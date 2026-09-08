@@ -1,16 +1,19 @@
 <div align="center">
 
 ```
-██████╗  █████╗ ██████╗ ██╗  ██╗███████╗███╗   ███╗ █████╗ ██████╗ ████████╗
-██╔══██╗██╔══██╗██╔══██╗██║ ██╔╝██╔════╝████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝
-██████╔╝███████║██████╔╝█████╔╝ ███████╗██╔████╔██║███████║██████╔╝   ██║   
-██╔═══╝ ██╔══██║██╔══██╗██╔═██╗ ╚════██║██║╚██╔╝██║██╔══██║██╔══██╗   ██║   
-██║     ██║  ██║██║  ██║██║  ██╗███████║██║ ╚═╝ ██║██║  ██║██║  ██║   ██║   
-╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   
+     ██████╗      █████╗     ██████╗     ██╗  ██╗    ███████╗    ███╗   ███╗     █████╗     ██████╗     ████████╗
+     ██╔══██╗    ██╔══██╗    ██╔══██╗    ██║ ██╔╝    ██╔════╝    ████╗ ████║    ██╔══██╗    ██╔══██╗    ╚══██╔══╝
+     ██████╔╝    ███████║    ██████╔╝    █████╔╝     ███████╗    ██╔████╔██║    ███████║    ██████╔╝       ██║
+     ██╔═══╝     ██╔══██║    ██╔══██╗    ██╔═██╗     ╚════██║    ██║╚██╔╝██║    ██╔══██║    ██╔══██╗       ██║
+     ██║         ██║  ██║    ██║  ██║    ██║  ██╗    ███████║    ██║ ╚═╝ ██║    ██║  ██║    ██║  ██║       ██║
+     ╚═╝         ╚═╝  ╚═╝    ╚═╝  ╚═╝    ╚═╝  ╚═╝    ╚══════╝    ╚═╝     ╚═╝    ╚═╝  ╚═╝    ╚═╝  ╚═╝       ╚═╝
 ```
 
 ### **ParkSmart — Smart Parking Booking Platform** 🚗
 
+_Find the nearest parking, book your spot, and rate your experience — all in one place._
+
+<br/>
 *Find the nearest parking, book your spot, and rate your experience — all in one place.*
 
 <br/>
@@ -51,13 +54,13 @@ ParkSmart/
 
 ## 👥 Team Assignment
 
-| Member | Module | Backend Files | Frontend Files |
-|:---:|---|---|---|
-| 1️⃣ | **Auth & Users** | `services/auth.service.js` · `controller/auth.controller.js` | `modules/auth` |
-| 2️⃣ | **Parkings** | `services/parkings.service.js` · `controller/parkings.controller.js` | `modules/parkings` |
-| 3️⃣ | **Spots & Search** | `services/spots.service.js` · `controller/spots.controller.js` | `modules/search` |
-| 4️⃣ | **Bookings** | `services/bookings.service.js` · `controller/bookings.controller.js` | `modules/bookings` |
-| 5️⃣ | **Reviews + Notifications + Integration** | `services/reviews.service.js` · `services/notification.service.js` · `index.js` | `modules/reviews` · `pages/` |
+| Member | Module                                    | Backend Files                                                                   | Frontend Files               |
+| :----: | ----------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------- |
+|   1️⃣   | **Auth & Users**                          | `services/auth.service.js` · `controller/auth.controller.js`                    | `modules/auth`               |
+|   2️⃣   | **Parkings**                              | `services/parkings.service.js` · `controller/parkings.controller.js`            | `modules/parkings`           |
+|   3️⃣   | **Spots & Search**                        | `services/spots.service.js` · `controller/spots.controller.js`                  | `modules/search`             |
+|   4️⃣   | **Bookings**                              | `services/bookings.service.js` · `controller/bookings.controller.js`            | `modules/bookings`           |
+|   5️⃣   | **Reviews + Notifications + Integration** | `services/reviews.service.js` · `services/notification.service.js` · `index.js` | `modules/reviews` · `pages/` |
 
 ---
 
@@ -75,6 +78,7 @@ cp .env.example .env
 ```
 
 Fill in your `.env` file:
+
 ```env
 MONGO_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/parksmart_db
 PORT=5000
@@ -89,6 +93,7 @@ npm run dev
 ```
 
 Expected output:
+
 ```
 ✅ DB Connected
 🚀 Server running on http://localhost:5000
@@ -99,46 +104,53 @@ Expected output:
 ## 🧩 API Endpoints
 
 ### 🔐 Auth
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|:---:|
-| `POST` | `/api/auth/register` | Register a new user | ❌ |
-| `POST` | `/api/auth/login` | Login & get JWT token | ❌ |
+
+| Method | Endpoint             | Description           | Auth Required |
+| ------ | -------------------- | --------------------- | :-----------: |
+| `POST` | `/api/auth/register` | Register a new user   |      ❌       |
+| `POST` | `/api/auth/login`    | Login & get JWT token |      ❌       |
 
 ### 🅿️ Parkings
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|:---:|
-| `GET` | `/api/parkings` | Get all parkings | ❌ |
-| `GET` | `/api/parkings/nearby?lat=..&lng=..&maxDistance=5000` | Get nearby parkings | ❌ |
-| `POST` | `/api/parkings` | Create a new parking | ✅ owner |
+
+| Method | Endpoint                                              | Description          | Auth Required |
+| ------ | ----------------------------------------------------- | -------------------- | :-----------: |
+| `GET`  | `/api/parkings`                                       | Get all parkings     |      ❌       |
+| `GET`  | `/api/parkings/nearby?lat=..&lng=..&maxDistance=5000` | Get nearby parkings  |      ❌       |
+| `POST` | `/api/parkings`                                       | Create a new parking |   ✅ owner    |
 
 ### 🔲 Spots
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|:---:|
-| `GET` | `/api/spots/parking/:parkingId` | Get all spots in a parking | ❌ |
-| `POST` | `/api/spots` | Add a new spot | ✅ owner |
-| `PUT` | `/api/spots/:id/status` | Manually change spot status | ✅ owner |
+
+| Method | Endpoint                        | Description                 | Auth Required |
+| ------ | ------------------------------- | --------------------------- | :-----------: |
+| `GET`  | `/api/spots/parking/:parkingId` | Get all spots in a parking  |      ❌       |
+| `POST` | `/api/spots`                    | Add a new spot              |   ✅ owner    |
+| `PUT`  | `/api/spots/:id/status`         | Manually change spot status |   ✅ owner    |
 
 ### 📅 Bookings
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|:---:|
-| `POST` | `/api/bookings` | Create a booking | ✅ |
-| `GET` | `/api/bookings/my` | Get my bookings | ✅ |
-| `PATCH` | `/api/bookings/:id/status` | Update booking status | ✅ |
+
+| Method  | Endpoint                   | Description           | Auth Required |
+| ------- | -------------------------- | --------------------- | :-----------: |
+| `POST`  | `/api/bookings`            | Create a booking      |      ✅       |
+| `GET`   | `/api/bookings/my`         | Get my bookings       |      ✅       |
+| `PATCH` | `/api/bookings/:id/status` | Update booking status |      ✅       |
 
 ### ⭐ Reviews
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|:---:|
-| `GET` | `/api/reviews/parking/:parkingId` | Get reviews for a parking | ❌ |
-| `POST` | `/api/reviews` | Add a review | ✅ |
+
+| Method | Endpoint                          | Description               | Auth Required |
+| ------ | --------------------------------- | ------------------------- | :-----------: |
+| `GET`  | `/api/reviews/parking/:parkingId` | Get reviews for a parking |      ❌       |
+| `POST` | `/api/reviews`                    | Add a review              |      ✅       |
 
 ### 🔔 Notifications
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|:---:|
-| `GET` | `/api/notifications` | Get my notifications | ✅ |
-| `PATCH` | `/api/notifications/read-all` | Mark all as read | ✅ |
-| `PATCH` | `/api/notifications/:id/read` | Mark one as read | ✅ |
+
+| Method  | Endpoint                      | Description          | Auth Required |
+| ------- | ----------------------------- | -------------------- | :-----------: |
+| `GET`   | `/api/notifications`          | Get my notifications |      ✅       |
+| `PATCH` | `/api/notifications/read-all` | Mark all as read     |      ✅       |
+| `PATCH` | `/api/notifications/:id/read` | Mark one as read     |      ✅       |
 
 > 💡 **For any protected endpoint**, send the token in the request header:
+>
 > ```
 > Authorization: Bearer <your_token>
 > ```
