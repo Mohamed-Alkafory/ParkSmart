@@ -1,0 +1,32 @@
+# ─── Dependencies ───────────────────────────────────────────────
+**/node_modules/
+
+# ─── Environment & Secrets (NEVER push these to GitHub) ─────────
+**/.env
+**/.env.local
+**/.env.production
+**/.env.staging
+
+# ─── Build Output ───────────────────────────────────────────────
+**/dist/
+**/build/
+**/.angular/
+
+# ─── Logs ───────────────────────────────────────────────────────
+**/*.log
+**/logs/
+npm-debug.log*
+
+# ─── OS Files ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── IDE / Editor ───────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+
+# ─── Testing & Coverage ─────────────────────────────────────────
+**/coverage/

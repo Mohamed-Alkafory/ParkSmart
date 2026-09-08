@@ -1,0 +1,30 @@
+# ─── Dependencies ───────────────────────────────────────────────
+node_modules/
+
+# ─── Environment & Secrets (NEVER commit these) ─────────────────
+.env
+.env.local
+.env.production
+.env.staging
+
+# ─── Logs ───────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+
+# ─── OS Files ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── IDE / Editor ───────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ─── Build Output ───────────────────────────────────────────────
+dist/
+build/
