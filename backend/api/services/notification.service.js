@@ -30,8 +30,7 @@ const Notification = require('../models/notification.model');
  */
 async function createNotification(data) {
   // TODO: implement
-  // مثال:
-  // return await Notification.create(data);
+  return await Notification.create(data);
 }
 
 /**
@@ -46,9 +45,7 @@ async function createNotification(data) {
  * @returns {Promise<Array>}
  */
 async function getUserNotifications(userId) {
-  // TODO: implement
-  // مثال:
-  // return await Notification.find({ userId }).sort({ createdAt: -1 });
+  return await Notification.find({ userId }).sort({ createdAt: -1 });
 }
 
 /**
@@ -64,7 +61,18 @@ async function getUserNotifications(userId) {
  * @returns {Promise<Object>}
  */
 async function markAsRead(notificationId, userId) {
-  // TODO: implement
+  return await Notification.findOneAndUpdate(
+    {
+      _id: notificationId,
+      userId: userId,
+    },
+    {
+      isRead: true,
+    },
+    {
+      new: true,
+    }
+  );
 }
 
 /**
@@ -78,9 +86,15 @@ async function markAsRead(notificationId, userId) {
  * @returns {Promise<Object>} result
  */
 async function markAllAsRead(userId) {
-  // TODO: implement
-  // مثال:
-  // return await Notification.updateMany({ userId, isRead: false }, { isRead: true });
+  return await Notification.updateMany(
+    {
+      userId: userId,
+      isRead: false,
+    },
+    {
+      isRead: true,
+    }
+  );
 }
 
 module.exports = {
