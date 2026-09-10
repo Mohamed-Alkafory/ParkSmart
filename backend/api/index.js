@@ -1,17 +1,17 @@
-const express = require('express');
-const cors    = require('cors');
+const express = require("express");
+const cors = require("cors");
 
-const { PORT }   = require('./config/env.config');
-const connectDB  = require('./config/db.config');
-const errorHandler = require('./middlewares/errorHandler');
+const { PORT } = require("./config/env.config");
+const connectDB = require("./config/db.config");
+const errorHandler = require("./middlewares/errorHandler");
 
 // Routes
-const authRoutes          = require('./routes/auth.routes');
-const parkingsRoutes      = require('./routes/parkings.routes');
-const spotsRoutes         = require('./routes/spots.routes');
-const bookingsRoutes      = require('./routes/bookings.routes');
-const reviewsRoutes       = require('./routes/reviews.routes');
-const notificationsRoutes = require('./routes/notifications.routes');
+const authRoutes = require("./routes/auth.routes");
+const parkingsRoutes = require("./routes/parkings.routes");
+const spotsRoutes = require("./routes/spots.routes");
+const bookingsRoutes = require("./routes/bookings.routes");
+const reviewsRoutes = require("./routes/reviews.routes");
+const notificationsRoutes = require("./routes/notifications.routes");
 
 const app = express();
 
@@ -23,16 +23,16 @@ app.use(express.json());
 connectDB();
 
 // ─── Routes ────────────────────────────────────────────────────
-app.use('/api/auth',          authRoutes);
-app.use('/api/parkings',      parkingsRoutes);
-app.use('/api/spots',         spotsRoutes);
-app.use('/api/bookings',      bookingsRoutes);
-app.use('/api/reviews',       reviewsRoutes);
-app.use('/api/notifications', notificationsRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/parkings", parkingsRoutes);
+app.use("/api/spots", spotsRoutes);
+app.use("/api/bookings", bookingsRoutes);
+app.use("/api/reviews", reviewsRoutes);
+app.use("/api/notifications", notificationsRoutes);
 
 // Health check
-app.get('/', (req, res) => {
-  res.json({ message: 'ParkSmart API is running 🚀' });
+app.get("/", (req, res) => {
+  res.json({ message: "ParkSmart API is running 🚀" });
 });
 
 // ─── Error Handler (لازم يفضل آخر حاجة) ───────────────────────
