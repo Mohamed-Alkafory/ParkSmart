@@ -18,6 +18,6 @@ const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
 router.get('/parking/:parkingId', getSpotsByParking);
 router.post('/',                  requireAuth, requireRole('owner'), createSpot);
 router.put('/:id/status',         requireAuth, requireRole('owner'), updateSpotStatus);
-router.delete('/:id', requireAuth, requireRole('owner'), deleteSpot);
+router.delete('/:id',             requireAuth, requireRole('owner'), deleteSpot);
 
 module.exports = router;
