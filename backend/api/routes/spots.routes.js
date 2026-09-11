@@ -1,6 +1,6 @@
 const express = require('express');
 const router  = express.Router();
-const { getSpotsByParking, createSpot, updateSpotStatus } = require('../controller/spots.controller');
+const { getSpotsByParking, createSpot, updateSpotStatus, deleteSpot } = require('../controller/spots.controller');
 const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
 
 /**
@@ -18,5 +18,6 @@ const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
 router.get('/parking/:parkingId', getSpotsByParking);
 router.post('/',                  requireAuth, requireRole('owner'), createSpot);
 router.put('/:id/status',         requireAuth, requireRole('owner'), updateSpotStatus);
+router.delete('/:id', requireAuth, requireRole('owner'), deleteSpot);
 
 module.exports = router;
