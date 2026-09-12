@@ -11,8 +11,7 @@ const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
  * POST /api/spots                     → إضافة spot (owner فقط)
  * PUT  /api/spots/:id/status          → تغيير حالة spot (owner فقط)
  *
- * TODO: ممكن تضيف:
- *   - DELETE /api/spots/:id → حذف spot (owner فقط)
+ * DELETE /api/spots/:id               → حذف spot (owner فقط)
  */
 
 router.get('/parking/:parkingId', getSpotsByParking);
