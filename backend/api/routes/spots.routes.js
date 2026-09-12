@@ -10,7 +10,6 @@ const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
  * GET  /api/spots/parking/:parkingId  → جلب الـ spots بتاعة جراج (عام)
  * POST /api/spots                     → إضافة spot (owner فقط)
  * PUT  /api/spots/:id/status          → تغيير حالة spot (owner فقط)
- *
  * DELETE /api/spots/:id               → حذف spot (owner فقط)
  */
 
