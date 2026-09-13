@@ -34,7 +34,7 @@ async function createReview(req, res, next) {
     }
 
     const data = await reviewsService.addReview({
-      userId: req.user.userId, // جاي من الـ auth middleware
+      userId: req.user.id, // جاي من الـ auth middleware
       parkingId,
       rating,
       comment,

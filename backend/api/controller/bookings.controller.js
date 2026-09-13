@@ -19,7 +19,7 @@ async function createBooking(req, res, next) {
       parkingId,
       startTime,
       durationHours,
-      userId: req.user.id || req.user.userId,
+      userId: req.user.id,
     });
 
     res.status(201).json({ success: true, data });
@@ -35,7 +35,7 @@ async function createBooking(req, res, next) {
 async function getMyBookings(req, res, next) {
   try {
     const data = await bookingsService.getUserBookings(
-      req.user.id || req.user.userId,
+      req.user.id,
     );
     res.json({ success: true, data });
   } catch (err) {

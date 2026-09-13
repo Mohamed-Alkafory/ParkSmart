@@ -9,7 +9,7 @@ const { JWT_SECRET } = require('../config/env.config');
  * الاستخدام في الـ routes:
  *   router.post('/', requireAuth, controllerFunction);
  *
- * req.user بيبقى فيه: { userId, role }
+ * req.user بيبقى فيه: { id, role }
  */
 function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -22,7 +22,7 @@ function requireAuth(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // { userId, role }
+    req.user = decoded; // { id, role }
     next();
   } catch (err) {
     return res.status(401).json({ success: false, message: 'Token غير صالح أو منتهي الصلاحية' });

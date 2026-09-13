@@ -42,7 +42,7 @@ async function fetchNearbyParkings({ lat, lng, maxDistance }) {
 /**
  * addParking
  * بيضيف جراج جديد في الـ DB
- * ownerId بيجي من الـ JWT token (req.user.userId في الـ controller)
+ * ownerId بيجي من الـ JWT token (req.user.id في الـ controller)
  *
  * @param {{ name, address, pricePerHour, lat, lng, ownerId }} parkingData
  * @returns {Promise<Object>} الجراج الجديد
