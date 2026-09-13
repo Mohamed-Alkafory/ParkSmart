@@ -1,20 +1,13 @@
 const authService = require("../services/auth.service");
 
 /**
- * Auth Controller
- * مهمته: يستقبل الـ request، يبعته للـ service، يرجع الـ response
- */
-
-/**
  * POST /api/auth/register
  * تسجيل مستخدم جديد
- * Body: { name, email, password, phone? }
  */
 async function register(req, res, next) {
   try {
     const { name, email, password, phone } = req.body;
 
-    // التأكد من البيانات المطلوبة
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
@@ -41,8 +34,6 @@ async function register(req, res, next) {
 /**
  * POST /api/auth/login
  * تسجيل الدخول
- * Body: { email, password }
- * Response: { token, user }
  */
 async function login(req, res, next) {
   try {
@@ -73,4 +64,3 @@ module.exports = {
   register,
   login,
 };
-

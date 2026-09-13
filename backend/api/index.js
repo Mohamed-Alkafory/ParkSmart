@@ -12,6 +12,7 @@ const spotsRoutes         = require('./routes/spots.routes');
 const bookingsRoutes      = require('./routes/bookings.routes');
 const reviewsRoutes       = require('./routes/reviews.routes');
 const notificationsRoutes = require('./routes/notifications.routes');
+const userRoutes          = require('./routes/user.routes');
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use('/api/spots',         spotsRoutes);
 app.use('/api/bookings',      bookingsRoutes);
 app.use('/api/reviews',       reviewsRoutes);
 app.use('/api/notifications', notificationsRoutes);
+app.use("/api/users",          userRoutes);
 
 // Health check
 app.get('/', (req, res) => {

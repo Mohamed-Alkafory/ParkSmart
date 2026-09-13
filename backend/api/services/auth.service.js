@@ -98,6 +98,7 @@ async function loginUser(credentials) {
   };
 }
 
+
 module.exports = {
   registerUser,
   loginUser,
