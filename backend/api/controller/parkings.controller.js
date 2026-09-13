@@ -58,7 +58,7 @@ async function createParking(req, res, next) {
 
     const data = await parkingsService.addParking({
       name, address, pricePerHour, lat, lng,
-      ownerId: req.user.userId, // جاي من الـ auth middleware
+      ownerId: req.user.id, // جاي من الـ auth middleware
     });
 
     res.status(201).json({ success: true, data });

@@ -1,0 +1,16 @@
+<!-- TODO (template): 3 sections — spots grid (@for over spots()), booking form, reviews list + review form. Owner-only spot management block. -->
+<div class="space-y-6">
+  <div class="rounded-2xl bg-white p-6 shadow">
+    <h1 class="text-2xl font-bold">Parking detail</h1>
+    <p class="text-sm text-gray-500">Spots: GET /api/spots/parking/:id · Reviews: GET /api/reviews/parking/:id · Book: POST /api/bookings</p>
+    <!-- TODO: booking form (startTime datetime-local + durationHours number) calling bookSpot() -->
+  </div>
+  <div class="rounded-2xl bg-white p-6 shadow">
+    <h2 class="font-semibold">Spots</h2>
+    <!-- TODO: @for (s of spots(); track s._id) badge for status + owner buttons -->
+  </div>
+  <div class="rounded-2xl bg-white p-6 shadow">
+    <h2 class="font-semibold">Reviews</h2>
+    <!-- TODO: @for (r of reviews(); track r._id) + rating/comment form calling submitReview() -->
+  </div>
+</div>
