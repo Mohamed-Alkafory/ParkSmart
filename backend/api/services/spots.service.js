@@ -18,6 +18,19 @@ async function fetchSpotsByParking(parkingId) {
 }
 
 /**
+ * fetchAllSpots
+ * بيجيب كل الـ spots — admin فقط
+ * بيستخدم في admin/parking-spots page
+ *
+ * @returns {Promise<Array>}
+ */
+async function fetchAllSpots() {
+  return ParkingSpot.find()
+    .populate('parkingId', 'name address')
+    .sort({ createdAt: -1 });
+}
+
+/**
  * addSpot
  * بيضيف spot جديد لجراج معين
  * المفروض يتستدعى بس من صاحب الجراج (requireRole('owner') في الـ route)
@@ -48,6 +61,7 @@ async function deleteSpot(spotId) {
 
 module.exports = {
   fetchSpotsByParking,
+  fetchAllSpots,
   addSpot,
   changeSpotStatus,
   deleteSpot
