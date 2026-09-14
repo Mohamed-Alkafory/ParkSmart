@@ -60,4 +60,29 @@ async function updateSpotStatus(req, res, next) {
   }
 }
 
-module.exports = { getSpotsByParking, createSpot, updateSpotStatus };
+async function deleteSpot(req, res, next) {
+  try {
+    const data = await spotsService.deleteSpot(req.params.id);
+
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: 'المكان غير موجود'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'تم حذف المكان بنجاح'
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = {
+  getSpotsByParking,
+  createSpot,
+  updateSpotStatus,
+  deleteSpot
+};

@@ -14,8 +14,7 @@ const ParkingSpot = require('../models/spot.model');
  * @returns {Promise<Array>}
  */
 async function fetchSpotsByParking(parkingId) {
-  // TODO: implement
-  // مثال: return await ParkingSpot.find({ parkingId });
+  return ParkingSpot.find({ parkingId });
 }
 
 /**
@@ -27,8 +26,7 @@ async function fetchSpotsByParking(parkingId) {
  * @returns {Promise<Object>}
  */
 async function addSpot(spotData) {
-  // TODO: implement
-  // مثال: return await ParkingSpot.create(spotData);
+  return ParkingSpot.create(spotData);
 }
 
 /**
@@ -41,9 +39,16 @@ async function addSpot(spotData) {
  * @returns {Promise<Object>}
  */
 async function changeSpotStatus(spotId, status) {
-  // TODO: implement
-  // مثال:
-  // return await ParkingSpot.findByIdAndUpdate(spotId, { status }, { new: true });
+  return await ParkingSpot.findByIdAndUpdate(spotId, { status }, { new: true });
 }
 
-module.exports = { fetchSpotsByParking, addSpot, changeSpotStatus };
+async function deleteSpot(spotId) {
+  return await ParkingSpot.findByIdAndDelete(spotId);
+}
+
+module.exports = {
+  fetchSpotsByParking,
+  addSpot,
+  changeSpotStatus,
+  deleteSpot
+};

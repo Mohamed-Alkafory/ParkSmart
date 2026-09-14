@@ -1,9 +1,9 @@
-const express = require('express');
-const cors    = require('cors');
+const express = require("express");
+const cors = require("cors");
 
-const { PORT }   = require('./config/env.config');
-const connectDB  = require('./config/db.config');
-const errorHandler = require('./middlewares/errorHandler');
+const { PORT } = require("./config/env.config");
+const connectDB = require("./config/db.config");
+const errorHandler = require("./middlewares/errorHandler");
 
 // Routes
 const authRoutes          = require('./routes/auth.routes');
@@ -33,8 +33,8 @@ app.use('/api/notifications', notificationsRoutes);
 app.use("/api/users",          userRoutes);
 
 // Health check
-app.get('/', (req, res) => {
-  res.json({ message: 'ParkSmart API is running 🚀' });
+app.get("/", (req, res) => {
+  res.json({ message: "ParkSmart API is running 🚀" });
 });
 
 // ─── Error Handler (لازم يفضل آخر حاجة) ───────────────────────
