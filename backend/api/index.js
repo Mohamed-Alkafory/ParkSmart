@@ -6,12 +6,13 @@ const connectDB = require("./config/db.config");
 const errorHandler = require("./middlewares/errorHandler");
 
 // Routes
-const authRoutes = require("./routes/auth.routes");
-const parkingsRoutes = require("./routes/parkings.routes");
-const spotsRoutes = require("./routes/spots.routes");
-const bookingsRoutes = require("./routes/bookings.routes");
-const reviewsRoutes = require("./routes/reviews.routes");
-const notificationsRoutes = require("./routes/notifications.routes");
+const authRoutes          = require('./routes/auth.routes');
+const parkingsRoutes      = require('./routes/parkings.routes');
+const spotsRoutes         = require('./routes/spots.routes');
+const bookingsRoutes      = require('./routes/bookings.routes');
+const reviewsRoutes       = require('./routes/reviews.routes');
+const notificationsRoutes = require('./routes/notifications.routes');
+const userRoutes          = require('./routes/user.routes');
 
 const app = express();
 
@@ -23,12 +24,13 @@ app.use(express.json());
 connectDB();
 
 // ─── Routes ────────────────────────────────────────────────────
-app.use("/api/auth", authRoutes);
-app.use("/api/parkings", parkingsRoutes);
-app.use("/api/spots", spotsRoutes);
-app.use("/api/bookings", bookingsRoutes);
-app.use("/api/reviews", reviewsRoutes);
-app.use("/api/notifications", notificationsRoutes);
+app.use('/api/auth',          authRoutes);
+app.use('/api/parkings',      parkingsRoutes);
+app.use('/api/spots',         spotsRoutes);
+app.use('/api/bookings',      bookingsRoutes);
+app.use('/api/reviews',       reviewsRoutes);
+app.use('/api/notifications', notificationsRoutes);
+app.use("/api/users",          userRoutes);
 
 // Health check
 app.get("/", (req, res) => {
