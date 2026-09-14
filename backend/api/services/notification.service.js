@@ -25,9 +25,9 @@ const Notification = require('../models/notification.model');
  *   - ساف الـ notification في الـ DB
  *   - TODO الاختياري: لو في Push Notifications (FCM مثلاً) ابعتها هنا
  *
- * @param {{ userId, bookingId, title, message, type }} data
+* @param {{ userId, bookingId, title, message, type }} data
  * @returns {Promise<Object>} الإشعار الجديد
- */
+*/
 async function createNotification(data) {
   // TODO: implement
   return await Notification.create(data);
