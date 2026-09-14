@@ -48,4 +48,24 @@ function requireRole(...roles) {
   };
 }
 
-module.exports = { requireAuth, requireRole };
+/**
+ * requireSelfOrAdmin Middleware
+ * بيسمح للمستخدم يوصل لبياناته هو بس، أو للأدمن يوصل لأي مستخدم
+ *
+ * الاستخدام:
+ *   router.get('/:id', requireAuth, requireSelfOrAdmin, controllerFunction);
+ *
+ * بيعتمد على إن requireAuth حط { id, role } في req.user
+ * وإن الـ route فيه param اسمه id
+ */
+function requireSelfOrAdmin(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: 'غير مصرح، سجل دخول أولاً' });
+  }
+  if (req.user.role === 'admin' || req.user.id === req.params.id) {
+    return next();
+  }
+  return res.status(403).json({ success: false, message: 'مش مسموح لك بالوصول ده' });
+}
+
+module.exports = { requireAuth, requireRole, requireSelfOrAdmin };
