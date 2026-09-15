@@ -1,4 +1,4 @@
-const userService = require("../services/user.service");
+﻿const userService = require("../services/user.service");
 
 // ===================== Get All Users =====================
 
@@ -43,7 +43,8 @@ async function updateUser(req, res, next) {
   try {
     const data = await userService.updateUser(
       req.params.id,
-      req.body
+      req.body,
+      req.user && req.user.role === "admin"
     );
 
     if (!data) {

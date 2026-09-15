@@ -27,8 +27,23 @@ export class BookingsService {
   updateStatus(id: string, status: BookingStatus): Observable<ApiResponse<Booking>> {
     // TODO 3: send PATCH to `${this.apiUrl}/${id}/status` with exact body { status }.
     //   Allowed values only: 'active' | 'completed' | 'cancelled'.
-    //   Protected: requireAuth (note: backend has NO role check here).
+    //   Protected: requireAuth — backend allows the booking owner, the parking owner, or admin (403 otherwise).
     //   Use: return this.http.patch<ApiResponse<Booking>>(url, { status }).
     throw new Error('Not implemented — see TODO 3');
+  }
+
+  getOwnerBookings(): Observable<ApiResponse<Booking[]>> {
+    // TODO 4: send GET to `${this.apiUrl}/owner` (owner dashboard).
+    //   Protected: requireAuth + requireRole('owner', 'admin').
+    //   Backend returns bookings of the caller's parkings, populated with parking + spot + user.
+    //   Use: return this.http.get<ApiResponse<Booking[]>>(url).
+    throw new Error('Not implemented — see TODO 4');
+  }
+
+  getAllBookings(): Observable<ApiResponse<Booking[]>> {
+    // TODO 5: send GET to `${this.apiUrl}/` (admin dashboard).
+    //   Protected: requireAuth + requireRole('admin').
+    //   Use: return this.http.get<ApiResponse<Booking[]>>(this.apiUrl).
+    throw new Error('Not implemented — see TODO 5');
   }
 }

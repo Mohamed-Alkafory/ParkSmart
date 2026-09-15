@@ -19,6 +19,19 @@ async function getSpotsByParking(req, res, next) {
 }
 
 /**
+ * GET /api/spots
+ * جلب كل الـ spots — admin فقط (admin/parking-spots page)
+ */
+async function getAllSpots(req, res, next) {
+  try {
+    const data = await spotsService.fetchAllSpots();
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
  * POST /api/spots
  * إضافة spot جديد — يحتاج requireAuth + requireRole('owner')
  * Body: { parkingId, spotNumber }
@@ -82,6 +95,7 @@ async function deleteSpot(req, res, next) {
 
 module.exports = {
   getSpotsByParking,
+  getAllSpots,
   createSpot,
   updateSpotStatus,
   deleteSpot

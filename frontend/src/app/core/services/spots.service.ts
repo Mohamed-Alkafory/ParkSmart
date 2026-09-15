@@ -12,11 +12,12 @@ export class SpotsService {
     return this.http.get<ApiResponse<Spot[]>>(`${this.apiUrl}/parking/${parkingId}`);
   }
 
+  getAll(): Observable<ApiResponse<Spot[]>> {
+    return this.http.get<ApiResponse<Spot[]>>(`${this.apiUrl}/`);
+  }
+
   create(parkingId: string, spotNumber: string): Observable<ApiResponse<Spot>> {
-    return this.http.post<ApiResponse<Spot>>(
-  this.apiUrl,
-  { parkingId, spotNumber }
-);
+    return this.http.post<ApiResponse<Spot>>(`${this.apiUrl}/`, { parkingId, spotNumber });
   }
 
   updateStatus(id: string, status: SpotStatus): Observable<ApiResponse<Spot>> {

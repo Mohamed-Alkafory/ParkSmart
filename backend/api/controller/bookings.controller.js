@@ -44,6 +44,32 @@ async function getMyBookings(req, res, next) {
 }
 
 /**
+ * GET /api/bookings/owner
+ * حجوزات كل جراجات الـ owner الحالي — بيستخدم في owner/bookings page
+ */
+async function getOwnerBookings(req, res, next) {
+  try {
+    const data = await bookingsService.getOwnerBookings(req.user.id);
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * GET /api/bookings
+ * كل الحجوزات — admin فقط (admin/bookings page)
+ */
+async function getAllBookings(req, res, next) {
+  try {
+    const data = await bookingsService.getAllBookings();
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
  * PATCH /api/bookings/:id/status
  * تغيير حالة حجز
  */
@@ -60,6 +86,7 @@ async function updateStatus(req, res, next) {
     const data = await bookingsService.updateBookingStatus(
       req.params.id,
       status,
+      req.user, // { id, role } — صاحب الحجز أو صاحب الجراج أو admin
     );
     if (!data) {
       return res
@@ -73,4 +100,4 @@ async function updateStatus(req, res, next) {
   }
 }
 
-module.exports = { createBooking, getMyBookings, updateStatus };
+module.exports = { createBooking, getMyBookings, getOwnerBookings, getAllBookings, updateStatus };
