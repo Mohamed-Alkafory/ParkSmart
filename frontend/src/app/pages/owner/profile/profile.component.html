@@ -1,2 +1,105 @@
-﻿<!-- TODO: profile form. -->
-<div class="mx-auto max-w-xl rounded-2xl bg-white p-8 shadow"><h1 class="text-2xl font-bold">Profile</h1><p class="text-sm text-gray-500">TODO owner profile</p></div>
+<section class="mx-auto max-w-3xl space-y-6">
+  <!-- Profile header from the parking-owner UI flow. -->
+  <div
+    class="overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 to-emerald-700 p-6 text-white shadow-lg sm:p-8"
+  >
+    <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
+      <div
+        class="flex h-20 w-20 items-center justify-center rounded-full bg-white/20 text-3xl font-bold ring-4 ring-white/20"
+      >
+        {{ (user()?.name ?? 'O').charAt(0).toUpperCase() }}
+      </div>
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wider text-emerald-100">Parking owner</p>
+        <h1 class="mt-1 text-3xl font-bold">{{ user()?.name ?? 'My profile' }}</h1>
+        <p class="mt-1 text-sm text-emerald-100">Keep your account information up to date.</p>
+      </div>
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {{ error() }}
+    </p>
+  }
+  @if (message()) {
+    <p
+      class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
+    >
+      {{ message() }}
+    </p>
+  }
+
+  <!-- Email and role are read-only; the owner can edit name and phone. -->
+  <form
+    class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8"
+    (ngSubmit)="onSave()"
+  >
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <label for="ownerName" class="mb-2 block text-sm font-semibold text-slate-700"
+          >Full name</label
+        >
+        <input
+          id="ownerName"
+          name="name"
+          type="text"
+          required
+          class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+        />
+      </div>
+
+      <div>
+        <label for="ownerEmail" class="mb-2 block text-sm font-semibold text-slate-700"
+          >Email</label
+        >
+        <input
+          id="ownerEmail"
+          type="email"
+          class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-slate-500"
+          [value]="user()?.email ?? ''"
+          disabled
+        />
+      </div>
+
+      <div>
+        <label for="ownerPhone" class="mb-2 block text-sm font-semibold text-slate-700"
+          >Phone</label
+        >
+        <input
+          id="ownerPhone"
+          name="phone"
+          type="tel"
+          class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+          placeholder="Your phone number"
+          [ngModel]="phone()"
+          (ngModelChange)="phone.set($event)"
+        />
+      </div>
+
+      <div class="sm:col-span-2">
+        <label for="ownerRole" class="mb-2 block text-sm font-semibold text-slate-700"
+          >Account role</label
+        >
+        <input
+          id="ownerRole"
+          class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 capitalize text-slate-500"
+          [value]="user()?.role ?? ''"
+          disabled
+        />
+      </div>
+    </div>
+
+    <div class="mt-7 flex justify-end">
+      <button
+        type="submit"
+        class="rounded-xl bg-emerald-600 px-7 py-3 font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+        [disabled]="saving() || loading()"
+      >
+        {{ saving() ? 'Saving...' : 'Save changes' }}
+      </button>
+    </div>
+  </form>
+</section>
