@@ -1,2 +1,64 @@
-﻿<!-- TODO: spots table. -->
-<div class="rounded-2xl bg-white p-6 shadow"><h1 class="text-2xl font-bold">Parking spots</h1><p class="text-sm text-gray-500">TODO admin spots</p></div>
+<section class="space-y-6">
+  <!-- Admin heading and system-wide spot count. -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wider text-violet-600">Admin control</p>
+      <h1 class="mt-1 text-3xl font-bold text-slate-900">All parking spots</h1>
+      <p class="mt-2 text-sm text-slate-500">Monitor every spot and its current status.</p>
+    </div>
+    <div class="rounded-xl bg-violet-700 px-5 py-3 text-white shadow">
+      <span class="text-sm text-violet-100">Total</span>
+      <strong class="ml-2 text-xl">{{ spots().length }}</strong>
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {{ error() }}
+    </p>
+  }
+
+  @if (loading()) {
+    <div class="rounded-2xl bg-white p-10 text-center text-slate-500 shadow-sm">
+      Loading spots...
+    </div>
+  } @else if (spots().length === 0 && !error()) {
+    <div
+      class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500"
+    >
+      No parking spots were found.
+    </div>
+  } @else {
+    <!-- The wrapper keeps the table usable on phones and tablets. -->
+    <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+      <table class="min-w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+          <tr>
+            <th class="px-5 py-4">Spot</th>
+            <th class="px-5 py-4">Parking</th>
+            <th class="px-5 py-4">Status</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          @for (spot of spots(); track spot._id ?? spot.spotNumber) {
+            <tr class="transition hover:bg-slate-50">
+              <td class="px-5 py-4 font-bold text-slate-900">{{ spot.spotNumber }}</td>
+              <td class="px-5 py-4 text-slate-600">{{ parkingName(spot) }}</td>
+              <td class="px-5 py-4">
+                <span
+                  class="inline-flex rounded-full px-3 py-1 text-xs font-semibold"
+                  [class.bg-emerald-100]="spot.status === 'available'"
+                  [class.text-emerald-700]="spot.status === 'available'"
+                  [class.bg-slate-200]="spot.status === 'booked'"
+                  [class.text-slate-700]="spot.status === 'booked'"
+                >
+                  {{ spot.status }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

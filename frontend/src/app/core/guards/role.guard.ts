@@ -15,14 +15,19 @@ import { getUserRole } from './owner.guard';
 export function roleGuard(allowed: string[]): CanActivateFn {
   return (route, state) => {
     const router = inject(Router);
-    // TODO: if (!getToken()) return login UrlTree with returnUrl (copy ownerGuard).
-    // TODO: if (!allowed.includes(getUserRole() ?? '')) return UrlTree to '/parkings'.
-    // TODO: return true otherwise.
-    void allowed;
-    void router;
-    void state;
-    void getToken;
-    void getUserRole;
-    throw new Error('Not implemented — see TODOs above');
+
+    // A missing token means the user must sign in first.
+    if (!getToken()) {
+      return router.createUrlTree(['/login'], {
+        queryParams: { returnUrl: state.url },
+      });
+    }
+
+    // Logged-in users can open only pages allowed for their role.
+    if (!allowed.includes(getUserRole() ?? '')) {
+      return router.createUrlTree(['/parkings']);
+    }
+
+    return true;
   };
 }

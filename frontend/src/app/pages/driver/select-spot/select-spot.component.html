@@ -1,2 +1,63 @@
-﻿<!-- TODO: @for available spots <app-parking-spot> + Continue button. -->
-<div class="space-y-4"><h1 class="text-2xl font-bold">Select spot</h1><p class="text-sm text-gray-500">TODO spot grid</p></div>
+<section class="space-y-6">
+  <!-- Page heading follows the ParkSmart driver flow. -->
+  <div
+    class="rounded-3xl bg-gradient-to-r from-blue-700 to-cyan-600 p-6 text-white shadow-lg sm:p-8"
+  >
+    <p class="text-sm font-semibold uppercase tracking-wider text-cyan-100">Choose your space</p>
+    <h1 class="mt-2 text-3xl font-bold">Select a parking spot</h1>
+    <p class="mt-2 max-w-2xl text-sm text-blue-100">
+      Green spots are available. Select one to continue to your booking.
+    </p>
+  </div>
+
+  @if (error()) {
+    <p class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {{ error() }}
+    </p>
+  }
+
+  @if (loading()) {
+    <div class="rounded-2xl bg-white p-10 text-center text-slate-500 shadow-sm">
+      Loading available spots...
+    </div>
+  } @else if (spots().length === 0 && !error()) {
+    <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+      <h2 class="font-semibold text-slate-800">No available spots</h2>
+      <p class="mt-1 text-sm text-slate-500">Please check again later or choose another parking.</p>
+    </div>
+  } @else {
+    <!-- Every reusable spot card emits its ID when selected. -->
+    <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      @for (spot of spots(); track spot._id ?? spot.spotNumber) {
+        <div
+          class="rounded-2xl p-1 transition"
+          [class.ring-4]="selectedSpotId() === spot._id"
+          [class.ring-blue-500]="selectedSpotId() === spot._id"
+        >
+          <app-parking-spot [spot]="spot" [selectable]="true" (select)="selectSpot($event)" />
+        </div>
+      }
+    </div>
+  }
+
+  <!-- The booking member receives both parking and selected spot IDs. -->
+  <div
+    class="flex flex-col gap-3 rounded-2xl bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+  >
+    <p class="text-sm text-slate-600">
+      {{
+        selectedSpotId() ? 'A spot is selected. You can continue.' : 'Select a spot to continue.'
+      }}
+    </p>
+    <a
+      [routerLink]="['/driver/parkings', id(), 'booking']"
+      [queryParams]="{ spotId: selectedSpotId() }"
+      class="rounded-xl bg-blue-700 px-6 py-3 text-center font-semibold text-white transition hover:bg-blue-800"
+      [class.pointer-events-none]="!selectedSpotId()"
+      [class.opacity-50]="!selectedSpotId()"
+      [attr.aria-disabled]="!selectedSpotId()"
+    >
+      Continue to booking
+    </a>
+  </div>
+</section>
