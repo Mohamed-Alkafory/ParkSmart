@@ -1,18 +1,17 @@
 const mongoose = require('mongoose');
 
 /**
- * Notification Model — الإشعارات
+ * Notification Model
  *
- * بتتعمل notification تلقائي لما:
- *   - الحجز يتأكد   → type: 'booking',   title: 'Booking Confirmed'
- *   - الحجز يكتمل   → type: 'booking',   title: 'Booking Completed'
- *   - الحجز يتلغى   → type: 'cancelled', title: 'Booking Cancelled'
- *   - TODO: أي أحداث تانية يقررها التيم
+ * Notifications are created automatically when:
+ *   - a booking is confirmed → type: 'booking',   title: 'Booking Confirmed'
+ *   - a booking is completed → type: 'booking',   title: 'Booking Completed'
+ *   - a booking is cancelled → type: 'cancelled', title: 'Booking Cancelled'
  *
- * isRead: بتتغير لـ true لما المستخدم يشوف الإشعار
+ * isRead flips to true once the user sees the notification.
  *
- * ملاحظة: الـ notifications بتتعمل من الـ notificationService
- *   — مش المفروض تتعمل مباشرة من الـ controller
+ * Note: notifications are created via the notification service,
+ * never directly from a controller.
  */
 const notificationSchema = new mongoose.Schema(
   {
@@ -22,13 +21,13 @@ const notificationSchema = new mongoose.Schema(
     message:   { type: String, required: true },
     type:      {
       type: String,
-      enum: ['booking', 'cancelled', 'reminder'], // TODO: أضيف أنواع لو احتجنا
+      enum: ['booking', 'cancelled', 'reminder'],
       default: 'booking',
     },
     isRead:    { type: Boolean, default: false },
   },
   {
-    timestamps: { createdAt: true, updatedAt: false }, // ما محتاجش updatedAt هنا
+    timestamps: { createdAt: true, updatedAt: false },
   }
 );
 

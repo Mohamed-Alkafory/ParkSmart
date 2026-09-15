@@ -1,12 +1,12 @@
 const Notification = require('../models/notification.model');
 
 /**
- * Notification Service — منطق الإشعارات
+ * Notification Service
  *
- * ده الـ service اللي بيتبعته كل service تانية عايزة تبعت إشعار
- * مش المفروض يتستدعى مباشرة من الـ controller
+ * The helper other services call when they need to notify a user.
+ * It is not meant to be called directly from controllers.
  *
- * الاستخدام في bookings.service.js مثلاً:
+ * Usage in bookings.service.js:
  *   const notificationService = require('./notification.service');
  *   await notificationService.createNotification({
  *     userId,
@@ -19,27 +19,17 @@ const Notification = require('../models/notification.model');
 
 /**
  * createNotification
- * بيحفظ إشعار جديد في الـ DB
  *
- * TODO: اعمل الـ function دي:
- *   - ساف الـ notification في الـ DB
- *   - TODO الاختياري: لو في Push Notifications (FCM مثلاً) ابعتها هنا
- *
-* @param {{ userId, bookingId, title, message, type }} data
- * @returns {Promise<Object>} الإشعار الجديد
-*/
+ * @param {{ userId, bookingId, title, message, type }} data
+ * @returns {Promise<Object>}
+ */
 async function createNotification(data) {
-  // TODO: implement
   return await Notification.create(data);
 }
 
 /**
  * getUserNotifications
- * بيجيب كل إشعارات مستخدم معين مرتبة من الأحدث
- *
- * TODO:
- *   - اجلب الـ notifications مع sort -createdAt
- *   - ممكن تضيف pagination هنا لو الـ notifications اتكترت
+ * All notifications of a user, newest first.
  *
  * @param {string} userId
  * @returns {Promise<Array>}
@@ -50,14 +40,11 @@ async function getUserNotifications(userId) {
 
 /**
  * markAsRead
- * بيعلم الإشعار كـ مقروء (isRead: true)
- *
- * TODO:
- *   - تحقق إن الـ notification بتاعة الـ user ده (أمان)
- *   - عدّل isRead لـ true
+ * Marks a notification as read (isRead: true).
+ * Scoped to the user's own notification.
  *
  * @param {string} notificationId
- * @param {string} userId - عشان نتحقق إن الإشعار ده بتاعه هو
+ * @param {string} userId
  * @returns {Promise<Object>}
  */
 async function markAsRead(notificationId, userId) {
@@ -77,10 +64,7 @@ async function markAsRead(notificationId, userId) {
 
 /**
  * markAllAsRead
- * بيعلم كل إشعارات المستخدم كـ مقروءة دفعة واحدة
- *
- * TODO:
- *   - عدّل كل الـ notifications اللي userId = userId و isRead = false
+ * Marks all of a user's notifications as read in one batch.
  *
  * @param {string} userId
  * @returns {Promise<Object>} result

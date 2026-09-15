@@ -5,8 +5,6 @@ const User = require("../models/user.model");
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
-// ===================== Read =====================
-
 async function getUsers() {
   return await User.find().select("-password");
 }
@@ -15,12 +13,10 @@ async function getUserById(id) {
   return await User.findById(id).select("-password");
 }
 
-// ===================== Update =====================
 // Whitelist updatable fields to prevent mass assignment:
 //   - anyone (self): name, phone, password (hashed before save)
 //   - admin only: role, email
 // Throws on invalid password or invalid role.
-
 async function updateUser(id, data, isAdmin = false) {
   const update = {};
 
@@ -55,8 +51,6 @@ async function updateUser(id, data, isAdmin = false) {
     }
   ).select("-password");
 }
-
-// ===================== Delete =====================
 
 async function deleteUser(id) {
   return await User.findByIdAndDelete(id);

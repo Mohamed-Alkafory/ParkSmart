@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
 /**
- * ParkingSpot Model — الأماكن داخل الجراج
+ * ParkingSpot Model — spots inside a parking.
  *
- * كل جراج عنده مجموعة spots، كل spot ليه رقم (A1, A2, B1, ...)
+ * Each parking has a set of spots, each with a number (A1, A2, B1, ...).
  *
  * status:
- *   - available → متاح للحجز
- *   - booked    → محجوز حالياً
+ *   - available → bookable
+ *   - booked    → currently booked
  */
 const spotSchema = new mongoose.Schema(
   {
@@ -18,14 +18,14 @@ const spotSchema = new mongoose.Schema(
       trim: true,
       uppercase: true,
       minlength: 1,
-    }, // مثال: "A1", "B2"
+    },
     status:      { type: String, enum: ['available', 'booked'], default: 'available' },
   },
   { timestamps: true }
 );
 
-// مينفعش يتكرر نفس رقم المكان داخل نفس الجراج.
-// نفس الرقم ممكن يتكرر في جراج مختلف بدون مشكلة.
+// A spot number must be unique within its own parking.
+// The same number may repeat in a different parking.
 spotSchema.index({ parkingId: 1, spotNumber: 1 }, { unique: true });
 
 module.exports = mongoose.model('ParkingSpot', spotSchema);

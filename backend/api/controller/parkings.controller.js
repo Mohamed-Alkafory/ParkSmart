@@ -1,13 +1,7 @@
 const parkingsService = require('../services/parkings.service');
 
 /**
- * Parkings Controller
- * مهمته: يستقبل الـ request، يبعته للـ service، يرجع الـ response
- */
-
-/**
  * GET /api/parkings
- * جلب كل الجراجات
  */
 async function getAllParkings(req, res, next) {
   try {
@@ -20,15 +14,14 @@ async function getAllParkings(req, res, next) {
 
 /**
  * GET /api/parkings/nearby?lat=26.1551&lng=32.7266&maxDistance=5000
- * بحث عن الجراجات القريبة من موقع معين
- * maxDistance: بالمتر، الافتراضي 5000 متر (5 كيلو)
+ * maxDistance in meters, defaults to 5000 (5 km).
  */
 async function getNearbyParkings(req, res, next) {
   try {
     const { lat, lng, maxDistance = 5000 } = req.query;
 
     if (!lat || !lng) {
-      return res.status(400).json({ success: false, message: 'الموقع مطلوب (lat, lng)' });
+      return res.status(400).json({ success: false, message: 'Location is required (lat, lng)' });
     }
 
     const data = await parkingsService.fetchNearbyParkings({
@@ -45,7 +38,7 @@ async function getNearbyParkings(req, res, next) {
 
 /**
  * POST /api/parkings
- * إضافة جراج جديد — يحتاج requireAuth + requireRole('owner')
+ * Requires requireAuth + requireRole('owner').
  * Body: { name, address, pricePerHour, lat, lng }
  */
 async function createParking(req, res, next) {
@@ -53,12 +46,12 @@ async function createParking(req, res, next) {
     const { name, address, pricePerHour, lat, lng } = req.body;
 
     if (!name || !address || !pricePerHour || !lat || !lng) {
-      return res.status(400).json({ success: false, message: 'من فضلك أدخل كل البيانات' });
+      return res.status(400).json({ success: false, message: 'Please provide all required fields' });
     }
 
     const data = await parkingsService.addParking({
       name, address, pricePerHour, lat, lng,
-      ownerId: req.user.id, // جاي من الـ auth middleware
+      ownerId: req.user.id,
     });
 
     res.status(201).json({ success: true, data });
@@ -67,9 +60,79 @@ async function createParking(req, res, next) {
   }
 }
 
-// TODO: ممكن تضيف:
-//   - getParkingById
-//   - updateParking
-//   - deleteParking
+/**
+ * GET /api/parkings/mine
+ * Parkings of the current owner. Requires requireAuth + requireRole('owner').
+ */
+async function getMyParkings(req, res, next) {
+  try {
+    const data = await parkingsService.fetchOwnerParkings(req.user.id);
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
 
-module.exports = { getAllParkings, getNearbyParkings, createParking };
+/**
+ * GET /api/parkings/:id
+ */
+async function getParkingById(req, res, next) {
+  try {
+    const data = await parkingsService.fetchParkingById(req.params.id);
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * PUT /api/parkings/:id
+ * Requires requireAuth + requireRole('owner') + ownership check.
+ * Body (at least one field): { name, address, pricePerHour, lat, lng }
+ * Note: lat and lng must be sent together to update the location.
+ */
+async function updateParking(req, res, next) {
+  try {
+    const { name, address, pricePerHour, lat, lng } = req.body;
+
+    if (
+      name === undefined &&
+      address === undefined &&
+      pricePerHour === undefined &&
+      lat === undefined &&
+      lng === undefined
+    ) {
+      return res.status(400).json({ success: false, message: 'Please provide at least one field to update' });
+    }
+
+    const data = await parkingsService.updateParking(
+      req.params.id,
+      { name, address, pricePerHour, lat, lng },
+      req.user.id
+    );
+
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * DELETE /api/parkings/:id
+ * Requires requireAuth + requireRole('owner') + ownership check.
+ * Rejected with 409 if there are active bookings or remaining spots.
+ */
+async function deleteParking(req, res, next) {
+  try {
+    await parkingsService.deleteParking(req.params.id, req.user.id);
+
+    res.json({
+      success: true,
+      message: 'Parking deleted successfully'
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { getAllParkings, getNearbyParkings, createParking, getMyParkings, getParkingById, updateParking, deleteParking };
