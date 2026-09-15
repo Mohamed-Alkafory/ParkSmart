@@ -1,12 +1,10 @@
 /**
- * errorHandler Middleware
- * معالج الأخطاء العام — لازم يتحط آخر حاجة في index.js بعد كل الـ routes
- *
- * بيمسك أي خطأ اتبعت بـ next(err) من أي controller
- * ويرد بـ response موحد
+ * errorHandler
+ * Global error handler — must be registered last in index.js, after all routes.
+ * Catches any error passed via next(err) and returns a unified response.
  */
 function errorHandler(err, req, res, next) {
-  console.error('❌ Error:', err.stack);
+  console.error('Error:', err.stack);
 
   // Malformed ObjectId (e.g. GET /api/users/abc) — client error, not server error
   if (err.name === 'CastError') {
@@ -34,7 +32,7 @@ function errorHandler(err, req, res, next) {
 
   res.status(err.status || 500).json({
     success: false,
-    message: err.message || 'حصل خطأ في السيرفر',
+    message: err.message || 'Internal server error',
   });
 }
 

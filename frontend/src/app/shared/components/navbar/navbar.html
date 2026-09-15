@@ -1,8 +1,6 @@
 <nav class="bg-slate-900 text-white shadow">
-  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-    <a routerLink="/parkings" class="text-lg font-bold tracking-tight">
-      ParkSmart
-    </a>
+  <div class="flex w-full items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+    <a routerLink="/parkings" class="text-lg font-bold tracking-tight"> ParkSmart </a>
 
     <div class="flex items-center gap-2 text-sm">
       <a
@@ -38,6 +36,15 @@
         >
           Notifications
         </a>
+        @if (!isAdmin()) {
+          <a
+            [routerLink]="profileLink()"
+            routerLinkActive="bg-slate-700"
+            class="rounded-lg px-3 py-2 hover:bg-slate-700"
+          >
+            Profile
+          </a>
+        }
         <span class="hidden px-2 text-slate-300 md:inline">
           {{ currentUser()?.name }}
         </span>

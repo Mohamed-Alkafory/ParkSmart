@@ -1,2 +1,3 @@
-﻿<!-- TODO (template): <span> with @if/@switch on status() for color classes. -->
-<span class="rounded-full bg-slate-100 px-2 py-1 text-xs">{{ status() }}</span>
+﻿<span class="rounded-full px-3 py-1 text-xs font-semibold {{ badgeClass() }}">{{
+  label()
+}}</span>

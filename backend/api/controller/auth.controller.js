@@ -2,7 +2,6 @@ const authService = require("../services/auth.service");
 
 /**
  * POST /api/auth/register
- * تسجيل مستخدم جديد
  */
 async function register(req, res, next) {
   try {
@@ -11,7 +10,7 @@ async function register(req, res, next) {
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "من فضلك أدخل كل البيانات المطلوبة",
+        message: "Please provide all required fields",
       });
     }
 
@@ -33,7 +32,6 @@ async function register(req, res, next) {
 
 /**
  * POST /api/auth/login
- * تسجيل الدخول
  */
 async function login(req, res, next) {
   try {
@@ -42,7 +40,7 @@ async function login(req, res, next) {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "أدخل الإيميل والباسورد",
+        message: "Please enter your email and password",
       });
     }
 

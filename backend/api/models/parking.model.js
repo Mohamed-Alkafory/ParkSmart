@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 /**
- * Parking Model — الجراجات
+ * Parking Model
  *
- * location: بيتخزن كـ GeoJSON Point عشان نقدر نعمل بحث جغرافي ($near)
- *   coordinates: [longitude, latitude]  ← ترتيب مهم! lng الأول
+ * location is stored as a GeoJSON Point for geospatial ($near) search.
+ *   coordinates: [longitude, latitude] — order matters, lng first.
  *
- * rating: بيتحسب تلقائياً من الـ Reviews — مش بيتكتب يدوي
+ * rating is computed automatically from Reviews — never written manually.
  */
 const parkingSchema = new mongoose.Schema(
   {
@@ -18,12 +18,12 @@ const parkingSchema = new mongoose.Schema(
       type:        { type: String, enum: ['Point'], default: 'Point' },
       coordinates: { type: [Number], required: true }, // [lng, lat]
     },
-    rating: { type: Number, default: 0 }, // متوسط تقييمات الـ Reviews
+    rating: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
 
-// ⚠️ Index مهم جداً عشان البحث بـ $near يشتغل
+// Required for $near queries to work.
 parkingSchema.index({ location: '2dsphere' });
 
 module.exports = mongoose.model('Parking', parkingSchema);

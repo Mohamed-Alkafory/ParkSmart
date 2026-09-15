@@ -1,2 +1,458 @@
-﻿<!-- TODO (template): hero + CTA routerLinks + feature bullets. -->
-<div class="mx-auto max-w-4xl py-16 text-center"><h1 class="text-4xl font-bold">ParkSmart</h1><p class="mt-2 text-gray-500">TODO landing hero + CTAs to /parkings /login /register</p></div>
+<div class="overflow-hidden rounded-[2rem] bg-slate-50 text-slate-900">
+  <!-- Hero -->
+  <section
+    class="relative isolate overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-blue-800 px-6 py-14 text-white sm:px-10 lg:px-14 lg:py-20"
+  >
+    <div
+      class="absolute -right-28 -top-36 -z-10 h-96 w-96 rounded-full bg-cyan-400/20 blur-3xl"
+    ></div>
+    <div
+      class="absolute -bottom-44 left-20 -z-10 h-96 w-96 rounded-full bg-emerald-400/15 blur-3xl"
+    ></div>
+
+    <div class="grid w-full items-center gap-12 lg:grid-cols-[1.05fr_.95fr]">
+      <div>
+        <div
+          class="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-white/10 px-4 py-2 text-sm font-medium text-cyan-100 backdrop-blur"
+        >
+          <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+          Smart parking for better journeys
+        </div>
+
+        <h1
+          class="max-w-3xl text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:text-6xl"
+        >
+          Find your parking spot
+          <span
+            class="block bg-gradient-to-r from-cyan-300 to-emerald-300 bg-clip-text text-transparent"
+          >
+            before you arrive.
+          </span>
+        </h1>
+
+        <p class="mt-6 max-w-2xl text-base leading-8 text-slate-200 sm:text-lg">
+          Discover nearby parking, check live availability, and reserve your spot in a few simple
+          steps with ParkSmart.
+        </p>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a
+            routerLink="/parkings"
+            class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 px-6 py-3.5 font-bold text-white shadow-lg shadow-blue-950/30 transition hover:-translate-y-0.5 hover:bg-blue-400"
+          >
+            Find parking
+            <svg
+              class="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7l5 5m0 0-5 5m5-5H6"
+              />
+            </svg>
+          </a>
+          <a
+            routerLink="/register"
+            class="inline-flex items-center justify-center rounded-xl border border-white/25 bg-white/10 px-6 py-3.5 font-bold text-white backdrop-blur transition hover:bg-white/20"
+          >
+            Create free account
+          </a>
+        </div>
+
+        <div class="mt-10 grid max-w-lg grid-cols-3 gap-5 border-t border-white/15 pt-7">
+          <div>
+            <p class="text-2xl font-black">24/7</p>
+            <p class="mt-1 text-xs text-slate-300 sm:text-sm">Availability</p>
+          </div>
+          <div>
+            <p class="text-2xl font-black">Fast</p>
+            <p class="mt-1 text-xs text-slate-300 sm:text-sm">Booking</p>
+          </div>
+          <div>
+            <p class="text-2xl font-black">Secure</p>
+            <p class="mt-1 text-xs text-slate-300 sm:text-sm">Parking</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parking visual -->
+      <div class="relative mx-auto w-full max-w-xl">
+        <div class="absolute -inset-5 rounded-[2rem] bg-cyan-300/10 blur-2xl"></div>
+        <div
+          class="relative rounded-[1.75rem] border border-white/20 bg-white/95 p-4 shadow-2xl shadow-slate-950/40 sm:p-6"
+        >
+          <div class="mb-5 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">
+                Live availability
+              </p>
+              <h2 class="mt-1 text-xl font-black text-slate-900">Downtown Parking</h2>
+            </div>
+            <span class="rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-bold text-emerald-700"
+              >12 spots free</span
+            >
+          </div>
+
+          <div class="rounded-2xl bg-slate-100 p-4">
+            <div
+              class="mb-3 flex items-center justify-between text-xs font-semibold text-slate-500"
+            >
+              <span>ENTRANCE</span>
+              <span>LEVEL 01</span>
+              <span>EXIT</span>
+            </div>
+            <div class="grid grid-cols-4 gap-2 sm:grid-cols-6">
+              <div
+                class="rounded-lg border-2 border-emerald-300 bg-emerald-50 p-3 text-center text-xs font-bold text-emerald-700"
+              >
+                A1
+              </div>
+              <div
+                class="rounded-lg border-2 border-rose-200 bg-rose-50 p-3 text-center text-xs font-bold text-rose-600"
+              >
+                A2
+              </div>
+              <div
+                class="rounded-lg border-2 border-emerald-300 bg-emerald-50 p-3 text-center text-xs font-bold text-emerald-700"
+              >
+                A3
+              </div>
+              <div
+                class="rounded-lg border-2 border-blue-400 bg-blue-50 p-3 text-center text-xs font-bold text-blue-700 ring-2 ring-blue-200"
+              >
+                A4
+              </div>
+              <div
+                class="rounded-lg border-2 border-emerald-300 bg-emerald-50 p-3 text-center text-xs font-bold text-emerald-700"
+              >
+                A5
+              </div>
+              <div
+                class="rounded-lg border-2 border-slate-200 bg-white p-3 text-center text-xs font-bold text-slate-500"
+              >
+                A6
+              </div>
+              <div
+                class="rounded-lg border-2 border-slate-200 bg-white p-3 text-center text-xs font-bold text-slate-500"
+              >
+                B1
+              </div>
+              <div
+                class="rounded-lg border-2 border-emerald-300 bg-emerald-50 p-3 text-center text-xs font-bold text-emerald-700"
+              >
+                B2
+              </div>
+              <div
+                class="rounded-lg border-2 border-rose-200 bg-rose-50 p-3 text-center text-xs font-bold text-rose-600"
+              >
+                B3
+              </div>
+              <div
+                class="rounded-lg border-2 border-emerald-300 bg-emerald-50 p-3 text-center text-xs font-bold text-emerald-700"
+              >
+                B4
+              </div>
+              <div
+                class="rounded-lg border-2 border-slate-200 bg-white p-3 text-center text-xs font-bold text-slate-500"
+              >
+                B5
+              </div>
+              <div
+                class="rounded-lg border-2 border-emerald-300 bg-emerald-50 p-3 text-center text-xs font-bold text-emerald-700"
+              >
+                B6
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-500">
+            <span class="flex items-center gap-2"
+              ><span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>Available</span
+            >
+            <span class="flex items-center gap-2"
+              ><span class="h-2.5 w-2.5 rounded-full bg-rose-400"></span>Booked</span
+            >
+            <span class="flex items-center gap-2"
+              ><span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span>Selected</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="px-6 py-16 sm:px-10 lg:px-14 lg:py-20">
+    <div class="w-full">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="text-sm font-black uppercase tracking-[0.22em] text-blue-600">Why ParkSmart?</p>
+        <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+          Parking made simple
+        </h2>
+        <p class="mt-4 leading-7 text-slate-600">
+          Everything you need to find and book the right spot, all in one place.
+        </p>
+      </div>
+
+      <div class="mt-12 grid gap-5 md:grid-cols-3">
+        <article
+          class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+        >
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-700"
+          >
+            <svg
+              class="h-6 w-6"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 21s6-4.35 6-11a6 6 0 10-12 0c0 6.65 6 11 6 11z"
+              />
+              <circle cx="12" cy="10" r="2" stroke-width="2" />
+            </svg>
+          </div>
+          <h3 class="mt-5 text-xl font-black">Find nearby parking</h3>
+          <p class="mt-3 leading-7 text-slate-600">
+            Search nearby garages and compare locations, prices, and ratings.
+          </p>
+        </article>
+
+        <article
+          class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+        >
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700"
+          >
+            <svg
+              class="h-6 w-6"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3M5 11h14M6 5h12a2 2 0 012 2v12H4V7a2 2 0 012-2z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 15l2 2 4-4"
+              />
+            </svg>
+          </div>
+          <h3 class="mt-5 text-xl font-black">Book in seconds</h3>
+          <p class="mt-3 leading-7 text-slate-600">
+            Choose an available spot and confirm your booking without waiting.
+          </p>
+        </article>
+
+        <article
+          class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+        >
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-violet-700"
+          >
+            <svg
+              class="h-6 w-6"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 3l7 3v5c0 4.6-2.95 8.63-7 10-4.05-1.37-7-5.4-7-10V6l7-3z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4"
+              />
+            </svg>
+          </div>
+          <h3 class="mt-5 text-xl font-black">Park with confidence</h3>
+          <p class="mt-3 leading-7 text-slate-600">
+            Manage your bookings and receive clear status updates wherever you are.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="border-y border-slate-200 bg-white px-6 py-16 sm:px-10 lg:px-14 lg:py-20">
+    <div class="w-full">
+      <div class="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.22em] text-emerald-600">
+            How it works
+          </p>
+          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+            From search to parked in three steps
+          </h2>
+          <p class="mt-4 leading-7 text-slate-600">
+            No complicated process. ParkSmart keeps every step clear and quick.
+          </p>
+          <a
+            routerLink="/register"
+            class="mt-7 inline-flex items-center gap-2 font-bold text-blue-700 hover:text-blue-500"
+          >
+            Get started now
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <ol class="grid gap-4 sm:grid-cols-3">
+          <li class="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-200">
+            <span
+              class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-black text-white"
+              >1</span
+            >
+            <h3 class="mt-5 font-black">Search</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Find the best parking near your destination.
+            </p>
+          </li>
+          <li class="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-200">
+            <span
+              class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-black text-white"
+              >2</span
+            >
+            <h3 class="mt-5 font-black">Select</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Pick an available spot that works for you.
+            </p>
+          </li>
+          <li class="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-200">
+            <span
+              class="flex h-9 w-9 items-center justify-center rounded-full bg-violet-600 text-sm font-black text-white"
+              >3</span
+            >
+            <h3 class="mt-5 font-black">Book</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Confirm your booking and enjoy the journey.
+            </p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="px-6 py-16 sm:px-10 lg:px-14">
+    <div
+      class="flex w-full flex-col items-center justify-between gap-7 rounded-3xl bg-gradient-to-r from-blue-700 to-cyan-600 px-7 py-10 text-center text-white shadow-xl shadow-blue-900/15 sm:px-10 lg:flex-row lg:text-left"
+    >
+      <div>
+        <h2 class="text-2xl font-black sm:text-3xl">Ready for a smoother parking experience?</h2>
+        <p class="mt-2 text-blue-100">Join ParkSmart and reserve your next spot with confidence.</p>
+      </div>
+      <div class="flex shrink-0 flex-col gap-3 sm:flex-row">
+        <a
+          routerLink="/login"
+          class="rounded-xl border border-white/30 px-5 py-3 font-bold transition hover:bg-white/10"
+          >Login</a
+        >
+        <a
+          routerLink="/register"
+          class="rounded-xl bg-white px-5 py-3 font-bold text-blue-700 shadow transition hover:bg-blue-50"
+          >Create account</a
+        >
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="relative isolate overflow-hidden bg-slate-950 px-6 pb-8 pt-14 text-slate-400 sm:px-10 lg:px-14">
+    <div
+      class="absolute -top-32 left-1/3 -z-10 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl"
+      aria-hidden="true"
+    ></div>
+
+    <div class="w-full">
+      <div class="grid gap-10 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
+        <div>
+          <a routerLink="/" class="inline-flex items-center gap-3">
+            <span
+              class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-blue-600 text-lg font-black text-white"
+              aria-hidden="true"
+              >P</span
+            >
+            <span class="text-xl font-black tracking-tight text-white">ParkSmart</span>
+          </a>
+          <p class="mt-4 text-sm font-semibold text-slate-200">
+            Smart parking for better journeys.
+          </p>
+          <p class="mt-1 text-sm leading-6">Find, book, and manage parking with ease.</p>
+          <a
+            routerLink="/parkings"
+            class="mt-6 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-500"
+          >
+            Find Parking
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <nav aria-label="Product">
+          <h3 class="text-xs font-bold uppercase tracking-[0.18em] text-white">Product</h3>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li><a routerLink="/parkings" class="transition hover:text-cyan-300">Find Parking</a></li>
+            <li><a routerLink="/parkings/new" class="transition hover:text-cyan-300">Add Parking</a></li>
+            <li><a routerLink="/bookings" class="transition hover:text-cyan-300">My Bookings</a></li>
+            <li><a routerLink="/notifications" class="transition hover:text-cyan-300">Notifications</a></li>
+          </ul>
+        </nav>
+
+        <nav aria-label="For drivers">
+          <h3 class="text-xs font-bold uppercase tracking-[0.18em] text-white">For Drivers</h3>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li><a routerLink="/parkings" class="transition hover:text-cyan-300">Find Parking</a></li>
+            <li><a routerLink="/bookings" class="transition hover:text-cyan-300">My Bookings</a></li>
+            <li><a routerLink="/profile" class="transition hover:text-cyan-300">Profile</a></li>
+          </ul>
+        </nav>
+
+        <nav aria-label="For parking owners">
+          <h3 class="text-xs font-bold uppercase tracking-[0.18em] text-white">For Owners</h3>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li><a routerLink="/parkings/new" class="transition hover:text-cyan-300">Add Parking</a></li>
+            <li><a routerLink="/owner/profile" class="transition hover:text-cyan-300">Owner Profile</a></li>
+            <li><a routerLink="/parkings" class="transition hover:text-cyan-300">All Parkings</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div
+        class="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm sm:flex-row"
+      >
+        <p>© 2026 ParkSmart. All rights reserved.</p>
+        <button
+          type="button"
+          (click)="scrollToTop()"
+          class="inline-flex items-center gap-2 rounded-xl border border-white/15 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-cyan-300/40 hover:text-cyan-300"
+        >
+          Back to top
+          <span aria-hidden="true">↑</span>
+        </button>
+      </div>
+    </div>
+  </footer>
+</div>

@@ -1,16 +1,15 @@
 const mongoose = require("mongoose");
 
 /**
- * User Model — مستخدمي التطبيق
+ * User Model
  *
  * Roles:
- *   - driver → السائق اللي بيحجز
- *   - owner  → صاحب الجراج
- *   - admin  → المدير
+ *   - driver → books spots
+ *   - owner  → owns parkings
+ *   - admin  → manages the platform
  *
- * ملاحظة:
- * الـ password بيتخزن دائماً hashed باستخدام bcrypt
- * وليس plain text (الـ hashing بيحصل في auth.service.js و user.service.js).
+ * Note: passwords are always stored hashed with bcrypt, never plain text
+ * (hashing happens in auth.service.js and user.service.js).
  */
 
 const userSchema = new mongoose.Schema(

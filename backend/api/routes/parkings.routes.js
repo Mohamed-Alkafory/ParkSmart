@@ -1,24 +1,38 @@
 const express = require('express');
 const router  = express.Router();
-const { getAllParkings, getNearbyParkings, createParking } = require('../controller/parkings.controller');
+const {
+  getAllParkings,
+  getNearbyParkings,
+  createParking,
+  getMyParkings,
+  getParkingById,
+  updateParking,
+  deleteParking,
+} = require('../controller/parkings.controller');
 const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
 
 /**
  * Parkings Routes
  * Base: /api/parkings
  *
- * GET  /api/parkings          → جلب كل الجراجات (عام)
- * GET  /api/parkings/nearby   → بحث قريب بالموقع (عام)
- * POST /api/parkings          → إضافة جراج (owner فقط)
+ * GET    /api/parkings          → all parkings (public)
+ * GET    /api/parkings/nearby   → nearby search by location (public)
+ * GET    /api/parkings/mine     → current owner's parkings (owner only)
+ * GET    /api/parkings/:id      → single parking details (public)
+ * POST   /api/parkings          → add a parking (owner only)
+ * PUT    /api/parkings/:id      → update a parking (owning owner only)
+ * DELETE /api/parkings/:id      → delete a parking (owning owner only)
  *
- * TODO: ممكن تضيف:
- *   - GET    /api/parkings/:id       → تفاصيل جراج معين
- *   - PUT    /api/parkings/:id       → تعديل جراج (owner فقط)
- *   - DELETE /api/parkings/:id       → حذف جراج (owner أو admin)
+ * Route order matters — /nearby and /mine must come before /:id
+ * so Express does not confuse /mine with /:id.
  */
 
 router.get('/',        getAllParkings);
 router.get('/nearby',  getNearbyParkings);
+router.get('/mine',    requireAuth, requireRole('owner'), getMyParkings);
+router.get('/:id',     getParkingById);
 router.post('/',       requireAuth, requireRole('owner'), createParking);
+router.put('/:id',     requireAuth, requireRole('owner'), updateParking);
+router.delete('/:id',  requireAuth, requireRole('owner'), deleteParking);
 
 module.exports = router;
