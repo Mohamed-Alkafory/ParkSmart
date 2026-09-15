@@ -1,4 +1,4 @@
-const Review  = require('../models/review.model');
+const Review = require('../models/review.model');
 const Parking = require('../models/parking.model');
 const Booking = require('../models/booking.model');
 const mongoose = require('mongoose');
@@ -30,10 +30,14 @@ function validateObjectId(id, message) {
  * @returns {Promise<Array>}
  */
 async function fetchReviewsByParking(parkingId) {
-  validateObjectId(parkingId, 'Invalid parking ID format');
+  if (!parkingId || !mongoose.isValidObjectId(parkingId)) {
+    throw createError(400, 'Invalid parking ID');
+  }
 
-  const parkingExists = await Parking.exists({ _id: parkingId });
-  if (!parkingExists) throw createError(404, 'Parking not found');
+  const parking = await Parking.findById(parkingId).select('_id');
+  if (!parking) {
+    throw createError(404, 'Parking not found');
+  }
 
   return await Review.find({ parkingId })
     .populate('userId', 'name')
@@ -41,26 +45,11 @@ async function fetchReviewsByParking(parkingId) {
 }
 
 /**
- * recalculateParkingRating
- * Recomputes the average of all reviews and updates the Parking rating field.
- *
- * @param {string} parkingId
- */
-async function recalculateParkingRating(parkingId) {
-  const result = await Review.aggregate([
-    { $match: { parkingId: new mongoose.Types.ObjectId(parkingId) } },
-    { $group: { _id: null, avgRating: { $avg: '$rating' } } },
-  ]);
-
-  const avgRating = result.length > 0 ? result[0].avgRating : 0;
-  await Parking.findByIdAndUpdate(parkingId, { rating: avgRating });
-}
-
-/**
  * addReview
  * Creates a review and updates the parking's average rating.
- * The user must have at least one booking for that parking
- * (any status — what matters is they have used the parking before).
+ * The user must have a non-cancelled booking (active or completed)
+ * for that parking before reviewing it.
+ * Repeat reviews upsert: an existing review is updated, not duplicated.
  *
  * @param {{ userId, parkingId, rating, comment }} reviewData
  * @returns {Promise<Object>}
@@ -68,15 +57,17 @@ async function recalculateParkingRating(parkingId) {
 async function addReview(reviewData) {
   const { userId, parkingId, rating, comment } = reviewData;
 
-  if (!userId || !parkingId || rating === undefined) {
-    throw createError(400, 'Please provide all required fields');
+  if (!userId || !parkingId || rating === undefined || rating === null) {
+    throw createError(400, 'Missing review data (userId, parkingId, rating are required)');
   }
 
-  validateObjectId(parkingId, 'Invalid parking ID format');
+  if (!mongoose.isValidObjectId(userId) || !mongoose.isValidObjectId(parkingId)) {
+    throw createError(400, 'Invalid user ID or parking ID');
+  }
 
-  const parsedRating = Number(rating);
-  if (!Number.isInteger(parsedRating) || parsedRating < 1 || parsedRating > 5) {
-    throw createError(400, 'Rating must be an integer from 1 to 5');
+  const numericRating = Number(rating);
+  if (!Number.isFinite(numericRating) || numericRating < 1 || numericRating > 5) {
+    throw createError(400, 'Rating must be a number between 1 and 5');
   }
 
   const parking = await Parking.findById(parkingId);
@@ -84,20 +75,39 @@ async function addReview(reviewData) {
     throw createError(404, 'Parking not found');
   }
 
-  const hasBooking = await Booking.exists({ userId, parkingId });
+  // The user must have a non-cancelled booking for this parking before reviewing it.
+  const hasBooking = await Booking.exists({
+    userId,
+    parkingId,
+    status: { $in: ['active', 'completed'] },
+  });
   if (!hasBooking) {
     throw createError(403, 'You can only review a parking you have booked before');
   }
 
-  const review = await Review.create({
-    userId,
-    parkingId,
-    rating: parsedRating,
-    comment,
-  });
+  // Upsert: update the existing review instead of creating a duplicate.
+  let review = await Review.findOne({ userId, parkingId });
+  if (review) {
+    review.rating = numericRating;
+    if (comment !== undefined) review.comment = comment;
+    await review.save();
+  } else {
+    review = new Review({ userId, parkingId, rating: numericRating, comment });
+    await review.save();
+  }
 
-  await recalculateParkingRating(parkingId);
+  // Recompute the average rating from all reviews of this parking.
+  const reviews = await Review.find({ parkingId }).select('rating');
+  const avg =
+    reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      : 0;
 
+  // Update the rating on the Parking document (rounded to one decimal).
+  parking.rating = Math.round(avg * 10) / 10;
+  await parking.save();
+
+  await review.populate('userId', 'name');
   return review;
 }
 
