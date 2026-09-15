@@ -2,13 +2,26 @@ const Booking = require("../models/booking.model");
 const ParkingSpot = require("../models/spot.model");
 const Parking = require("../models/parking.model");
 const notificationService = require("./notification.service");
+const mongoose = require("mongoose");
+
+/**
+ * Builds an error carrying an HTTP status for the errorHandler.
+ * Same pattern as spots.service.js.
+ */
+function createError(status, message) {
+  const error = new Error(message);
+  error.status = status;
+  return error;
+}
 
 /**
  * makeBooking
- * بيعمل حجز جديد + notification تلقائي (Booking Confirmed)
+ * Creates a booking + automatic notification (Booking Confirmed).
+ * spotId is optional: books that exact spot if given, otherwise
+ * auto-picks the first available spot.
  */
 async function makeBooking(bookingData) {
-  const { parkingId, startTime, durationHours, userId } = bookingData;
+  const { parkingId, startTime, durationHours, userId, spotId } = bookingData;
 
   if (!parkingId || !startTime || !durationHours || !userId) {
     throw new Error("Missing booking data");
@@ -19,9 +32,26 @@ async function makeBooking(bookingData) {
     throw new Error("Parking not found");
   }
 
-  const spot = await ParkingSpot.findOne({ parkingId, status: "available" });
-  if (!spot) {
-    throw new Error("No available spots");
+  let spot;
+  if (spotId) {
+    if (!mongoose.isValidObjectId(spotId)) {
+      throw createError(400, "Invalid spot ID format");
+    }
+    spot = await ParkingSpot.findById(spotId);
+    if (!spot) {
+      throw createError(404, "Spot not found");
+    }
+    if (spot.parkingId.toString() !== parkingId.toString()) {
+      throw createError(400, "This spot does not belong to the requested parking");
+    }
+    if (spot.status !== "available") {
+      throw createError(409, "This spot was just booked. Please choose another one");
+    }
+  } else {
+    spot = await ParkingSpot.findOne({ parkingId, status: "available" });
+    if (!spot) {
+      throw new Error("No available spots");
+    }
   }
 
   const totalPrice = parking.pricePerHour * durationHours;
@@ -42,7 +72,7 @@ async function makeBooking(bookingData) {
 
   await booking.save();
 
-  // notification تلقائي — لو فشل ميوقعش الحجز
+  // Best-effort notification — a failure must not break the booking.
   try {
     await notificationService.createNotification({
       userId,
@@ -52,7 +82,7 @@ async function makeBooking(bookingData) {
       type: "booking",
     });
   } catch (err) {
-    console.error("⚠️ Notification failed:", err.message);
+    console.error("Notification failed:", err.message);
   }
 
   return booking;
@@ -60,7 +90,7 @@ async function makeBooking(bookingData) {
 
 /**
  * getUserBookings
- * بيجيب كل حجوزات مستخدم معين
+ * All bookings of a given user.
  */
 async function getUserBookings(userId) {
   return await Booking.find({ userId })
@@ -70,8 +100,7 @@ async function getUserBookings(userId) {
 
 /**
  * getOwnerBookings
- * بيجيب حجوزات كل الجراجات بتاعة owner معين
- * بيستخدم في owner/bookings page
+ * Bookings of all parkings owned by a given owner.
  */
 async function getOwnerBookings(ownerId) {
   const parkings = await Parking.find({ ownerId }).select("_id");
@@ -83,9 +112,7 @@ async function getOwnerBookings(ownerId) {
 }
 
 /**
- * getAllBookings
- * بيجيب كل الحجوزات — admin فقط
- * بيستخدم في admin/bookings page
+ * getAllBookings — admin only.
  */
 async function getAllBookings() {
   return await Booking.find()
@@ -97,8 +124,8 @@ async function getAllBookings() {
 
 /**
  * updateBookingStatus
- * بيغير حالة الحجز + notification تلقائي (Completed/Cancelled)
- * مسموح لصاحب الحجز، أو صاحب الجراج، أو الـ admin
+ * Changes a booking's status + automatic notification (Completed/Cancelled).
+ * Allowed for the booking owner, the parking owner, or an admin.
  */
 async function updateBookingStatus(bookingId, newStatus, requester) {
   const validStatuses = ["active", "completed", "cancelled"];
@@ -117,7 +144,7 @@ async function updateBookingStatus(bookingId, newStatus, requester) {
     const isParkingOwner =
       parking && parking.ownerId.toString() === requester.id;
     if (!isBookingOwner && !isParkingOwner && requester.role !== "admin") {
-      const err = new Error("مش مسموح لك بالوصول ده");
+      const err = new Error("You are not allowed to access this resource");
       err.status = 403;
       throw err;
     }
@@ -130,6 +157,7 @@ async function updateBookingStatus(bookingId, newStatus, requester) {
   booking.status = newStatus;
   booking.statusHistory.push({ status: newStatus, changedAt: new Date() });
 
+  // Freed spots become bookable again once the booking ends or is cancelled.
   if (newStatus === "completed" || newStatus === "cancelled") {
     const spot = await ParkingSpot.findById(booking.spotId);
     if (spot) {
@@ -140,7 +168,7 @@ async function updateBookingStatus(bookingId, newStatus, requester) {
 
   await booking.save();
 
-  // notification تلقائي — لو فشل ميوقعش الـ update
+  // Best-effort notification — a failure must not break the update.
   try {
     if (newStatus === "cancelled") {
       await notificationService.createNotification({
@@ -160,7 +188,7 @@ async function updateBookingStatus(bookingId, newStatus, requester) {
       });
     }
   } catch (err) {
-    console.error("⚠️ Notification failed:", err.message);
+    console.error("Notification failed:", err.message);
   }
 
   return booking;

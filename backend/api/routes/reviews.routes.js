@@ -7,12 +7,11 @@ const { requireAuth } = require('../middlewares/auth.middleware');
  * Reviews Routes
  * Base: /api/reviews
  *
- * GET  /api/reviews/parking/:parkingId → تقييمات جراج معين (عام)
- * POST /api/reviews                    → إضافة تقييم (driver — لازم يكون عنده حجز قديم في الجراج ده)
+ * GET  /api/reviews/parking/:parkingId → reviews of a parking (public)
+ * POST /api/reviews                    → add a review (must have booked the parking before)
  *
- * TODO: ممكن تضيف:
- *   - DELETE /api/reviews/:id → حذف تقييم (صاحبه أو admin)
- *   - التحقق إن الـ user عمل حجز في الجراج ده قبل ما يقدر يقيّمه
+ * Possible addition:
+ *   - DELETE /api/reviews/:id → delete a review (its author or admin)
  */
 
 router.get('/parking/:parkingId', getReviewsByParking);

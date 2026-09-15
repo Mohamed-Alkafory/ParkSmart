@@ -1,12 +1,11 @@
 /**
  * env.config.js
- * كل المتغيرات البيئية اللي بيستخدمها التطبيق
- * يتم تحميلها من ملف .env باستخدام dotenv
+ * All environment variables used by the app, loaded from .env via dotenv.
  *
- * ⚠️ لو عايز تضيف متغير جديد:
- *    1. ضيفه هنا
- *    2. ضيفه في ملف .env
- *    3. ضيفه في ملف .env.example (من غير القيمة الحقيقية)
+ * To add a new variable:
+ *    1. Add it here
+ *    2. Add it to the .env file
+ *    3. Add it to .env.example (without the real value)
  */
 
 require('dotenv').config();
@@ -25,5 +24,5 @@ module.exports = {
   // ──────────────── Environment ────────────────
   NODE_ENV: process.env.NODE_ENV || 'development',
 
-  // TODO: لو هتضيف Email Service أو أي متغيرات تانية حطها هنا
+  // Add future variables (e.g. Email Service) here
 };

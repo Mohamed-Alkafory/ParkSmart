@@ -2,17 +2,18 @@ const bookingsService = require("../services/bookings.service");
 
 /**
  * POST /api/bookings
- * عمل حجز جديد
+ * Body: { parkingId, startTime, durationHours, spotId? }
+ * spotId is optional — books that exact spot if given, otherwise auto-assigns
+ * the first available spot.
  */
 async function createBooking(req, res, next) {
   try {
-    // console.log("🔍 req.user =", req.user);
-    const { parkingId, startTime, durationHours } = req.body;
+    const { parkingId, startTime, durationHours, spotId } = req.body;
 
     if (!parkingId || !startTime || !durationHours) {
       return res
         .status(400)
-        .json({ success: false, message: "من فضلك أدخل كل البيانات" });
+        .json({ success: false, message: "Please provide all required fields" });
     }
 
     const data = await bookingsService.makeBooking({
@@ -20,6 +21,7 @@ async function createBooking(req, res, next) {
       startTime,
       durationHours,
       userId: req.user.id,
+      ...(spotId ? { spotId } : {}),
     });
 
     res.status(201).json({ success: true, data });
@@ -30,7 +32,6 @@ async function createBooking(req, res, next) {
 
 /**
  * GET /api/bookings/my
- * جلب حجوزات المستخدم الحالي
  */
 async function getMyBookings(req, res, next) {
   try {
@@ -45,7 +46,7 @@ async function getMyBookings(req, res, next) {
 
 /**
  * GET /api/bookings/owner
- * حجوزات كل جراجات الـ owner الحالي — بيستخدم في owner/bookings page
+ * Bookings of all parkings owned by the current owner.
  */
 async function getOwnerBookings(req, res, next) {
   try {
@@ -58,7 +59,7 @@ async function getOwnerBookings(req, res, next) {
 
 /**
  * GET /api/bookings
- * كل الحجوزات — admin فقط (admin/bookings page)
+ * All bookings — admin only.
  */
 async function getAllBookings(req, res, next) {
   try {
@@ -71,7 +72,6 @@ async function getAllBookings(req, res, next) {
 
 /**
  * PATCH /api/bookings/:id/status
- * تغيير حالة حجز
  */
 async function updateStatus(req, res, next) {
   try {
@@ -80,18 +80,18 @@ async function updateStatus(req, res, next) {
     if (!["active", "completed", "cancelled"].includes(status)) {
       return res
         .status(400)
-        .json({ success: false, message: "الحالة غير صحيحة" });
+        .json({ success: false, message: "Invalid status" });
     }
 
     const data = await bookingsService.updateBookingStatus(
       req.params.id,
       status,
-      req.user, // { id, role } — صاحب الحجز أو صاحب الجراج أو admin
+      req.user, // { id, role } — booking owner, parking owner, or admin
     );
     if (!data) {
       return res
         .status(404)
-        .json({ success: false, message: "الحجز غير موجود" });
+        .json({ success: false, message: "Booking not found" });
     }
 
     res.json({ success: true, data });

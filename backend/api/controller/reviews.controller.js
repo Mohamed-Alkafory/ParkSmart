@@ -1,13 +1,8 @@
 const reviewsService = require('../services/reviews.service');
 
 /**
- * Reviews Controller
- * مهمته: يستقبل الـ request، يبعته للـ service، يرجع الـ response
- */
-
-/**
  * GET /api/reviews/parking/:parkingId
- * جلب كل تقييمات جراج معين — متاح للجميع (مش محتاج auth)
+ * Public — no auth required.
  */
 async function getReviewsByParking(req, res, next) {
   try {
@@ -20,21 +15,19 @@ async function getReviewsByParking(req, res, next) {
 
 /**
  * POST /api/reviews
- * إضافة تقييم جديد — يحتاج requireAuth
+ * Requires requireAuth.
  * Body: { parkingId, rating, comment? }
- *
- * الـ service هتحسب وتحدث متوسط الـ rating في الجراج تلقائياً
  */
 async function createReview(req, res, next) {
   try {
     const { parkingId, rating, comment } = req.body;
 
     if (!parkingId || !rating) {
-      return res.status(400).json({ success: false, message: 'من فضلك أدخل التقييم' });
+      return res.status(400).json({ success: false, message: 'Please provide a rating' });
     }
 
     const data = await reviewsService.addReview({
-      userId: req.user.id, // جاي من الـ auth middleware
+      userId: req.user.id,
       parkingId,
       rating,
       comment,

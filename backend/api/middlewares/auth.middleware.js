@@ -2,20 +2,20 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config/env.config');
 
 /**
- * requireAuth Middleware
- * بيتحقق إن في token صالح في الـ Authorization header
- * لو صح، بيحط بيانات المستخدم في req.user ويكمل
+ * requireAuth
+ * Verifies a valid token in the Authorization header.
+ * On success, attaches the user payload to req.user and continues.
  *
- * الاستخدام في الـ routes:
+ * Usage in routes:
  *   router.post('/', requireAuth, controllerFunction);
  *
- * req.user بيبقى فيه: { id, role }
+ * req.user contains: { id, role }
  */
 function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ success: false, message: 'غير مصرح، سجل دخول أولاً' });
+    return res.status(401).json({ success: false, message: 'Unauthorized, please log in first' });
   }
 
   const token = authHeader.split(' ')[1];
@@ -25,47 +25,47 @@ function requireAuth(req, res, next) {
     req.user = decoded; // { id, role }
     next();
   } catch (err) {
-    return res.status(401).json({ success: false, message: 'Token غير صالح أو منتهي الصلاحية' });
+    return res.status(401).json({ success: false, message: 'Invalid or expired token' });
   }
 }
 
 /**
- * requireRole Middleware
- * بيتحقق إن المستخدم عنده الـ role المطلوب للوصول للـ route
+ * requireRole
+ * Verifies the user has one of the roles required to access the route.
  *
- * الاستخدام:
+ * Usage:
  *   router.post('/', requireAuth, requireRole('owner'), controllerFunction);
  *   router.get('/admin', requireAuth, requireRole('admin'), controllerFunction);
  *
- * @param {...string} roles - الـ roles المسموح لها
+ * @param {...string} roles - allowed roles
  */
 function requireRole(...roles) {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
-      return res.status(403).json({ success: false, message: 'مش مسموح لك بالوصول ده' });
+      return res.status(403).json({ success: false, message: 'You are not allowed to access this resource' });
     }
     next();
   };
 }
 
 /**
- * requireSelfOrAdmin Middleware
- * بيسمح للمستخدم يوصل لبياناته هو بس، أو للأدمن يوصل لأي مستخدم
+ * requireSelfOrAdmin
+ * Allows a user to access only their own data, or an admin to access any user.
  *
- * الاستخدام:
+ * Usage:
  *   router.get('/:id', requireAuth, requireSelfOrAdmin, controllerFunction);
  *
- * بيعتمد على إن requireAuth حط { id, role } في req.user
- * وإن الـ route فيه param اسمه id
+ * Relies on requireAuth having set { id, role } on req.user,
+ * and on the route having a param named id.
  */
 function requireSelfOrAdmin(req, res, next) {
   if (!req.user) {
-    return res.status(401).json({ success: false, message: 'غير مصرح، سجل دخول أولاً' });
+    return res.status(401).json({ success: false, message: 'Unauthorized, please log in first' });
   }
   if (req.user.role === 'admin' || req.user.id === req.params.id) {
     return next();
   }
-  return res.status(403).json({ success: false, message: 'مش مسموح لك بالوصول ده' });
+  return res.status(403).json({ success: false, message: 'You are not allowed to access this resource' });
 }
 
 module.exports = { requireAuth, requireRole, requireSelfOrAdmin };

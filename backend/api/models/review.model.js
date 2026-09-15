@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
 /**
- * Review Model — التقييمات
+ * Review Model
  *
- * كل review بتاعة user على parking معين
- * rating: من 1 لـ 5
+ * Each review belongs to a user on a specific parking.
+ * rating: 1 to 5.
  *
- * ملاحظة: لما بيتضاف review جديد، لازم يتحدث الـ rating
- * في الـ Parking document — ده بيتعمل في الـ reviewsService
+ * Note: when a new review is added, the Parking rating field
+ * must be updated — handled in the reviews service.
  */
 const reviewSchema = new mongoose.Schema(
   {
