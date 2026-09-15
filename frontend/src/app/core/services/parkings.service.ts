@@ -17,11 +17,15 @@ export class ParkingsService {
   }
 
   getNearby(lat: number, lng: number, maxDistance?: number): Observable<ApiResponse<Parking[]>> {
-    // TODO 2: send GET to `${this.apiUrl}/nearby?lat=&lng=&maxDistance=`
-    //   Backend requires query params lat + lng, optional maxDistance (default 5000 meters).
-    //   Use: new HttpParams().set('lat', ...).set('lng', ...) and this.http.get(url, { params }).
-    //   Note: backend fetchNearbyParkings() is also still a TODO stub.
-    throw new Error('Not implemented — see TODO 2');
+    let params = new HttpParams()
+      .set('lat', lat.toString())
+      .set('lng', lng.toString());
+
+    if (maxDistance !== undefined) {
+      params = params.set('maxDistance', maxDistance.toString());
+    }
+
+    return this.http.get<ApiResponse<Parking[]>>(`${this.apiUrl}/nearby`, { params });
   }
 
   create(payload: { name: string; address: string; pricePerHour: number; lat: number; lng: number }): Observable<ApiResponse<Parking>> {

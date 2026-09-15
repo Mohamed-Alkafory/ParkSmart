@@ -19,6 +19,19 @@ async function getSpotsByParking(req, res, next) {
 }
 
 /**
+ * GET /api/spots/:id
+ * جلب Spot واحد باستخدام الـ ID الخاص به.
+ */
+async function getSpotById(req, res, next) {
+  try {
+    const data = await spotsService.fetchSpotById(req.params.id);
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
  * GET /api/spots
  * جلب كل الـ spots — admin فقط (admin/parking-spots page)
  */
@@ -40,11 +53,17 @@ async function createSpot(req, res, next) {
   try {
     const { parkingId, spotNumber } = req.body;
 
-    if (!parkingId || !spotNumber) {
+    if (!parkingId || typeof spotNumber !== 'string' || !spotNumber.trim()) {
       return res.status(400).json({ success: false, message: 'من فضلك أدخل كل البيانات' });
     }
 
-    const data = await spotsService.addSpot({ parkingId, spotNumber });
+    // نبعت ID المستخدم من الـ Token للـ service
+    // عشان يتأكد إن المستخدم هو صاحب الجراج
+    const data = await spotsService.addSpot(
+      { parkingId, spotNumber },
+      req.user.id
+    );
+
     res.status(201).json({ success: true, data });
   } catch (err) {
     next(err);
@@ -64,8 +83,12 @@ async function updateSpotStatus(req, res, next) {
       return res.status(400).json({ success: false, message: 'الحالة غير صحيحة' });
     }
 
-    const data = await spotsService.changeSpotStatus(req.params.id, status);
-    if (!data) return res.status(404).json({ success: false, message: 'المكان غير موجود' });
+    // نبعت ID المستخدم عشان الـ service يتأكد إنه صاحب الجراج.
+    const data = await spotsService.changeSpotStatus(
+      req.params.id,
+      status,
+      req.user.id
+    );
 
     res.json({ success: true, data });
   } catch (err) {
@@ -75,14 +98,8 @@ async function updateSpotStatus(req, res, next) {
 
 async function deleteSpot(req, res, next) {
   try {
-    const data = await spotsService.deleteSpot(req.params.id);
-
-    if (!data) {
-      return res.status(404).json({
-        success: false,
-        message: 'المكان غير موجود'
-      });
-    }
+    // نبعت ID المستخدم عشان الـ service يتأكد إنه صاحب الجراج.
+    await spotsService.deleteSpot(req.params.id, req.user.id);
 
     res.json({
       success: true,
@@ -95,6 +112,7 @@ async function deleteSpot(req, res, next) {
 
 module.exports = {
   getSpotsByParking,
+  getSpotById,
   getAllSpots,
   createSpot,
   updateSpotStatus,

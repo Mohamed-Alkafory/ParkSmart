@@ -9,39 +9,22 @@ export class SpotsService {
   private readonly apiUrl = 'http://localhost:3000/api/spots';
 
   getByParking(parkingId: string): Observable<ApiResponse<Spot[]>> {
-    // TODO 1: send GET to `${this.apiUrl}/parking/${parkingId}` (public).
-    //   Use: return this.http.get<ApiResponse<Spot[]>>(url).
-    throw new Error('Not implemented — see TODO 1');
+    return this.http.get<ApiResponse<Spot[]>>(`${this.apiUrl}/parking/${parkingId}`);
   }
 
   getAll(): Observable<ApiResponse<Spot[]>> {
-    // TODO 2: send GET to `${this.apiUrl}/` (admin overview).
-    //   Protected: requireAuth + requireRole('admin').
-    //   Backend populates parkingId (name, address), newest first.
-    //   Use: return this.http.get<ApiResponse<Spot[]>>(this.apiUrl).
-    throw new Error('Not implemented — see TODO 2');
+    return this.http.get<ApiResponse<Spot[]>>(`${this.apiUrl}/`);
   }
 
   create(parkingId: string, spotNumber: string): Observable<ApiResponse<Spot>> {
-    // TODO 3: send POST to `${this.apiUrl}/` with exact body { parkingId, spotNumber }.
-    //   Protected: requireAuth + requireRole('owner').
-    //   Use: return this.http.post<ApiResponse<Spot>>(this.apiUrl, { parkingId, spotNumber }).
-    throw new Error('Not implemented — see TODO 3');
+    return this.http.post<ApiResponse<Spot>>(`${this.apiUrl}/`, { parkingId, spotNumber });
   }
 
   updateStatus(id: string, status: SpotStatus): Observable<ApiResponse<Spot>> {
-    // TODO 4: send PUT to `${this.apiUrl}/${id}/status` with exact body { status }.
-    //   Allowed values only: 'available' | 'booked' (backend validates this).
-    //   Protected: requireAuth + requireRole('owner').
-    //   Use: return this.http.put<ApiResponse<Spot>>(url, { status }).
-    throw new Error('Not implemented — see TODO 4');
+    return this.http.put<ApiResponse<Spot>>(`${this.apiUrl}/${id}/status`, { status });
   }
 
   delete(id: string): Observable<ApiResponse<null>> {
-    // TODO 5: send DELETE to `${this.apiUrl}/${id}` (no body).
-    //   Protected: requireAuth + requireRole('owner').
-    //   Note: backend returns { success: true, message } with NO data field here.
-    //   Use: return this.http.delete<ApiResponse<null>>(url).
-    throw new Error('Not implemented — see TODO 5');
+    return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`);
   }
 }
