@@ -1,2 +1,105 @@
-﻿<!-- TODO: profile form (name/email/phone/role). -->
-<div class="mx-auto max-w-xl rounded-2xl bg-white p-8 shadow"><h1 class="text-2xl font-bold">Profile</h1><p class="text-sm text-gray-500">TODO profile form</p></div>
+<section class="mx-auto max-w-3xl space-y-6">
+  <!-- Profile header from the driver UI flow. -->
+  <div
+    class="overflow-hidden rounded-3xl bg-gradient-to-r from-blue-800 to-cyan-600 p-6 text-white shadow-lg sm:p-8"
+  >
+    <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
+      <div
+        class="flex h-20 w-20 items-center justify-center rounded-full bg-white/20 text-3xl font-bold ring-4 ring-white/20"
+      >
+        {{ (user()?.name ?? 'U').charAt(0).toUpperCase() }}
+      </div>
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wider text-cyan-100">Driver account</p>
+        <h1 class="mt-1 text-3xl font-bold">{{ user()?.name ?? 'My profile' }}</h1>
+        <p class="mt-1 text-sm text-blue-100">Manage your personal information.</p>
+      </div>
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {{ error() }}
+    </p>
+  }
+  @if (message()) {
+    <p
+      class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
+    >
+      {{ message() }}
+    </p>
+  }
+
+  <!-- Email and role are read-only; the backend allows the user to edit name and phone. -->
+  <form
+    class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8"
+    (ngSubmit)="onSave()"
+  >
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <label for="driverName" class="mb-2 block text-sm font-semibold text-slate-700"
+          >Full name</label
+        >
+        <input
+          id="driverName"
+          name="name"
+          type="text"
+          required
+          class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+        />
+      </div>
+
+      <div>
+        <label for="driverEmail" class="mb-2 block text-sm font-semibold text-slate-700"
+          >Email</label
+        >
+        <input
+          id="driverEmail"
+          type="email"
+          class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-slate-500"
+          [value]="user()?.email ?? ''"
+          disabled
+        />
+      </div>
+
+      <div>
+        <label for="driverPhone" class="mb-2 block text-sm font-semibold text-slate-700"
+          >Phone</label
+        >
+        <input
+          id="driverPhone"
+          name="phone"
+          type="tel"
+          class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          placeholder="Your phone number"
+          [ngModel]="phone()"
+          (ngModelChange)="phone.set($event)"
+        />
+      </div>
+
+      <div class="sm:col-span-2">
+        <label for="driverRole" class="mb-2 block text-sm font-semibold text-slate-700"
+          >Account role</label
+        >
+        <input
+          id="driverRole"
+          class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 capitalize text-slate-500"
+          [value]="user()?.role ?? ''"
+          disabled
+        />
+      </div>
+    </div>
+
+    <div class="mt-7 flex justify-end">
+      <button
+        type="submit"
+        class="rounded-xl bg-blue-700 px-7 py-3 font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
+        [disabled]="saving() || loading()"
+      >
+        {{ saving() ? 'Saving...' : 'Save changes' }}
+      </button>
+    </div>
+  </form>
+</section>

@@ -18,6 +18,8 @@ export class Navbar implements OnInit {
   readonly currentUser = this.auth.currentUser;
   readonly isLoggedIn = computed(() => this.currentUser() !== null);
   readonly isOwner = computed(() => this.currentUser()?.role === 'owner');
+  readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
+  readonly profileLink = computed(() => (this.isOwner() ? '/owner/profile' : '/profile'));
 
   ngOnInit(): void {
     if (this.currentUser()) {
