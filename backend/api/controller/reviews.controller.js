@@ -29,7 +29,7 @@ async function createReview(req, res, next) {
   try {
     const { parkingId, rating, comment } = req.body;
 
-    if (!parkingId || !rating) {
+    if (!parkingId || rating === undefined || rating === null) {
       return res.status(400).json({ success: false, message: 'من فضلك أدخل التقييم' });
     }
 
