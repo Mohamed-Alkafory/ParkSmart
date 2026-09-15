@@ -8,4 +8,9 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   templateUrl: './landing.component.html',
 })
-export class LandingComponent {}
+export class LandingComponent {
+  /** Footer "Back to top" action. */
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}

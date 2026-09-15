@@ -1,2 +1,12 @@
-﻿<!-- TODO (template): centered title + hint. -->
-<div class="py-8 text-center"><p class="font-semibold">{{ title() }}</p><p class="text-sm text-gray-500">{{ hint() }}</p></div>
+﻿<div class="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
+  <div
+    class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-xl"
+    aria-hidden="true"
+  >
+    📭
+  </div>
+  <p class="font-semibold text-slate-900">{{ title() }}</p>
+  @if (hint()) {
+    <p class="text-sm text-slate-500">{{ hint() }}</p>
+  }
+</div>

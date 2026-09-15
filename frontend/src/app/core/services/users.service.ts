@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, User } from '../models/api.models';
+import { environment } from '../../../environments/environment';
 
 /**
  * Users API service.
@@ -10,7 +11,7 @@ import { ApiResponse, User } from '../models/api.models';
 @Injectable({ providedIn: 'root' })
 export class UsersService {
   private http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/users';
+  private readonly apiUrl = `${environment.apiUrl}/users`;
 
   getById(id: string): Observable<ApiResponse<User>> {
     return this.http.get<ApiResponse<User>>(`${this.apiUrl}/${id}`);

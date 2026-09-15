@@ -100,5 +100,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 
+  // TEMPORARY development preview — remove with its component folder.
+  {
+    path: 'components-preview',
+    loadComponent: () =>
+      import('./pages/components-preview/components-preview.component').then(
+        (m) => m.ComponentsPreviewComponent,
+      ),
+  },
+
   { path: '**', redirectTo: 'parkings' },
 ];

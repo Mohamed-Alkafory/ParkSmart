@@ -1,1 +1,19 @@
 @import 'tailwindcss';
+
+/* Angular mounts the app inside custom elements (<app-root>, routed
+   component hosts), which are inline by default. An inline root puts the
+   page in an inline formatting context where stray whitespace text nodes
+   (e.g. around <router-outlet>) create anonymous line boxes that can
+   offset centered content. Block display keeps the root chain exact. */
+app-root {
+  display: block;
+}
+
+/* Never let the page scroll sideways: a wider-than-viewport document
+   breaks viewport-relative centering of mx-auto containers. `clip`
+   (unlike `hidden`) creates no scroll container, so sticky sidebars
+   keep working. Decorative hero blobs stay clipped by their own
+   overflow-hidden sections. */
+body {
+  overflow-x: clip;
+}
