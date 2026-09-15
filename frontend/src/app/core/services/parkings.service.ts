@@ -2,11 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, Parking } from '../models/api.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ParkingsService {
   private http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/parkings';
+  private readonly apiUrl = `${environment.apiUrl}/parkings`;
 
   getAll(): Observable<ApiResponse<Parking[]>> {
     // TODO 1: send GET to `${this.apiUrl}/` (public, no token needed).

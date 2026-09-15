@@ -2,11 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, Spot, SpotStatus } from '../models/api.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class SpotsService {
   private http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/spots';
+  private readonly apiUrl = `${environment.apiUrl}/spots`;
 
   getByParking(parkingId: string): Observable<ApiResponse<Spot[]>> {
     return this.http.get<ApiResponse<Spot[]>>(`${this.apiUrl}/parking/${parkingId}`);
