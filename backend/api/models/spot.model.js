@@ -12,10 +12,20 @@ const mongoose = require('mongoose');
 const spotSchema = new mongoose.Schema(
   {
     parkingId:   { type: mongoose.Schema.Types.ObjectId, ref: 'Parking', required: true },
-    spotNumber:  { type: String, required: true }, // مثال: "A1", "B2"
+    spotNumber:  {
+      type: String,
+      required: true,
+      trim: true,
+      uppercase: true,
+      minlength: 1,
+    }, // مثال: "A1", "B2"
     status:      { type: String, enum: ['available', 'booked'], default: 'available' },
   },
   { timestamps: true }
 );
+
+// مينفعش يتكرر نفس رقم المكان داخل نفس الجراج.
+// نفس الرقم ممكن يتكرر في جراج مختلف بدون مشكلة.
+spotSchema.index({ parkingId: 1, spotNumber: 1 }, { unique: true });
 
 module.exports = mongoose.model('ParkingSpot', spotSchema);
