@@ -25,8 +25,9 @@ function validateObjectId(id, message) {
 /**
  * verifyParkingOwner
  * Ensures the parking exists and the current user owns it.
+ * Admins bypass the ownership check (role comes from the JWT, no extra lookup).
  */
-async function verifyParkingOwner(parkingId, userId) {
+async function verifyParkingOwner(parkingId, userId, role) {
   validateObjectId(parkingId, 'Invalid parking ID format');
 
   const parking = await Parking.findById(parkingId);
@@ -35,7 +36,7 @@ async function verifyParkingOwner(parkingId, userId) {
     throw createError(404, 'Parking not found');
   }
 
-  if (parking.ownerId.toString() !== userId.toString()) {
+  if (role !== 'admin' && parking.ownerId.toString() !== userId.toString()) {
     throw createError(403, 'You are not the owner of this parking');
   }
 
@@ -193,7 +194,7 @@ async function updateParking(parkingId, data, userId) {
 
 /**
  * deleteParking
- * Only the parking owner may delete.
+ * Only the parking owner or an admin may delete.
  *
  * Safe-delete policy (BLOCK, not cascade):
  *   1. Rejects with 409 if any spot of this parking has an active booking.
@@ -203,10 +204,11 @@ async function updateParking(parkingId, data, userId) {
  *
  * @param {string} parkingId
  * @param {string} userId - user ID from the JWT token
+ * @param {string} role - role from the JWT token ('admin' bypasses ownership)
  * @returns {Promise<Object>}
  */
-async function deleteParking(parkingId, userId) {
-  const parking = await verifyParkingOwner(parkingId, userId);
+async function deleteParking(parkingId, userId, role) {
+  const parking = await verifyParkingOwner(parkingId, userId, role);
 
   const activeBooking = await Booking.exists({ parkingId, status: 'active' });
   if (activeBooking) {

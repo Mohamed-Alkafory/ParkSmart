@@ -1,0 +1,136 @@
+<div class="flex flex-col gap-6 lg:flex-row lg:items-start">
+  <app-sidebar [role]="role()" />
+  <div class="min-w-0 flex-1 space-y-6">
+  <div class="flex flex-wrap items-center justify-between gap-3 rounded-3xl bg-gradient-to-r from-emerald-700 to-teal-600 p-6 text-white shadow-lg sm:p-8">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wider text-emerald-100">Reservations</p>
+      <h1 class="mt-2 text-3xl font-bold">Owner bookings</h1>
+    </div>
+    <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur">
+      Revenue: {{ revenue() }} EGP
+    </span>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2 rounded-2xl bg-white p-4 shadow-sm">
+    <span class="text-sm font-semibold text-slate-600">Filter:</span>
+    @for (f of ['all', 'active', 'completed', 'cancelled']; track f) {
+      <button
+        type="button"
+        (click)="filter.set($any(f))"
+        class="rounded-full px-4 py-1.5 text-sm font-semibold transition"
+        [class.bg-emerald-700]="filter() === f"
+        [class.text-white]="filter() === f"
+        [class.bg-slate-100]="filter() !== f"
+        [class.text-slate-600]="filter() !== f"
+      >
+        {{ f === 'all' ? 'All' : (f.charAt(0).toUpperCase() + f.slice(1)) }}
+      </button>
+    }
+  </div>
+
+  @if (notice()) {
+    <p class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">{{ notice() }}</p>
+  }
+  @if (error()) {
+    <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {{ error() }}
+      <button type="button" (click)="load()" class="ml-2 font-semibold underline">Retry</button>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="rounded-2xl bg-white p-10 text-center text-slate-500 shadow-sm">Loading bookings...</div>
+  } @else if (filtered().length === 0) {
+    <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+      <h2 class="font-semibold text-slate-800">No bookings found</h2>
+      <p class="mt-1 text-sm text-slate-500">
+        {{ filter() === 'all' ? 'Bookings for your parkings will appear here.' : 'No bookings with this status.' }}
+      </p>
+    </div>
+  } @else {
+    <!-- Desktop table -->
+    <div class="hidden overflow-x-auto rounded-2xl bg-white shadow-sm md:block">
+      <table class="w-full text-left text-sm">
+        <thead>
+          <tr class="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+            <th class="px-4 py-3">Parking / Spot</th>
+            <th class="px-4 py-3">Driver</th>
+            <th class="px-4 py-3">Start</th>
+            <th class="px-4 py-3">Duration</th>
+            <th class="px-4 py-3">Total</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (b of filtered(); track b._id) {
+            <tr class="border-b border-slate-100 last:border-0 hover:bg-slate-50">
+              <td class="px-4 py-3">
+                <p class="font-semibold text-slate-900">{{ parkingName(b) }}</p>
+                <p class="text-xs text-slate-500">Spot {{ spotLabel(b) }}</p>
+              </td>
+              <td class="px-4 py-3">
+                <p class="font-medium text-slate-800">{{ driverName(b) }}</p>
+                @if (driverEmail(b)) {
+                  <p class="text-xs text-slate-500">{{ driverEmail(b) }}</p>
+                }
+              </td>
+              <td class="px-4 py-3 text-slate-600">{{ b.startTime | date: 'medium' }}</td>
+              <td class="px-4 py-3 text-slate-600">{{ b.durationHours }}h</td>
+              <td class="px-4 py-3 font-semibold text-emerald-700">{{ b.totalPrice }} EGP</td>
+              <td class="px-4 py-3"><app-status-badge [status]="b.status" /></td>
+              <td class="px-4 py-3">
+                @if (b.status === 'active') {
+                  <div class="flex gap-2">
+                    <button type="button" (click)="complete(b._id)" [disabled]="actingId() === b._id"
+                      class="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50">
+                      Complete
+                    </button>
+                    <button type="button" (click)="cancel(b._id)" [disabled]="actingId() === b._id"
+                      class="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50">
+                      Cancel
+                    </button>
+                  </div>
+                } @else {
+                  <span class="text-xs text-slate-400">—</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <!-- Mobile cards -->
+    <div class="grid gap-4 md:hidden">
+      @for (b of filtered(); track b._id) {
+        <article class="rounded-2xl bg-white p-5 shadow-sm">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h2 class="font-bold text-slate-900">{{ parkingName(b) }}</h2>
+              <p class="text-xs text-slate-500">Spot {{ spotLabel(b) }} · {{ driverName(b) }}</p>
+            </div>
+            <app-status-badge [status]="b.status" />
+          </div>
+          <dl class="mt-3 space-y-1 text-sm text-slate-600">
+            <div class="flex justify-between"><dt>Start</dt><dd>{{ b.startTime | date: 'medium' }}</dd></div>
+            <div class="flex justify-between"><dt>Duration</dt><dd>{{ b.durationHours }}h</dd></div>
+            <div class="flex justify-between font-semibold text-slate-900"><dt>Total</dt><dd>{{ b.totalPrice }} EGP</dd></div>
+          </dl>
+          @if (b.status === 'active') {
+            <div class="mt-4 flex gap-2">
+              <button type="button" (click)="complete(b._id)" [disabled]="actingId() === b._id"
+                class="flex-1 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50">
+                Complete
+              </button>
+              <button type="button" (click)="cancel(b._id)" [disabled]="actingId() === b._id"
+                class="flex-1 rounded-xl border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50">
+                Cancel
+              </button>
+            </div>
+          }
+        </article>
+      }
+    </div>
+  }
+  </div>
+</div>

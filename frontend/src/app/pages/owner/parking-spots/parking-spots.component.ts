@@ -1,8 +1,11 @@
-import { Component, OnInit, inject, input, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { SpotsService } from '../../../core/services/spots.service';
 import { Spot, SpotStatus } from '../../../core/models/api.models';
 import { ParkingSpotComponent } from '../../../shared/components/parking-spot/parking-spot.component';
+import { AuthService } from '../../../core/services/auth.service';
+import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 
 /**
  * Owner spot management page.
@@ -11,11 +14,15 @@ import { ParkingSpotComponent } from '../../../shared/components/parking-spot/pa
 @Component({
   selector: 'app-owner-spots',
   standalone: true,
-  imports: [FormsModule, ParkingSpotComponent],
+  imports: [FormsModule, RouterLink, ParkingSpotComponent, SidebarComponent],
   templateUrl: './parking-spots.component.html',
 })
 export class OwnerParkingSpotsComponent implements OnInit {
   private spotsSvc = inject(SpotsService);
+  private auth = inject(AuthService);
+
+  /** Sidebar role — same source the navbar uses (AuthService.currentUser). */
+  readonly role = computed(() => this.auth.currentUser()?.role ?? 'owner');
 
   // The router provides this value from /owner/parkings/:id/spots.
   readonly id = input<string>('');

@@ -1,4 +1,6 @@
-<section class="mx-auto max-w-3xl space-y-6">
+<section class="flex flex-col gap-6 lg:flex-row lg:items-start">
+  <app-sidebar [role]="role()" />
+  <div class="mx-auto w-full max-w-3xl flex-1 space-y-6">
   <!-- Profile header from the parking-owner UI flow. -->
   <div
     class="overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 to-emerald-700 p-6 text-white shadow-lg sm:p-8"
@@ -102,4 +104,5 @@
       </button>
     </div>
   </form>
+  </div>
 </section>

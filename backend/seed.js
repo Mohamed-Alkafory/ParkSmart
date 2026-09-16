@@ -15,11 +15,12 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const User = require('./modules/auth/user.model');
-const Parking = require('./modules/parkings/parking.model');
-const ParkingSpot = require('./modules/spots/spot.model');
-const Booking = require('./modules/bookings/booking.model');
-const Review = require('./modules/reviews/review.model');
+const User = require('./api/models/user.model');
+const Parking = require('./api/models/parking.model');
+const ParkingSpot = require('./api/models/spot.model');
+const Booking = require('./api/models/booking.model');
+const Review = require('./api/models/review.model');
+const Notification = require('./api/models/notification.model');
 
 async function seed() {
   try {
@@ -32,6 +33,7 @@ async function seed() {
     await ParkingSpot.deleteMany({});
     await Booking.deleteMany({});
     await Review.deleteMany({});
+    await Notification.deleteMany({});
     console.log('🗑️  البيانات القديمة اتمسحت');
 
     // 2. إضافة يوزرز تجريبيين (سائقين وأصحاب جراجات)
@@ -42,6 +44,7 @@ async function seed() {
       { name: 'سارة علي', email: 'sara@example.com', password: hashedPassword, role: 'driver', phone: '01098765432' },
       { name: 'محمود حسن', email: 'mahmoud@example.com', password: hashedPassword, role: 'owner', phone: '01055555555' },
       { name: 'منى إبراهيم', email: 'mona@example.com', password: hashedPassword, role: 'owner', phone: '01066666666' },
+      { name: 'Admin', email: 'admin@parksmart.app', password: hashedPassword, role: 'admin', phone: '01000000000' },
     ]);
     console.log(`👤 اتضاف ${users.length} يوزرز (كلمة السر لجميع اليوزرز: 123456)`);
 
@@ -128,6 +131,7 @@ async function seed() {
     console.log('\n📝 بيانات تسجيل الدخول للتجربة:');
     console.log('   Email: ahmed@example.com | Password: 123456 (سائق)');
     console.log('   Email: mahmoud@example.com | Password: 123456 (صاحب جراج)');
+    console.log('   Email: admin@parksmart.app | Password: 123456 (أدمن)');
 
     process.exit(0);
   } catch (err) {

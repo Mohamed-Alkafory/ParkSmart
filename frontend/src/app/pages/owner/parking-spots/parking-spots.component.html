@@ -1,4 +1,6 @@
-<section class="space-y-6">
+<section class="flex flex-col gap-6 lg:flex-row lg:items-start">
+  <app-sidebar [role]="role()" />
+  <div class="min-w-0 flex-1 space-y-6">
   <!-- Page title and a quick summary for the owner. -->
   <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
     <div>
@@ -8,9 +10,17 @@
       <h1 class="mt-1 text-3xl font-bold text-slate-900">Parking spots</h1>
       <p class="mt-2 text-sm text-slate-500">Add spots and keep their availability up to date.</p>
     </div>
-    <div class="rounded-xl bg-slate-900 px-4 py-3 text-white">
-      <span class="text-sm text-slate-300">Total spots</span>
-      <strong class="ml-2 text-xl">{{ spots().length }}</strong>
+    <div class="flex flex-wrap items-center gap-3">
+      <div class="rounded-xl bg-slate-900 px-4 py-3 text-white">
+        <span class="text-sm text-slate-300">Total spots</span>
+        <strong class="ml-2 text-xl">{{ spots().length }}</strong>
+      </div>
+      <a
+        routerLink="/owner/bookings"
+        class="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+      >
+        View bookings
+      </a>
     </div>
   </div>
 
@@ -91,4 +101,5 @@
       }
     </div>
   }
+  </div>
 </section>

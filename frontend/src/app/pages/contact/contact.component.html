@@ -1,0 +1,313 @@
+<!-- Root breaks out of the app shell's padded <main> so sections bleed edge-to-edge.
+     Inner content stays constrained via max-w-6xl mx-auto. Scoped to Contact only. -->
+<div class="-mx-4 -mb-6 -mt-6 bg-slate-50 text-slate-900 sm:-mx-6 lg:-mx-8">
+  <!-- ================= TEMPORARY INLINE NAVBAR (local to Contact only) =================
+       Another developer owns shared NavbarComponent — do NOT move this there.
+       Delete this entire <header> and use <app-navbar> once the shared one is ready. -->
+  <header class="sticky top-0 z-50 border-b border-slate-200/70 bg-white/90 backdrop-blur">
+    <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+      <a routerLink="/" class="flex items-center gap-2.5" aria-label="ParkSmart home">
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-blue-600 text-lg font-black text-white"
+          aria-hidden="true"
+          >P</span
+        >
+        <span class="text-xl font-black tracking-tight">ParkSmart</span>
+      </a>
+
+      <nav class="hidden items-center gap-7 text-sm font-semibold text-slate-600 md:flex" aria-label="Primary">
+        <a routerLink="/" class="transition hover:text-blue-700">Home</a>
+        <a routerLink="/parkings" class="transition hover:text-blue-700">Find Parking</a>
+        <a routerLink="/about" class="transition hover:text-blue-700">About</a>
+        <a routerLink="/contact" class="text-blue-700" aria-current="page">Contact</a>
+      </nav>
+
+      <div class="hidden items-center gap-3 md:flex">
+        <a
+          routerLink="/login"
+          class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-blue-400 hover:text-blue-700"
+          >Login</a
+        >
+        <a
+          routerLink="/register"
+          class="rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white shadow transition hover:bg-blue-800"
+          >Register</a
+        >
+      </div>
+
+      <button
+        type="button"
+        (click)="mobileMenuOpen.set(!mobileMenuOpen())"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        aria-label="Toggle navigation menu"
+        class="rounded-xl border border-slate-300 p-2 text-slate-700 md:hidden"
+      >
+        @if (mobileMenuOpen()) {
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-width="2" d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        } @else {
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        }
+      </button>
+    </div>
+
+    @if (mobileMenuOpen()) {
+      <nav class="border-t border-slate-200 bg-white px-4 py-4 md:hidden" aria-label="Mobile">
+        <div class="flex flex-col gap-1 text-sm font-semibold text-slate-700">
+          <a routerLink="/" (click)="closeMobileMenu()" class="rounded-lg px-3 py-2.5 hover:bg-slate-100">Home</a>
+          <a routerLink="/parkings" (click)="closeMobileMenu()" class="rounded-lg px-3 py-2.5 hover:bg-slate-100">Find Parking</a>
+          <a routerLink="/about" (click)="closeMobileMenu()" class="rounded-lg px-3 py-2.5 hover:bg-slate-100">About</a>
+          <a routerLink="/contact" (click)="closeMobileMenu()" class="rounded-lg px-3 py-2.5 text-blue-700 hover:bg-slate-100">Contact</a>
+          <div class="mt-2 grid grid-cols-2 gap-2">
+            <a
+              routerLink="/login"
+              (click)="closeMobileMenu()"
+              class="rounded-xl border border-slate-300 px-4 py-2.5 text-center font-bold hover:border-blue-400 hover:text-blue-700"
+              >Login</a
+            >
+            <a
+              routerLink="/register"
+              (click)="closeMobileMenu()"
+              class="rounded-xl bg-blue-700 px-4 py-2.5 text-center font-bold text-white hover:bg-blue-800"
+              >Register</a
+            >
+          </div>
+        </div>
+      </nav>
+    }
+  </header>
+  <!-- =============== END TEMPORARY INLINE NAVBAR =============== -->
+
+  <!-- Hero -->
+  <section class="relative isolate w-full overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-blue-800 py-16 text-white lg:py-24">
+    <div class="absolute -right-28 -top-36 -z-10 h-96 w-96 rounded-full bg-cyan-400/20 blur-3xl" aria-hidden="true"></div>
+    <div class="absolute -bottom-44 left-20 -z-10 h-96 w-96 rounded-full bg-emerald-400/15 blur-3xl" aria-hidden="true"></div>
+    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6">
+      <div class="mx-auto max-w-2xl text-center" appScrollReveal>
+        <p class="text-sm font-black uppercase tracking-[0.22em] text-cyan-300">We reply fast</p>
+        <h1 class="mt-3 text-4xl font-black tracking-tight sm:text-5xl">Get in Touch</h1>
+        <p class="mt-6 text-base leading-8 text-slate-200 sm:text-lg">
+          Questions about bookings, listings, or anything else? Send us a message —
+          the ParkSmart team is happy to help.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Form + info -->
+  <section class="w-full bg-white py-16 lg:py-20">
+    <div class="mx-auto grid w-full max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.2fr_.8fr]">
+      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8" appScrollReveal>
+        <h2 class="text-2xl font-black">Send us a message</h2>
+        <p class="mt-1 text-sm text-slate-500">This demo form validates locally — nothing is sent anywhere.</p>
+
+        @if (sent()) {
+          <div class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
+            <p class="text-3xl" aria-hidden="true">✓</p>
+            <p class="mt-2 font-black text-emerald-800">Message sent! We'll get back to you soon.</p>
+            <button
+              type="button"
+              (click)="onWriteAnother()"
+              class="mt-4 rounded-xl border border-emerald-300 px-5 py-2.5 text-sm font-bold text-emerald-700 transition hover:bg-emerald-100"
+            >
+              Write another message
+            </button>
+          </div>
+        } @else {
+          <form (ngSubmit)="onSubmit()" class="mt-6 space-y-4">
+            @if (formError()) {
+              <p class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ formError() }}</p>
+            }
+            <div class="grid gap-4 sm:grid-cols-2">
+              <label class="block text-sm font-semibold text-slate-700">
+                Name
+                <input
+                  type="text" name="name" required maxlength="80" placeholder="Your full name"
+                  [ngModel]="name()" (ngModelChange)="name.set($event)"
+                  class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2.5 font-normal text-slate-900 focus:border-blue-600 focus:outline-none"
+                />
+              </label>
+              <label class="block text-sm font-semibold text-slate-700">
+                Email
+                <input
+                  type="email" name="email" required maxlength="120" placeholder="you@example.com"
+                  [ngModel]="email()" (ngModelChange)="email.set($event)"
+                  class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2.5 font-normal text-slate-900 focus:border-blue-600 focus:outline-none"
+                />
+              </label>
+            </div>
+            <label class="block text-sm font-semibold text-slate-700">
+              Subject
+              <input
+                type="text" name="subject" required maxlength="120" placeholder="How can we help?"
+                [ngModel]="subject()" (ngModelChange)="subject.set($event)"
+                class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2.5 font-normal text-slate-900 focus:border-blue-600 focus:outline-none"
+              />
+            </label>
+            <label class="block text-sm font-semibold text-slate-700">
+              Message
+              <textarea
+                name="message" required rows="5" maxlength="2000" placeholder="Tell us what's on your mind..."
+                [ngModel]="message()" (ngModelChange)="message.set($event)"
+                class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2.5 font-normal text-slate-900 focus:border-blue-600 focus:outline-none"
+              ></textarea>
+            </label>
+            <button
+              type="submit"
+              class="w-full rounded-xl bg-blue-700 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-800 sm:w-auto sm:px-8"
+            >
+              Send message
+            </button>
+          </form>
+        }
+      </div>
+
+      <div class="space-y-4">
+        <article class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5" appScrollReveal>
+          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.9 5.3a2 2 0 002.2 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </span>
+          <div>
+            <h3 class="font-black">Email</h3>
+            <p class="mt-1 text-sm text-slate-600">support&#64;parksmart.app</p>
+          </div>
+        </article>
+        <article class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5" [appScrollReveal]="{ delay: 100 }">
+          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h2.28a1 1 0 01.95.68l1.5 4.5a1 1 0 01-.27 1.06l-1.7 1.7a16 16 0 006.58 6.58l1.7-1.7a1 1 0 011.06-.27l4.5 1.5a1 1 0 01.68.95V19a2 2 0 01-2 2h-1C9.72 21 3 14.28 3 6V5z" />
+            </svg>
+          </span>
+          <div>
+            <h3 class="font-black">Phone</h3>
+            <p class="mt-1 text-sm text-slate-600">+20 100 000 0000 (placeholder)</p>
+          </div>
+        </article>
+        <article class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5" [appScrollReveal]="{ delay: 200 }">
+          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21s6-4.35 6-11a6 6 0 10-12 0c0 6.65 6 11 6 11z" />
+              <circle cx="12" cy="10" r="2" stroke-width="2" />
+            </svg>
+          </span>
+          <div>
+            <h3 class="font-black">Address</h3>
+            <p class="mt-1 text-sm text-slate-600">123 Main Street, Cairo, Egypt (placeholder)</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="w-full border-t border-slate-200 bg-slate-50 py-16 lg:py-20">
+    <div class="mx-auto w-full max-w-3xl px-4 sm:px-6">
+      <div class="text-center" appScrollReveal>
+        <p class="text-sm font-black uppercase tracking-[0.22em] text-blue-600">FAQ</p>
+        <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Common questions</h2>
+      </div>
+      <div class="mt-10 space-y-3">
+        <details class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" appScrollReveal>
+          <summary class="cursor-pointer font-bold text-slate-900">How do I book a parking spot?</summary>
+          <p class="mt-3 text-sm leading-7 text-slate-600">
+            Create an account, search for parking near your destination, pick an available
+            spot, and confirm your booking. You will get an instant confirmation with all details.
+          </p>
+        </details>
+        <details class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" [appScrollReveal]="{ delay: 100 }">
+          <summary class="cursor-pointer font-bold text-slate-900">How do I list my parking space?</summary>
+          <p class="mt-3 text-sm leading-7 text-slate-600">
+            Register as an owner, add your parking with its location, price, and spots, then
+            manage bookings and earnings from your owner dashboard.
+          </p>
+        </details>
+        <details class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" [appScrollReveal]="{ delay: 200 }">
+          <summary class="cursor-pointer font-bold text-slate-900">Is ParkSmart free to use?</summary>
+          <p class="mt-3 text-sm leading-7 text-slate-600">
+            Creating an account and browsing parkings is free. Drivers only pay the hourly
+            price shown for the spot they book — no hidden fees.
+          </p>
+        </details>
+        <details class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" [appScrollReveal]="{ delay: 300 }">
+          <summary class="cursor-pointer font-bold text-slate-900">Can I cancel a booking?</summary>
+          <p class="mt-3 text-sm leading-7 text-slate-600">
+            Yes. Open My Bookings, choose the booking, and cancel it. The spot immediately
+            becomes available for other drivers again.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="w-full bg-gradient-to-r from-blue-700 to-cyan-600 py-12 text-white lg:py-16">
+    <div class="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-7 px-4 text-center sm:px-6 lg:flex-row lg:text-left" appScrollReveal>
+      <div>
+        <h2 class="text-2xl font-black sm:text-3xl">Ready to get started?</h2>
+        <p class="mt-2 text-blue-100">Create your free account and park smarter from today.</p>
+      </div>
+      <div class="flex shrink-0 flex-col gap-3 sm:flex-row">
+        <a routerLink="/login" class="rounded-xl border border-white/30 px-5 py-3 font-bold transition hover:bg-white/10">Login</a>
+        <a routerLink="/register" class="rounded-xl bg-white px-5 py-3 font-bold text-blue-700 shadow transition hover:bg-blue-50">Register</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TEMPORARY INLINE FOOTER (local to Contact only) =================
+       Another developer owns shared FooterComponent — do NOT move this there.
+       Delete this entire <footer> and use <app-footer> once the shared one is ready. -->
+  <footer class="w-full bg-slate-950 pb-8 pt-14 text-slate-400" appScrollReveal>
+    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6">
+      <div class="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div>
+          <span class="text-xl font-black tracking-tight text-white">ParkSmart</span>
+          <p class="mt-3 text-sm font-semibold text-slate-200">Smart parking for better journeys.</p>
+          <p class="mt-1 text-sm leading-6">Find, book, and manage parking with ease.</p>
+        </div>
+
+        <nav aria-label="Product">
+          <h3 class="text-xs font-bold uppercase tracking-[0.18em] text-white">Product</h3>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li><a routerLink="/parkings" class="transition hover:text-cyan-300">Parkings</a></li>
+            <li><a routerLink="/" class="transition hover:text-cyan-300">Home</a></li>
+            <li><a routerLink="/bookings" class="transition hover:text-cyan-300">My Bookings</a></li>
+          </ul>
+        </nav>
+
+        <nav aria-label="Company">
+          <h3 class="text-xs font-bold uppercase tracking-[0.18em] text-white">Company</h3>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li><a routerLink="/about" class="transition hover:text-cyan-300">About</a></li>
+            <li><a routerLink="/contact" class="transition hover:text-cyan-300">Contact</a></li>
+          </ul>
+        </nav>
+
+        <nav aria-label="Legal">
+          <h3 class="text-xs font-bold uppercase tracking-[0.18em] text-white">Legal</h3>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li><a href="#privacy" class="transition hover:text-cyan-300">Privacy</a></li>
+            <li><a href="#terms" class="transition hover:text-cyan-300">Terms</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm sm:flex-row">
+        <p>© {{ year }} ParkSmart. All rights reserved.</p>
+        <button
+          type="button"
+          (click)="scrollToTop()"
+          class="inline-flex items-center gap-2 rounded-xl border border-white/15 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-cyan-300/40 hover:text-cyan-300"
+        >
+          Back to top
+          <span aria-hidden="true">↑</span>
+        </button>
+      </div>
+    </div>
+  </footer>
+  <!-- =============== END TEMPORARY INLINE FOOTER =============== -->
+</div>

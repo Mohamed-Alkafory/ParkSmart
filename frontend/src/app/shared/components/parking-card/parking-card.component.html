@@ -34,7 +34,7 @@
 
     @if (parking()._id) {
       <a
-        [routerLink]="['/parkings', parking()._id]"
+        [routerLink]="[linkPrefix(), parking()._id]"
         class="block rounded-xl bg-blue-700 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-800"
       >
         View parking details

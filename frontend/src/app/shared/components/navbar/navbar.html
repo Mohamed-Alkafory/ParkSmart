@@ -15,11 +15,34 @@
       @if (isLoggedIn()) {
         @if (isOwner()) {
           <a
-            routerLink="/parkings/new"
+            routerLink="/owner/dashboard"
+            routerLinkActive="bg-slate-700"
+            class="rounded-lg px-3 py-2 hover:bg-slate-700"
+          >
+            Dashboard
+          </a>
+          <a
+            routerLink="/owner/parkings"
+            routerLinkActive="bg-slate-700"
+            class="rounded-lg px-3 py-2 hover:bg-slate-700"
+          >
+            My parkings
+          </a>
+          <a
+            routerLink="/owner/parkings/new"
             routerLinkActive="bg-slate-700"
             class="rounded-lg px-3 py-2 hover:bg-slate-700"
           >
             Add parking
+          </a>
+        }
+        @if (isAdmin()) {
+          <a
+            routerLink="/admin/dashboard"
+            routerLinkActive="bg-slate-700"
+            class="rounded-lg px-3 py-2 hover:bg-slate-700"
+          >
+            Dashboard
           </a>
         }
         <a

@@ -1,0 +1,11 @@
+/* About-page-only styles. Keep marketing tweaks here, not in global CSS. */
+
+:host {
+  display: block;
+  scroll-behavior: smooth;
+}
+
+/* Offset anchored sections below the sticky nav. */
+section[id] {
+  scroll-margin-top: 5rem;
+}

@@ -33,11 +33,27 @@ export class ParkingsService {
     return this.http.get<ApiResponse<Parking[]>>(`${this.apiUrl}/nearby`, { params });
   }
 
-  create(payload: { name: string; address: string; pricePerHour: number; lat: number; lng: number }): Observable<ApiResponse<Parking>> {
-    // TODO 3: send POST to `${this.apiUrl}/` with exact body
-    //   { name, address, pricePerHour, lat, lng }.
-    //   Protected: requires requireAuth + requireRole('owner') — token is added by the interceptor.
-    //   Use: return this.http.post<ApiResponse<Parking>>(this.apiUrl, payload).
-    throw new Error('Not implemented — see TODO 3');
+  /** POST /api/parkings — owner only, token added by the interceptor. */
+  create(payload: {
+    name: string;
+    address: string;
+    pricePerHour: number;
+    lat: number;
+    lng: number;
+  }): Observable<ApiResponse<Parking>> {
+    return this.http.post<ApiResponse<Parking>>(this.apiUrl, payload);
+  }
+
+  /** PUT /api/parkings/:id — owning owner only. lat+lng must be sent together. */
+  update(
+    id: string,
+    payload: { name?: string; address?: string; pricePerHour?: number; lat?: number; lng?: number },
+  ): Observable<ApiResponse<Parking>> {
+    return this.http.put<ApiResponse<Parking>>(`${this.apiUrl}/${id}`, payload);
+  }
+
+  /** DELETE /api/parkings/:id — rejected with 409 if active bookings or spots remain. */
+  delete(id: string): Observable<ApiResponse<null>> {
+    return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`);
   }
 }

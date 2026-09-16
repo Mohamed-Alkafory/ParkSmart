@@ -21,7 +21,7 @@ const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
  * GET    /api/parkings/:id      → single parking details (public)
  * POST   /api/parkings          → add a parking (owner only)
  * PUT    /api/parkings/:id      → update a parking (owning owner only)
- * DELETE /api/parkings/:id      → delete a parking (owning owner only)
+ * DELETE /api/parkings/:id      → delete a parking (owning owner or admin)
  *
  * Route order matters — /nearby and /mine must come before /:id
  * so Express does not confuse /mine with /:id.
@@ -33,6 +33,6 @@ router.get('/mine',    requireAuth, requireRole('owner'), getMyParkings);
 router.get('/:id',     getParkingById);
 router.post('/',       requireAuth, requireRole('owner'), createParking);
 router.put('/:id',     requireAuth, requireRole('owner'), updateParking);
-router.delete('/:id',  requireAuth, requireRole('owner'), deleteParking);
+router.delete('/:id',  requireAuth, requireRole('owner', 'admin'), deleteParking);
 
 module.exports = router;

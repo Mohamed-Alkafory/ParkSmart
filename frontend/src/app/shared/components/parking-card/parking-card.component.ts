@@ -15,4 +15,6 @@ import { RatingComponent } from '../rating/rating.component';
 })
 export class ParkingCardComponent {
   readonly parking = input.required<Parking>();
+  /** Route prefix for the details link. Defaults to the public page; driver flow passes '/driver/parkings'. */
+  readonly linkPrefix = input<string>('/parkings');
 }

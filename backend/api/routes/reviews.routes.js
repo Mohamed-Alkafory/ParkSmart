@@ -5,7 +5,7 @@ const {
   createReview, 
   getMyReviews, 
   deleteReview 
-} = require('../controllers/reviews.controller');
+} = require('../controller/reviews.controller');
 const { requireAuth } = require('../middlewares/auth.middleware');
 
 // Public Route: Get reviews for a specific parking

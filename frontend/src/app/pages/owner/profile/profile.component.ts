@@ -1,20 +1,24 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { UsersService } from '../../../core/services/users.service';
 import { USER_KEY } from '../../../core/guards/owner.guard';
 import { User } from '../../../core/models/api.models';
+import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 
 /** Owner profile page: reads and updates the signed-in owner's name and phone. */
 @Component({
   selector: 'app-owner-profile',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, SidebarComponent],
   templateUrl: './profile.component.html',
 })
 export class OwnerProfileComponent implements OnInit {
   private auth = inject(AuthService);
   private usersService = inject(UsersService);
+
+  /** Sidebar role — same source the navbar uses (AuthService.currentUser). */
+  readonly role = computed(() => this.auth.currentUser()?.role ?? 'owner');
 
   readonly user = signal<User | null>(null);
   readonly name = signal('');

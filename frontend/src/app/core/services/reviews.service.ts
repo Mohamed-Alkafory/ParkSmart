@@ -16,4 +16,9 @@ export class ReviewsService {
   create(parkingId: string, rating: number, comment?: string): Observable<ApiResponse<Review>> {
     return this.http.post<ApiResponse<Review>>(this.apiUrl, { parkingId, rating, comment });
   }
+
+  /** DELETE /:id — allowed for the author or an admin (moderation). */
+  delete(id: string): Observable<ApiResponse<{ message: string }>> {
+    return this.http.delete<ApiResponse<{ message: string }>>(`${this.apiUrl}/${id}`);
+  }
 }

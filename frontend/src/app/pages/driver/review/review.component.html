@@ -1,2 +1,45 @@
-﻿<!-- TODO: rating input + comment textarea + submit. -->
-<div class="mx-auto max-w-xl rounded-2xl bg-white p-8 shadow"><h1 class="text-2xl font-bold">Rate parking</h1><p class="text-sm text-gray-500">TODO review form</p></div>
+﻿<div class="mx-auto max-w-xl space-y-6">
+  <div class="rounded-3xl bg-gradient-to-r from-amber-500 to-orange-500 p-6 text-white shadow-lg sm:p-8">
+    <p class="text-sm font-semibold uppercase tracking-wider text-amber-100">Share feedback</p>
+    <h1 class="mt-2 text-3xl font-bold">Rate parking</h1>
+    @if (parkingName()) {
+      <p class="mt-2 text-sm text-amber-50">{{ parkingName() }}</p>
+    }
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+    @if (error()) {
+      <p class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error() }}</p>
+    }
+
+    <label class="block text-sm font-semibold text-slate-700">Your rating</label>
+    <div class="mt-2">
+      <app-rating [value]="rating()" (rated)="rating.set($event)" />
+    </div>
+
+    <label for="review-comment" class="mt-6 block text-sm font-semibold text-slate-700">
+      Comment <span class="font-normal text-slate-400">(optional)</span>
+    </label>
+    <textarea
+      id="review-comment"
+      rows="4"
+      maxlength="500"
+      placeholder="How was your parking experience?"
+      [ngModel]="comment()"
+      (ngModelChange)="comment.set($event)"
+      name="comment"
+      class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none"
+    ></textarea>
+
+    <button
+      type="submit"
+      [disabled]="submitting() || rating() < 1"
+      class="mt-6 w-full rounded-xl bg-blue-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {{ submitting() ? 'Submitting...' : 'Submit review' }}
+    </button>
+    <a routerLink="/bookings" class="mt-3 block text-center text-sm font-semibold text-blue-700 hover:underline">
+      Back to My Bookings
+    </a>
+  </form>
+</div>

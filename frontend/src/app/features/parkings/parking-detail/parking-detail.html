@@ -1,16 +1,82 @@
-<!-- TODO (template): 3 sections — spots grid (@for over spots()), booking form, reviews list + review form. Owner-only spot management block. -->
 <div class="space-y-6">
-  <div class="rounded-2xl bg-white p-6 shadow">
-    <h1 class="text-2xl font-bold">Parking detail</h1>
-    <p class="text-sm text-gray-500">Spots: GET /api/spots/parking/:id · Reviews: GET /api/reviews/parking/:id · Book: POST /api/bookings</p>
-    <!-- TODO: booking form (startTime datetime-local + durationHours number) calling bookSpot() -->
-  </div>
-  <div class="rounded-2xl bg-white p-6 shadow">
-    <h2 class="font-semibold">Spots</h2>
-    <!-- TODO: @for (s of spots(); track s._id) badge for status + owner buttons -->
-  </div>
-  <div class="rounded-2xl bg-white p-6 shadow">
-    <h2 class="font-semibold">Reviews</h2>
-    <!-- TODO: @for (r of reviews(); track r._id) + rating/comment form calling submitReview() -->
-  </div>
+  <a routerLink="/parkings" class="text-sm font-semibold text-blue-700 hover:underline">← Back to search</a>
+
+  @if (loading()) {
+    <div class="rounded-2xl bg-white p-10 text-center text-slate-500 shadow-sm">Loading parking details...</div>
+  } @else if (error() && !parking()) {
+    <app-error-state [message]="error() ?? 'Could not load parking details.'" (retry)="load()" />
+  } @else if (parking()) {
+    <!-- Header -->
+    <div class="overflow-hidden rounded-3xl bg-white shadow-sm">
+      <div class="bg-gradient-to-br from-slate-900 via-blue-800 to-cyan-600 p-6 text-white sm:p-8">
+        <h1 class="text-2xl font-bold sm:text-3xl">{{ parking()!.name }}</h1>
+        <p class="mt-1 text-sm text-blue-100">📍 {{ parking()!.address }}</p>
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <app-rating [value]="parking()!.rating" [readonly]="true" />
+          <span class="rounded-full bg-white/15 px-3 py-1 text-sm font-semibold backdrop-blur">
+            {{ parking()!.pricePerHour }} EGP/hour
+          </span>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 p-4 sm:p-6">
+        <app-status-badge status="available" />
+        <span class="text-sm text-slate-600">{{ availableSpots().length }} available</span>
+        <app-status-badge status="booked" />
+        <span class="text-sm text-slate-600">{{ bookedSpots().length }} booked</span>
+      </div>
+    </div>
+
+    <!-- CTA: adapts to auth state (login for guests, driver flow for drivers) -->
+    <div>
+      <a
+        [routerLink]="ctaLink().commands"
+        [queryParams]="ctaLink().queryParams"
+        class="block rounded-xl bg-blue-700 px-6 py-3 text-center font-semibold text-white transition hover:bg-blue-800"
+        [class.pointer-events-none]="!canBook()"
+        [class.opacity-50]="!canBook()"
+      >
+        Book Now
+      </a>
+      @if (!canBook()) {
+        <p class="mt-2 text-sm text-slate-500">No spots are currently available at this parking.</p>
+      }
+    </div>
+
+    <!-- Spots overview (read-only; booking happens in the driver flow) -->
+    <section class="rounded-2xl bg-white p-6 shadow-sm">
+      <h2 class="text-lg font-bold text-slate-900">Spots ({{ spots().length }})</h2>
+      @if (spots().length === 0) {
+        <div class="mt-4">
+          <app-empty-state title="No spots listed" hint="This parking has no spots yet. Please check back later." />
+        </div>
+      } @else {
+        <div class="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          @for (spot of spots(); track spot._id ?? spot.spotNumber) {
+            <app-parking-spot [spot]="spot" [selectable]="false" />
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Reviews -->
+    <section class="rounded-2xl bg-white p-6 shadow-sm">
+      <h2 class="text-lg font-bold text-slate-900">Reviews ({{ reviews().length }})</h2>
+      @if (reviews().length === 0) {
+        <div class="mt-4">
+          <app-empty-state title="No reviews yet" hint="Be the first to review after your visit." />
+        </div>
+      } @else {
+        <ul class="mt-4 space-y-4">
+          @for (review of reviews(); track review._id) {
+            <li class="rounded-xl border border-slate-200 p-4">
+              <app-rating [value]="review.rating" [readonly]="true" />
+              @if (review.comment) {
+                <p class="mt-2 text-sm text-slate-700">{{ review.comment }}</p>
+              }
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
 </div>
