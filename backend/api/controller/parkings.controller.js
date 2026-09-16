@@ -119,12 +119,13 @@ async function updateParking(req, res, next) {
 
 /**
  * DELETE /api/parkings/:id
- * Requires requireAuth + requireRole('owner') + ownership check.
+ * Requires requireAuth + requireRole('owner', 'admin').
+ * Owners pass the ownership check; admins bypass it.
  * Rejected with 409 if there are active bookings or remaining spots.
  */
 async function deleteParking(req, res, next) {
   try {
-    await parkingsService.deleteParking(req.params.id, req.user.id);
+    await parkingsService.deleteParking(req.params.id, req.user.id, req.user.role);
 
     res.json({
       success: true,

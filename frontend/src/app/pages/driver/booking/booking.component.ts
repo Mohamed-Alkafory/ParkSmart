@@ -1,7 +1,6 @@
 ﻿import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { BookingsService } from '../../../core/services/bookings.service';
 import { ParkingsService } from '../../../core/services/parkings.service';
 
 @Component({
@@ -11,7 +10,6 @@ import { ParkingsService } from '../../../core/services/parkings.service';
   templateUrl: './booking.component.html',
 })
 export class BookingComponent implements OnInit {
-  private bookings = inject(BookingsService);
   private parkings = inject(ParkingsService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -55,7 +53,7 @@ export class BookingComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.invalid || this.submitting()) return;
+    if (this.form.invalid) return;
 
     const parkingId = this.id();
     if (!parkingId) {
@@ -65,22 +63,21 @@ export class BookingComponent implements OnInit {
 
     const rawStart: string = this.form.get('startTime')?.value ?? '';
     const duration = Number(this.form.get('durationHours')?.value);
-    const spot = this.spotId() || undefined;
+    const startIso = new Date(rawStart).toISOString();
+    if (Number.isNaN(Date.parse(startIso))) {
+      this.error.set('Please choose a valid start time.');
+      return;
+    }
 
-    this.submitting.set(true);
-    this.error.set(null);
-
-    this.bookings
-      .create(parkingId, new Date(rawStart).toISOString(), duration, spot)
-      .subscribe({
-        next: () => {
-          this.submitting.set(false);
-          void this.router.navigate(['/bookings']);
-        },
-        error: (err) => {
-          this.error.set(err?.error?.message ?? 'Could not create the booking.');
-          this.submitting.set(false);
-        },
-      });
+    // No POST here — the confirmation page creates the booking on Confirm.
+    // Forward the form values as query params (actual names: id/spotId + form controls).
+    void this.router.navigate(['/bookings/confirmation'], {
+      queryParams: {
+        parkingId,
+        ...(this.spotId() ? { spotId: this.spotId() } : {}),
+        startTime: startIso,
+        durationHours: duration,
+      },
+    });
   }
 }

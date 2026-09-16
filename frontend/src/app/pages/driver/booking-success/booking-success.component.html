@@ -1,0 +1,46 @@
+<div class="mx-auto max-w-xl space-y-6 text-center">
+  <div class="rounded-3xl bg-white p-8 shadow-sm sm:p-12">
+    <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100">
+      <span class="text-4xl text-emerald-600" aria-hidden="true">✓</span>
+    </div>
+    <h1 class="mt-6 text-3xl font-bold text-slate-900">Booking confirmed!</h1>
+    <p class="mt-2 text-sm text-slate-500">
+      Your spot is reserved. Show this booking when you arrive.
+    </p>
+    @if (bookingId()) {
+      <p class="mx-auto mt-4 max-w-full truncate rounded-xl bg-slate-50 px-4 py-3 font-mono text-sm text-slate-700">
+        Booking ID: {{ bookingId() }}
+      </p>
+    }
+    @if (booking()) {
+      <dl class="mx-auto mt-4 max-w-sm space-y-2 text-left text-sm">
+        @if (parkingName()) {
+          <div class="flex justify-between gap-4">
+            <dt class="text-slate-500">Parking</dt>
+            <dd class="font-semibold text-slate-900">{{ parkingName() }}</dd>
+          </div>
+        }
+        @if (totalPrice() !== null) {
+          <div class="flex justify-between gap-4">
+            <dt class="text-slate-500">Total paid</dt>
+            <dd class="font-bold text-blue-700">{{ totalPrice() }} EGP</dd>
+          </div>
+        }
+      </dl>
+    }
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      <a
+        routerLink="/bookings"
+        class="flex-1 rounded-xl bg-blue-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-800"
+      >
+        View My Bookings
+      </a>
+      <a
+        routerLink="/parkings"
+        class="flex-1 rounded-xl border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+      >
+        Book Another
+      </a>
+    </div>
+  </div>
+</div>

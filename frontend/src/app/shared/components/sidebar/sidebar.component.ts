@@ -17,6 +17,7 @@ interface SidebarLink {
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './sidebar.component.html',
+  styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
   readonly role = input<UserRole>('driver');
@@ -33,7 +34,9 @@ export class SidebarComponent {
       return [
         { label: 'Dashboard', route: '/owner/dashboard', icon: '▦' },
         { label: 'My parkings', route: '/owner/parkings', icon: 'P' },
-        { label: 'Bookings', route: '/bookings', icon: 'B' },
+        { label: 'Add parking', route: '/owner/parkings/new', icon: '+' },
+        { label: 'Bookings', route: '/owner/bookings', icon: 'B' },
+        { label: 'Reviews', route: '/owner/reviews', icon: 'R' },
         { label: 'Notifications', route: '/notifications', icon: 'N' },
         { label: 'Profile', route: '/owner/profile', icon: 'U' },
       ];
@@ -45,8 +48,9 @@ export class SidebarComponent {
         { label: 'Users', route: '/admin/users', icon: 'U' },
         { label: 'Parkings', route: '/admin/parkings', icon: 'P' },
         { label: 'Parking spots', route: '/admin/spots', icon: 'S' },
-        { label: 'Bookings', route: '/bookings', icon: 'B' },
+        { label: 'Bookings', route: '/admin/bookings', icon: 'B' },
         { label: 'Reviews', route: '/admin/reviews', icon: 'R' },
+        { label: 'Notifications', route: '/admin/notifications', icon: 'N' },
         { label: 'Settings', route: '/admin/settings', icon: '⚙' },
       ];
     }

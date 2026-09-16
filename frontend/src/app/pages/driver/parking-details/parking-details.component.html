@@ -1,2 +1,93 @@
-﻿<!-- TODO: header + spots summary + reviews list + CTA to select-spot. -->
-<div class="space-y-6"><h1 class="text-2xl font-bold">Parking details</h1><p class="text-sm text-gray-500">TODO details body</p></div>
+﻿<div class="space-y-6">
+  <a routerLink="/parkings" class="text-sm font-semibold text-blue-700 hover:underline">← Back to search</a>
+
+  @if (loading()) {
+    <div class="rounded-2xl bg-white p-10 text-center text-slate-500 shadow-sm">Loading parking details...</div>
+  } @else if (error() && !parking()) {
+    <div class="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700 shadow-sm">
+      {{ error() }}
+      <button type="button" (click)="load()" class="ml-2 font-semibold underline">Retry</button>
+    </div>
+  } @else if (parking()) {
+    <!-- Header -->
+    <div class="overflow-hidden rounded-3xl bg-white shadow-sm">
+      <div class="bg-gradient-to-br from-slate-900 via-blue-800 to-cyan-600 p-6 text-white sm:p-8">
+        <h1 class="text-2xl font-bold sm:text-3xl">{{ parking()!.name }}</h1>
+        <p class="mt-1 text-sm text-blue-100">📍 {{ parking()!.address }}</p>
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <app-rating [value]="parking()!.rating" [readonly]="true" />
+          <span class="rounded-full bg-white/15 px-3 py-1 text-sm font-semibold backdrop-blur">
+            {{ parking()!.pricePerHour }} EGP/hour
+          </span>
+          @if (coordinates()) {
+            <span class="rounded-full bg-white/15 px-3 py-1 text-xs backdrop-blur">
+              {{ coordinates()!.lat }}, {{ coordinates()!.lng }}
+            </span>
+          }
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-2 p-4 sm:p-6">
+        <app-status-badge status="available" />
+        <span class="text-sm text-slate-600">{{ availableSpots().length }} available</span>
+        <app-status-badge status="booked" />
+        <span class="text-sm text-slate-600">{{ bookedSpots().length }} booked</span>
+      </div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <a
+        [routerLink]="['/driver/parkings', id(), 'select-spot']"
+        class="flex-1 rounded-xl bg-blue-700 px-6 py-3 text-center font-semibold text-white transition hover:bg-blue-800"
+        [class.pointer-events-none]="!canBook()"
+        [class.opacity-50]="!canBook()"
+      >
+        Select Spot
+      </a>
+      <a
+        [routerLink]="['/driver/parkings', id(), 'booking']"
+        class="flex-1 rounded-xl border border-blue-700 px-6 py-3 text-center font-semibold text-blue-700 transition hover:bg-blue-50"
+        [class.pointer-events-none]="!canBook()"
+        [class.opacity-50]="!canBook()"
+      >
+        Book Now
+      </a>
+    </div>
+    @if (!canBook()) {
+      <p class="text-sm text-slate-500">No spots are currently available at this parking.</p>
+    }
+
+    <!-- Spots overview (read-only; selection happens on the Select Spot page) -->
+    <section class="rounded-2xl bg-white p-6 shadow-sm">
+      <h2 class="text-lg font-bold text-slate-900">Spots ({{ spots().length }})</h2>
+      @if (spots().length === 0) {
+        <p class="mt-2 text-sm text-slate-500">No spots listed for this parking yet.</p>
+      } @else {
+        <div class="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          @for (spot of spots(); track spot._id ?? spot.spotNumber) {
+            <app-parking-spot [spot]="spot" [selectable]="false" />
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Reviews -->
+    <section class="rounded-2xl bg-white p-6 shadow-sm">
+      <h2 class="text-lg font-bold text-slate-900">Reviews ({{ reviews().length }})</h2>
+      @if (reviews().length === 0) {
+        <p class="mt-2 text-sm text-slate-500">No reviews yet. Be the first to review after your visit.</p>
+      } @else {
+        <ul class="mt-4 space-y-4">
+          @for (review of reviews(); track review._id) {
+            <li class="rounded-xl border border-slate-200 p-4">
+              <app-rating [value]="review.rating" [readonly]="true" />
+              @if (review.comment) {
+                <p class="mt-2 text-sm text-slate-700">{{ review.comment }}</p>
+              }
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</div>

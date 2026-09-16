@@ -24,4 +24,17 @@ export class UsersService {
   updateProfile(id: string, name: string, phone?: string): Observable<ApiResponse<User>> {
     return this.http.patch<ApiResponse<User>>(`${this.apiUrl}/${id}`, { name, phone });
   }
+
+  /**
+   * Admin-only role change. Backend has no PATCH /:id/role — role is an
+   * admin-whitelisted field on PATCH /:id (see user.service.js).
+   */
+  updateRole(id: string, role: User['role']): Observable<ApiResponse<User>> {
+    return this.http.patch<ApiResponse<User>>(`${this.apiUrl}/${id}`, { role });
+  }
+
+  /** DELETE /:id — admin only. */
+  delete(id: string): Observable<ApiResponse<{ message: string }>> {
+    return this.http.delete<ApiResponse<{ message: string }>>(`${this.apiUrl}/${id}`);
+  }
 }

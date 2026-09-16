@@ -1,0 +1,38 @@
+@if (totalPages() > 1) {
+  <nav class="flex flex-wrap items-center justify-between gap-3" aria-label="Pagination">
+    <p class="text-xs text-slate-500">
+      Page {{ page() }} of {{ totalPages() }} · {{ totalItems() }} item(s)
+    </p>
+    <div class="flex items-center gap-1">
+      <button
+        type="button"
+        (click)="go(page() - 1)"
+        [disabled]="page() <= 1"
+        class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+      >
+        Prev
+      </button>
+      @for (p of pages(); track p) {
+        <button
+          type="button"
+          (click)="go(p)"
+          class="rounded-lg px-3 py-1.5 text-sm font-semibold"
+          [class.bg-indigo-700]="p === page()"
+          [class.text-white]="p === page()"
+          [class.text-slate-600]="p !== page()"
+          [class.hover:bg-slate-100]="p !== page()"
+        >
+          {{ p }}
+        </button>
+      }
+      <button
+        type="button"
+        (click)="go(page() + 1)"
+        [disabled]="page() >= totalPages()"
+        class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+      >
+        Next
+      </button>
+    </div>
+  </nav>
+}

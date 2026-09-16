@@ -10,6 +10,8 @@ import {
   ChartWidgetComponent,
   STATUS_COLORS,
 } from '../../../shared/components/chart-widget/chart-widget.component';
+import { AuthService } from '../../../core/services/auth.service';
+import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 
 function parkingKey(b: Booking): string {
   return typeof b.parkingId === 'string' ? b.parkingId : (b.parkingId._id ?? '');
@@ -18,13 +20,17 @@ function parkingKey(b: Booking): string {
 @Component({
   selector: 'app-owner-dashboard',
   standalone: true,
-  imports: [RouterLink, StatCardComponent, ChartWidgetComponent],
+  imports: [RouterLink, StatCardComponent, ChartWidgetComponent, SidebarComponent],
   templateUrl: './dashboard.component.html',
 })
 export class OwnerDashboardComponent implements OnInit {
   private parkingsSvc = inject(ParkingsService);
   private bookingsSvc = inject(BookingsService);
   private spotsSvc = inject(SpotsService);
+  private auth = inject(AuthService);
+
+  /** Sidebar role — same source the navbar uses (AuthService.currentUser). */
+  readonly role = computed(() => this.auth.currentUser()?.role ?? 'owner');
 
   readonly parkings = signal<Parking[]>([]);
   readonly bookings = signal<Booking[]>([]);

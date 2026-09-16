@@ -1,7 +1,7 @@
 <nav class="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
-  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:grid md:grid-cols-3">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-3">
     <!-- LEFT: brand -->
-    <div class="flex items-center justify-start">
+    <div class="flex shrink-0 items-center justify-start">
       <a
         routerLink="/"
         (click)="closeMenu()"
@@ -22,8 +22,8 @@
 
     <!-- CENTER: main navigation (desktop only) -->
     @if (!isLoggedIn()) {
-      <div class="hidden justify-center md:flex">
-        <nav class="flex items-center gap-1 text-sm" aria-label="Primary">
+      <div class="hidden min-w-0 flex-1 justify-center md:flex">
+        <nav class="flex max-w-full flex-wrap items-center justify-center gap-1 overflow-x-auto text-sm" aria-label="Primary">
           <a
             routerLink="/"
             routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
@@ -46,19 +46,25 @@
           >
             Features
           </a>
-          <!-- TODO(landing): scroll to an About section once the landing page
-               with id="about" exists at '/'. No invented routes. -->
           <a
-            href="#about"
+            routerLink="/about"
+            routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
             class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
           >
             About
           </a>
+          <a
+            routerLink="/contact"
+            routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+            class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+          >
+            Contact
+          </a>
         </nav>
       </div>
     } @else {
-      <div class="hidden justify-center md:flex">
-        <nav class="flex items-center gap-0.5 text-sm" aria-label="Primary">
+      <div class="hidden min-w-0 flex-1 justify-center md:flex">
+        <nav class="flex max-w-full flex-wrap items-center justify-center gap-0.5 overflow-x-auto text-sm" aria-label="Primary">
           <a
             routerLink="/"
             routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
@@ -76,13 +82,23 @@
           </a>
           @if (isOwner()) {
             <a
-              routerLink="/parkings/new"
+              routerLink="/owner/dashboard"
               routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
               class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
             >
-              Add parking
+              Dashboard
             </a>
           }
+          @if (isAdmin()) {
+            <a
+              routerLink="/admin/dashboard"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              Dashboard
+            </a>
+          }
+          @if (!isOwner() && !isAdmin()) {
           <a
             routerLink="/bookings"
             routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
@@ -107,12 +123,22 @@
             </span>
             Notifications
           </a>
+          }
+          @if (!isOwner()) {
+          <a
+            [routerLink]="profileLink()"
+            routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+            class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+          >
+            Profile
+          </a>
+          }
         </nav>
       </div>
     }
 
     <!-- RIGHT: actions (desktop) + hamburger (mobile) -->
-    <div class="flex items-center justify-end gap-2">
+    <div class="flex shrink-0 items-center justify-end gap-2">
       @if (!isLoggedIn()) {
         <div class="hidden items-center gap-1 text-sm md:flex">
           <a
@@ -131,6 +157,24 @@
         </div>
       } @else {
         <div class="hidden items-center gap-1 text-sm md:flex">
+          @if (isOwner() || isAdmin()) {
+            <a
+              [routerLink]="notificationsLink()"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              [attr.aria-label]="hasUnread() ? 'Notifications, unread' : 'Notifications'"
+              class="relative inline-flex items-center rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              <span class="relative inline-flex">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true">
+                  <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                  <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                </svg>
+                @if (hasUnread()) {
+                  <span class="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" aria-hidden="true"></span>
+                }
+              </span>
+            </a>
+          }
           <span class="rounded-lg bg-[#E8F1FB] px-3 py-2 font-medium text-[#003366]">
             {{ currentUser()?.name }}
           </span>
@@ -191,11 +235,20 @@
             Features
           </a>
           <a
-            href="#about"
+            routerLink="/about"
+            routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
             (click)="closeMenu()"
             class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
           >
             About
+          </a>
+          <a
+            routerLink="/contact"
+            routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+            (click)="closeMenu()"
+            class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+          >
+            Contact
           </a>
           <a
             routerLink="/login"
@@ -231,6 +284,22 @@
           </a>
           @if (isOwner()) {
             <a
+              routerLink="/owner/dashboard"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              (click)="closeMenu()"
+              class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              Dashboard
+            </a>
+            <a
+              routerLink="/owner/parkings"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              (click)="closeMenu()"
+              class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              My parkings
+            </a>
+            <a
               routerLink="/parkings/new"
               routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
               (click)="closeMenu()"
@@ -238,15 +307,91 @@
             >
               Add parking
             </a>
+            <a
+              routerLink="/owner/bookings"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              (click)="closeMenu()"
+              class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              Bookings
+            </a>
+            <a
+              routerLink="/owner/reviews"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              (click)="closeMenu()"
+              class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              Reviews
+            </a>
           }
-          <a
-            routerLink="/bookings"
-            routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
-            (click)="closeMenu()"
-            class="whitespace-nowrap rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
-          >
-            My bookings
-          </a>
+          @if (isAdmin()) {
+            <a
+              routerLink="/admin/dashboard"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              (click)="closeMenu()"
+              class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              Dashboard
+            </a>
+            <a
+              routerLink="/admin/users"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              (click)="closeMenu()"
+              class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              Users
+            </a>
+            <a
+              routerLink="/admin/parkings"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              (click)="closeMenu()"
+              class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              Parkings
+            </a>
+            <a
+              routerLink="/admin/spots"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              (click)="closeMenu()"
+              class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              Parking spots
+            </a>
+            <a
+              routerLink="/admin/bookings"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              (click)="closeMenu()"
+              class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              Bookings
+            </a>
+            <a
+              routerLink="/admin/reviews"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              (click)="closeMenu()"
+              class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              Reviews
+            </a>
+            <a
+              routerLink="/admin/settings"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              (click)="closeMenu()"
+              class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              Settings
+            </a>
+          }
+          @if (!isOwner() && !isAdmin()) {
+            <a
+              routerLink="/bookings"
+              routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+              (click)="closeMenu()"
+              class="whitespace-nowrap rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+            >
+              My bookings
+            </a>
+          }
           <a
             routerLink="/notifications"
             routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
@@ -264,6 +409,14 @@
               }
             </span>
             Notifications
+          </a>
+          <a
+            [routerLink]="profileLink()"
+            routerLinkActive="text-[#0060C0] bg-[#E8F1FB]"
+            (click)="closeMenu()"
+            class="rounded-lg px-3 py-2 font-medium text-[#003366] transition hover:text-[#0060C0]"
+          >
+            Profile
           </a>
           <span class="mt-1 rounded-lg bg-[#E8F1FB] px-3 py-2 font-medium text-[#003366]">
             {{ currentUser()?.name }}

@@ -9,17 +9,23 @@ import {
   ChartWidgetComponent,
   STATUS_COLORS,
 } from '../../../shared/components/chart-widget/chart-widget.component';
+import { AuthService } from '../../../core/services/auth.service';
+import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [StatCardComponent, ChartWidgetComponent],
+  imports: [StatCardComponent, ChartWidgetComponent, SidebarComponent],
   templateUrl: './dashboard.component.html',
 })
 export class AdminDashboardComponent implements OnInit {
   private usersSvc = inject(UsersService);
   private parkingsSvc = inject(ParkingsService);
   private bookingsSvc = inject(BookingsService);
+  private auth = inject(AuthService);
+
+  /** Sidebar role — same source the navbar uses (AuthService.currentUser). */
+  readonly role = computed(() => this.auth.currentUser()?.role ?? 'admin');
 
   readonly users = signal<User[]>([]);
   readonly parkings = signal<Parking[]>([]);

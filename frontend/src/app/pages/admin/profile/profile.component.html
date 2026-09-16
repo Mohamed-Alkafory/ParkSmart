@@ -1,0 +1,108 @@
+<section class="flex flex-col gap-6 lg:flex-row lg:items-start">
+  <app-sidebar [role]="role()" />
+  <div class="mx-auto w-full max-w-3xl flex-1 space-y-6">
+  <!-- Profile header from the admin UI flow. -->
+  <div
+    class="overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 to-violet-700 p-6 text-white shadow-lg sm:p-8"
+  >
+    <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
+      <div
+        class="flex h-20 w-20 items-center justify-center rounded-full bg-white/20 text-3xl font-bold ring-4 ring-white/20"
+      >
+        {{ (user()?.name ?? 'A').charAt(0).toUpperCase() }}
+      </div>
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wider text-indigo-100">Administrator</p>
+        <h1 class="mt-1 text-3xl font-bold">{{ user()?.name ?? 'My profile' }}</h1>
+        <p class="mt-1 text-sm text-indigo-100">Keep your account information up to date.</p>
+      </div>
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {{ error() }}
+    </p>
+  }
+  @if (message()) {
+    <p
+      class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
+    >
+      {{ message() }}
+    </p>
+  }
+
+  <!-- Email and role are read-only; the admin can edit name and phone. -->
+  <form
+    class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8"
+    (ngSubmit)="onSave()"
+  >
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <label for="adminName" class="mb-2 block text-sm font-semibold text-slate-700"
+          >Full name</label
+        >
+        <input
+          id="adminName"
+          name="name"
+          type="text"
+          required
+          class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+        />
+      </div>
+
+      <div>
+        <label for="adminEmail" class="mb-2 block text-sm font-semibold text-slate-700"
+          >Email</label
+        >
+        <input
+          id="adminEmail"
+          type="email"
+          class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-slate-500"
+          [value]="user()?.email ?? ''"
+          disabled
+        />
+      </div>
+
+      <div>
+        <label for="adminPhone" class="mb-2 block text-sm font-semibold text-slate-700"
+          >Phone</label
+        >
+        <input
+          id="adminPhone"
+          name="phone"
+          type="tel"
+          class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+          placeholder="Your phone number"
+          [ngModel]="phone()"
+          (ngModelChange)="phone.set($event)"
+        />
+      </div>
+
+      <div class="sm:col-span-2">
+        <label for="adminRole" class="mb-2 block text-sm font-semibold text-slate-700"
+          >Account role</label
+        >
+        <input
+          id="adminRole"
+          class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 capitalize text-slate-500"
+          [value]="user()?.role ?? ''"
+          disabled
+        />
+      </div>
+    </div>
+
+    <div class="mt-7 flex justify-end">
+      <button
+        type="submit"
+        class="rounded-xl bg-indigo-700 px-7 py-3 font-semibold text-white transition hover:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-60"
+        [disabled]="saving() || loading()"
+      >
+        {{ saving() ? 'Saving...' : 'Save changes' }}
+      </button>
+    </div>
+  </form>
+  </div>
+</section>

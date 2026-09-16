@@ -1,38 +1,104 @@
-import { Component, inject, input, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { ParkingsService } from '../../../core/services/parkings.service';
 import { SpotsService } from '../../../core/services/spots.service';
 import { ReviewsService } from '../../../core/services/reviews.service';
-import { BookingsService } from '../../../core/services/bookings.service';
-import { Spot, Review } from '../../../core/models/api.models';
+import { Parking, Review, Spot } from '../../../core/models/api.models';
+import { ParkingSpotComponent } from '../../../shared/components/parking-spot/parking-spot.component';
+import { RatingComponent } from '../../../shared/components/rating/rating.component';
+import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
+import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { getToken } from '../../../core/guards/auth.guard';
+import { getUserRole } from '../../../core/guards/owner.guard';
 
+/**
+ * Public parking details page (route /parkings/:id) — no login required.
+ * Same data pattern as the driver details page: GET /api/parkings/:id header
+ * plus GET /api/spots/parking/:id and GET /api/reviews/parking/:id in parallel.
+ * The CTA adapts: anonymous visitors go to /login (with returnUrl into the
+ * driver flow), signed-in drivers go straight to select-spot, other roles
+ * fall back to browsing /parkings.
+ */
 @Component({
   selector: 'app-parking-detail',
   standalone: true,
-  imports: [FormsModule],
+  imports: [
+    RouterLink,
+    ParkingSpotComponent,
+    RatingComponent,
+    StatusBadgeComponent,
+    ErrorStateComponent,
+    EmptyStateComponent,
+  ],
   templateUrl: './parking-detail.html',
 })
-export class ParkingDetail {
-  private spotsService = inject(SpotsService);
-  private reviewsService = inject(ReviewsService);
-  private bookingsService = inject(BookingsService);
+export class ParkingDetail implements OnInit {
+  private parkingsSvc = inject(ParkingsService);
+  private spotsSvc = inject(SpotsService);
+  private reviewsSvc = inject(ReviewsService);
 
   // Route param: /parkings/:id — use input() with withComponentInputBinding().
   readonly id = input<string>('');
 
+  readonly parking = signal<Parking | null>(null);
   readonly spots = signal<Spot[]>([]);
   readonly reviews = signal<Review[]>([]);
+  readonly loading = signal(false);
+  readonly error = signal<string | null>(null);
 
-  // TODO 1: in ngOnInit (implement OnInit): call spotsService.getByParking(id)
-  //   → GET /api/spots/parking/:parkingId, assign to spots signal.
-  // TODO 2: in ngOnInit: call reviewsService.getByParking(id)
-  //   → GET /api/reviews/parking/:parkingId, assign to reviews signal.
-  //   Note: backend has NO GET /api/parkings/:id, so header info must come
-  //   from navigation state or re-fetching the list.
-  // TODO 3: add bookSpot() method: call bookingsService.create(parkingId, startTime, durationHours)
-  //   → POST /api/bookings. Needs startTime + durationHours signals (form inputs).
-  // TODO 4: add submitReview(): call reviewsService.create(parkingId, rating, comment?)
-  //   → POST /api/reviews, rating 1..5.
-  // TODO 5 (owner only): addSpot(), changeSpotStatus(), removeSpot() using SpotsService
-  //   → POST /api/spots, PUT /api/spots/:id/status, DELETE /api/spots/:id.
-  //   Gate the buttons in the template with an isOwner check (decode JWT role).
+  readonly availableSpots = computed(() => this.spots().filter((s) => s.status === 'available'));
+  readonly bookedSpots = computed(() => this.spots().filter((s) => s.status === 'booked'));
+  readonly canBook = computed(() => this.availableSpots().length > 0);
+
+  /** Where "Book Now" goes, depending on who is looking at the page. */
+  readonly ctaLink = computed(() => {
+    const parkingId = this.id();
+    if (!getToken()) {
+      return {
+        commands: ['/login'],
+        queryParams: { returnUrl: `/driver/parkings/${parkingId}/select-spot` },
+      };
+    }
+    if (getUserRole() === 'driver' || getUserRole() === 'owner') {
+      return {
+        commands: ['/driver/parkings', parkingId, 'select-spot'],
+        queryParams: {},
+      };
+    }
+    return { commands: ['/parkings'], queryParams: {} };
+  });
+
+  ngOnInit(): void {
+    this.load();
+  }
+
+  load(): void {
+    const parkingId = this.id();
+    if (!parkingId) {
+      this.error.set('Parking ID is missing.');
+      return;
+    }
+    this.loading.set(true);
+    this.error.set(null);
+
+    forkJoin({
+      parking: this.parkingsSvc.getById(parkingId),
+      spots: this.spotsSvc.getByParking(parkingId),
+      reviews: this.reviewsSvc.getByParking(parkingId),
+    }).subscribe({
+      next: ({ parking, spots, reviews }) => {
+        this.parking.set(parking.data ?? null);
+        this.spots.set(spots.data ?? []);
+        this.reviews.set(reviews.data ?? []);
+        if (!parking.data) this.error.set('Parking not found.');
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err?.error?.message ?? 'Could not load parking details.');
+        this.loading.set(false);
+      },
+    });
+  }
 }

@@ -1,2 +1,82 @@
-﻿<!-- TODO: settings form. -->
-<div class="mx-auto max-w-xl rounded-2xl bg-white p-8 shadow"><h1 class="text-2xl font-bold">Settings</h1><p class="text-sm text-gray-500">TODO settings form</p></div>
+﻿<div class="flex flex-col gap-6 lg:flex-row lg:items-start">
+  <app-sidebar [role]="role()" />
+  <div class="mx-auto w-full max-w-2xl flex-1 space-y-6 lg:ml-64">
+  <div class="rounded-3xl bg-gradient-to-r from-indigo-700 to-violet-600 p-6 text-white shadow-lg sm:p-8">
+    <p class="text-sm font-semibold uppercase tracking-wider text-indigo-100">Platform</p>
+    <h1 class="mt-2 text-3xl font-bold">Settings</h1>
+    <p class="mt-2 text-sm text-indigo-100">Stored in this browser only — no backend endpoint exists.</p>
+  </div>
+
+  <form (ngSubmit)="onSave()" class="space-y-6 rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+    @if (error()) {
+      <p class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error() }}</p>
+    }
+    @if (message()) {
+      <p class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{{ message() }}</p>
+    }
+
+    <fieldset class="space-y-4">
+      <legend class="text-sm font-bold uppercase tracking-wider text-slate-500">General</legend>
+      <label class="block text-sm font-semibold text-slate-700">
+        App name
+        <input type="text" required maxlength="50" [ngModel]="appName()" (ngModelChange)="appName.set($event)" name="appName"
+          class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal focus:border-indigo-600 focus:outline-none" />
+      </label>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="block text-sm font-semibold text-slate-700">
+          Contact email
+          <input type="email" required [ngModel]="contactEmail()" (ngModelChange)="contactEmail.set($event)" name="contactEmail"
+            class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal focus:border-indigo-600 focus:outline-none" />
+        </label>
+        <label class="block text-sm font-semibold text-slate-700">
+          Support phone
+          <input type="tel" [ngModel]="supportPhone()" (ngModelChange)="supportPhone.set($event)" name="supportPhone"
+            class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal focus:border-indigo-600 focus:outline-none" />
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="space-y-4">
+      <legend class="text-sm font-bold uppercase tracking-wider text-slate-500">Booking defaults</legend>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="block text-sm font-semibold text-slate-700">
+          Default price / hour (EGP)
+          <input type="number" min="0" step="any" [ngModel]="defaultPricePerHour()" (ngModelChange)="defaultPricePerHour.set($event)" name="defaultPricePerHour"
+            class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal focus:border-indigo-600 focus:outline-none" />
+        </label>
+        <label class="block text-sm font-semibold text-slate-700">
+          Max booking duration (hours)
+          <input type="number" min="1" step="1" [ngModel]="maxBookingHours()" (ngModelChange)="maxBookingHours.set($event)" name="maxBookingHours"
+            class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal focus:border-indigo-600 focus:outline-none" />
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="space-y-3">
+      <legend class="text-sm font-bold uppercase tracking-wider text-slate-500">Notifications</legend>
+      <label class="flex items-center gap-3 text-sm font-medium text-slate-700">
+        <input type="checkbox" [ngModel]="notifyOnBooking()" (ngModelChange)="notifyOnBooking.set($event)" name="notifyOnBooking" class="h-4 w-4 accent-indigo-700" />
+        Notify on new booking
+      </label>
+      <label class="flex items-center gap-3 text-sm font-medium text-slate-700">
+        <input type="checkbox" [ngModel]="notifyOnCancellation()" (ngModelChange)="notifyOnCancellation.set($event)" name="notifyOnCancellation" class="h-4 w-4 accent-indigo-700" />
+        Notify on cancellation
+      </label>
+      <label class="block text-sm font-semibold text-slate-700">
+        Reminder before start (hours)
+        <input type="number" min="0" step="1" [ngModel]="reminderBeforeHours()" (ngModelChange)="reminderBeforeHours.set($event)" name="reminderBeforeHours"
+          class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal focus:border-indigo-600 focus:outline-none sm:max-w-xs" />
+      </label>
+    </fieldset>
+
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <button type="submit" class="flex-1 rounded-xl bg-indigo-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-800">
+        Save settings
+      </button>
+      <button type="button" (click)="onReset()" class="flex-1 rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+        Reset to defaults
+      </button>
+    </div>
+  </form>
+  </div>
+</div>

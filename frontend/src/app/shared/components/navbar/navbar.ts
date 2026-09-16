@@ -21,6 +21,17 @@ export class Navbar implements OnInit {
   readonly currentUser = this.auth.currentUser;
   readonly isLoggedIn = computed(() => this.currentUser() !== null);
   readonly isOwner = computed(() => this.currentUser()?.role === 'owner');
+  readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
+  readonly notificationsLink = computed(() =>
+    this.isAdmin() ? '/admin/notifications' : '/notifications',
+  );
+  readonly profileLink = computed(() =>
+    this.isAdmin()
+      ? '/admin/profile'
+      : this.isOwner()
+        ? '/owner/profile'
+        : '/profile',
+  );
   readonly menuOpen = signal(false);
   readonly hasUnread = signal(false);
   private readonly unreadUserId = signal<string | null>(null);
