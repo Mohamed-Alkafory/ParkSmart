@@ -1,2 +1,73 @@
-﻿<!-- TODO: @for stats <app-stat-card> + recent lists. -->
-<div class="space-y-6"><h1 class="text-2xl font-bold">Owner dashboard</h1><p class="text-sm text-gray-500">TODO stat cards</p></div>
+﻿<section class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold text-slate-900">Owner dashboard</h1>
+    <p class="mt-1 text-sm text-slate-500">Performance of your parkings at a glance.</p>
+  </div>
+
+  @if (loading()) {
+    <div class="rounded-2xl bg-white p-10 text-center text-slate-500 shadow-sm">
+      Loading dashboard…
+    </div>
+  } @else if (error()) {
+    <div class="rounded-2xl border border-red-200 bg-white p-10 text-center shadow-sm">
+      <p class="text-sm font-semibold text-red-700">{{ error() }}</p>
+      <button
+        type="button"
+        (click)="load()"
+        class="mt-4 rounded-xl bg-blue-700 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-800"
+      >
+        Retry
+      </button>
+    </div>
+  } @else if (parkings().length === 0) {
+    <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm">
+      <h2 class="font-semibold text-slate-800">No parkings yet</h2>
+      <p class="mt-1 text-sm text-slate-500">Add your first parking to start seeing stats.</p>
+      <a
+        routerLink="/parkings/new"
+        class="mt-4 inline-block rounded-xl bg-blue-700 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-800"
+      >
+        Add parking
+      </a>
+    </div>
+  } @else {
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <app-stat-card label="Parkings" [value]="parkings().length" hint="Your properties" />
+      <app-stat-card label="Spots" [value]="totalSpots()" hint="Across all parkings" />
+      <app-stat-card
+        label="Active bookings"
+        [value]="activeCount()"
+        hint="Currently parked"
+      />
+      <app-stat-card
+        label="Revenue"
+        [value]="revenue() + ' EGP'"
+        hint="Completed bookings"
+      />
+    </div>
+
+    @if (bookings().length > 0) {
+      <div class="grid gap-4 lg:grid-cols-2">
+        <app-chart-widget
+          type="doughnut"
+          title="Bookings by status"
+          [labels]="statusBreakdown().labels"
+          [data]="statusBreakdown().data"
+          [colors]="statusColors"
+        />
+        @if (revenuePerParking().data.length > 0) {
+          <app-chart-widget
+            type="bar"
+            title="Revenue per parking (EGP)"
+            [labels]="revenuePerParking().labels"
+            [data]="revenuePerParking().data"
+          />
+        }
+      </div>
+    } @else {
+      <div class="rounded-2xl bg-white p-10 text-center text-sm text-slate-500 shadow-sm">
+        No bookings yet — charts will appear once drivers start booking your spots.
+      </div>
+    }
+  }
+</section>

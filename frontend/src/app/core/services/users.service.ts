@@ -13,6 +13,10 @@ export class UsersService {
   private http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/users`;
 
+  getAll(): Observable<ApiResponse<User[]>> {
+    return this.http.get<ApiResponse<User[]>>(this.apiUrl);
+  }
+
   getById(id: string): Observable<ApiResponse<User>> {
     return this.http.get<ApiResponse<User>>(`${this.apiUrl}/${id}`);
   }

@@ -46,6 +46,14 @@ export const routes: Routes = [
       ),
     canActivate: [authGuard, ownerGuard],
   },
+  {
+    path: 'owner/dashboard',
+    loadComponent: () =>
+      import('./pages/owner/dashboard/dashboard.component').then(
+        (m) => m.OwnerDashboardComponent,
+      ),
+    canActivate: [authGuard, ownerGuard],
+  },
 
   // Driver selects one available spot before continuing to booking.
   {
@@ -84,6 +92,14 @@ export const routes: Routes = [
       ),
     canActivate: [authGuard, roleGuard(['admin'])],
   },
+  {
+    path: 'admin/dashboard',
+    loadComponent: () =>
+      import('./pages/admin/dashboard/dashboard.component').then(
+        (m) => m.AdminDashboardComponent,
+      ),
+    canActivate: [authGuard, roleGuard(['admin'])],
+  },
 
   {
     path: 'bookings',
@@ -98,15 +114,6 @@ export const routes: Routes = [
         (m) => m.NotificationsList,
       ),
     canActivate: [authGuard],
-  },
-
-  // TEMPORARY development preview — remove with its component folder.
-  {
-    path: 'components-preview',
-    loadComponent: () =>
-      import('./pages/components-preview/components-preview.component').then(
-        (m) => m.ComponentsPreviewComponent,
-      ),
   },
 
   { path: '**', redirectTo: 'parkings' },

@@ -17,12 +17,3 @@ export class ReviewsService {
     return this.http.post<ApiResponse<Review>>(this.apiUrl, { parkingId, rating, comment });
   }
 }
-  create(parkingId: string, rating: number, comment?: string): Observable<ApiResponse<Review>> {
-    // TODO 2: send POST to `${this.apiUrl}/` with exact body { parkingId, rating, comment? }.
-    //   Required: parkingId + rating (1..5). Comment is optional.
-    //   Protected: requireAuth (any role).
-    //   Note: backend addReview() is still a TODO stub.
-    //   Use: return this.http.post<ApiResponse<Review>>(this.apiUrl, { parkingId, rating, comment }).
-    throw new Error('Not implemented — see TODO 2');
-  }
-}
