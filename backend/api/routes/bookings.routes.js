@@ -13,11 +13,11 @@ const { requireAuth, requireRole } = require("../middlewares/auth.middleware");
  * Bookings Routes
  * Base: /api/bookings
  *
- * POST /api/bookings            → حجز جديد (أي user مسجل)
- * GET  /api/bookings            → كل الحجوزات (admin فقط)
- * GET  /api/bookings/my         → حجوزاتي (أي user مسجل)
- * GET  /api/bookings/owner      → حجوزات جراجاتي (owner فقط)
- * PATCH /api/bookings/:id/status → تغيير الحالة (صاحب الحجز أو صاحب الجراج أو admin)
+ * POST /api/bookings              → create a booking (any authenticated user)
+ * GET  /api/bookings              → all bookings (admin only)
+ * GET  /api/bookings/my           → current user's bookings (any authenticated user)
+ * GET  /api/bookings/owner        → bookings of the owner's parkings (owner only)
+ * PATCH /api/bookings/:id/status  → change status (booking owner, parking owner, or admin)
  */
 
 router.post("/", requireAuth, createBooking);

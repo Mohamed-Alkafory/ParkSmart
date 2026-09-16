@@ -7,24 +7,17 @@ const {
   JWT_EXPIRES_IN,
 } = require("../config/env.config");
 
-/**
- * Auth Service
- * المنطق الخاص بالتسجيل وتسجيل الدخول
- */
-
 // ===================== Register =====================
 
 async function registerUser(userData) {
   const { name, email, password, phone } = userData;
 
-  // 1. التأكد إن الـ email مش موجود
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
     throw new Error("Email already exists");
   }
 
-  // 2. التحقق من قوة الـ password قبل الـ hashing
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
@@ -34,11 +27,9 @@ async function registerUser(userData) {
     );
   }
 
-  // 3. عمل hash للـ password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // 4. إنشاء الـ User
-  // role مش بناخده من المستخدم عشان محدش يقدر يسجل نفسه admin
+  // Role is never taken from user input so nobody can register as admin.
   const user = await User.create({
     name,
     email,
@@ -46,7 +37,6 @@ async function registerUser(userData) {
     phone,
   });
 
-  // 5. إخفاء الـ password قبل إرجاع البيانات
   const userResponse = user.toObject();
   delete userResponse.password;
 
@@ -58,14 +48,12 @@ async function registerUser(userData) {
 async function loginUser(credentials) {
   const { email, password } = credentials;
 
-  // 1. البحث عن المستخدم بالـ email
   const user = await User.findOne({ email });
 
   if (!user) {
     throw new Error("Invalid email or password");
   }
 
-  // 2. مقارنة الـ password بالـ hashed password
   const isPasswordCorrect = await bcrypt.compare(
     password,
     user.password
@@ -75,7 +63,6 @@ async function loginUser(credentials) {
     throw new Error("Invalid email or password");
   }
 
-  // 3. إنشاء JWT Token
   const token = jwt.sign(
     {
       id: user._id,
@@ -87,11 +74,9 @@ async function loginUser(credentials) {
     }
   );
 
-  // 4. إخفاء الـ password
   const userResponse = user.toObject();
   delete userResponse.password;
 
-  // 5. إرجاع الـ token وبيانات المستخدم
   return {
     token,
     user: userResponse,
@@ -154,4 +139,3 @@ module.exports = {
   loginUser,
   findOrCreateOAuthUser,
 };
-

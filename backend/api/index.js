@@ -39,7 +39,7 @@ app.get("/", (req, res) => {
   res.json({ message: "ParkSmart API is running 🚀" });
 });
 
-// ─── Error Handler (لازم يفضل آخر حاجة) ───────────────────────
+// ─── Error Handler (must stay last) ───────────────────────────
 app.use(errorHandler);
 
 // ─── Start Server ──────────────────────────────────────────────

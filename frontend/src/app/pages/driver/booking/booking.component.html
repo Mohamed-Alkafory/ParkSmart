@@ -1,2 +1,70 @@
-﻿<!-- TODO: startTime + durationHours form + price preview + error. -->
-<div class="mx-auto max-w-xl rounded-2xl bg-white p-8 shadow"><h1 class="text-2xl font-bold">Book spot</h1><p class="text-sm text-gray-500">TODO booking form</p></div>
+﻿<div class="mx-auto max-w-xl space-y-6">
+  <div class="rounded-2xl bg-white p-8 shadow">
+    <h1 class="text-2xl font-bold text-slate-900">Book spot</h1>
+    @if (spotId()) {
+      <p class="mt-1 text-sm text-slate-500">
+        Booking spot <span class="font-semibold text-slate-700">{{ spotId() }}</span>.
+      </p>
+    } @else {
+      <p class="mt-1 text-sm text-slate-500">
+        No specific spot selected — an available spot will be assigned automatically.
+        <a
+          [routerLink]="['/driver/parkings', id(), 'select-spot']"
+          class="font-semibold text-blue-700 hover:underline"
+        >
+          Choose a spot
+        </a>
+      </p>
+    }
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="rounded-2xl bg-white p-8 shadow">
+    @if (error()) {
+      <p class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        {{ error() }}
+      </p>
+    }
+
+    <label class="block text-sm font-semibold text-slate-700" for="startTime">Start time</label>
+    <input
+      id="startTime"
+      type="datetime-local"
+      formControlName="startTime"
+      class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none"
+    />
+    @if (form.get('startTime')?.touched && form.get('startTime')?.invalid) {
+      <p class="mt-1 text-xs text-red-600">Start time is required.</p>
+    }
+
+    <label class="mt-4 block text-sm font-semibold text-slate-700" for="durationHours">
+      Duration (hours)
+    </label>
+    <input
+      id="durationHours"
+      type="number"
+      min="1"
+      step="1"
+      formControlName="durationHours"
+      class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none"
+    />
+    @if (form.get('durationHours')?.touched && form.get('durationHours')?.invalid) {
+      <p class="mt-1 text-xs text-red-600">Duration must be at least 1 hour.</p>
+    }
+
+    @if (estimatedTotal() !== null) {
+      <p class="mt-4 rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
+        Estimated total:
+        <span class="font-bold text-blue-700">{{ estimatedTotal() }} EGP</span>
+        <span class="text-slate-500">({{ pricePerHour() }} EGP/h × {{ durationValue() }}h)</span>
+      </p>
+    }
+
+    <button
+      type="submit"
+      [disabled]="form.invalid || submitting()"
+      class="mt-6 w-full rounded-xl bg-blue-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {{ submitting() ? 'Booking…' : 'Confirm booking' }}
+    </button>
+  </form>
+</div>

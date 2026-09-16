@@ -13,9 +13,12 @@ import { Parking } from '../../../core/models/api.models';
 export class ParkingList {
   private parkingsService = inject(ParkingsService);
 
-  // TODO 1: create signals: parkings = signal<Parking[]>([]), loading, error,
-  //   plus lat / lng / maxDistance filter signals for the nearby search.
   readonly parkings = signal<Parking[]>([]);
+  readonly loading = signal(false);
+  readonly error = signal<string | null>(null);
+  readonly lat = signal(30.0444);
+  readonly lng = signal(31.2357);
+  readonly maxDistance = signal(5000);
 
   loadAll(): void {
     // TODO 2: call parkingsService.getAll() and subscribe();
@@ -25,8 +28,22 @@ export class ParkingList {
   }
 
   searchNearby(): void {
-    // TODO 3: call parkingsService.getNearby(lat, lng, maxDistance) and
-    //   assign result to parkings signal. Backend query: ?lat=&lng=&maxDistance= (meters, default 5000).
-    throw new Error('Not implemented — see TODO 3');
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.parkingsService
+      .getNearby(this.lat(), this.lng(), this.maxDistance())
+      .subscribe({
+        next: (res) => {
+          this.parkings.set(res.data ?? []);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          this.error.set(
+            err.error?.message ?? 'Failed to search nearby parkings'
+          );
+          this.loading.set(false);
+        },
+      });
   }
 }

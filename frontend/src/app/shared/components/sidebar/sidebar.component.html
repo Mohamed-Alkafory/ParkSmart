@@ -1,2 +1,32 @@
-﻿<!-- TODO (template): @if (role() === 'owner') owner links, admin links, driver links. Tailwind vertical nav. -->
-<aside class="w-56 rounded-2xl bg-white p-4 shadow"><p class="text-sm text-gray-500">Sidebar — TODO links per role</p></aside>
+<aside
+  class="w-full overflow-hidden rounded-3xl bg-slate-950 text-white shadow-xl lg:sticky lg:top-6 lg:w-64"
+>
+  <!-- Sidebar brand and current workspace. -->
+  <div class="border-b border-white/10 bg-gradient-to-br from-blue-700 to-emerald-500 p-5">
+    <a routerLink="/" class="text-xl font-bold tracking-tight">ParkSmart</a>
+    <p class="mt-1 text-xs font-medium text-white/80">{{ title() }}</p>
+  </div>
+
+  <!-- Links change automatically when the role input changes. -->
+  <nav
+    class="flex gap-2 overflow-x-auto p-3 lg:flex-col lg:overflow-visible"
+    aria-label="Dashboard navigation"
+  >
+    @for (link of links(); track link.route) {
+      <a
+        [routerLink]="link.route"
+        routerLinkActive="bg-white text-slate-950 shadow-sm"
+        [routerLinkActiveOptions]="{ exact: link.route === '/parkings' }"
+        class="flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white lg:w-full"
+      >
+        <span
+          class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-xs font-bold"
+          aria-hidden="true"
+        >
+          {{ link.icon }}
+        </span>
+        <span>{{ link.label }}</span>
+      </a>
+    }
+  </nav>
+</aside>

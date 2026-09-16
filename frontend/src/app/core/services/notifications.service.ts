@@ -2,11 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, AppNotification } from '../models/api.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsService {
   private http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/notifications';
+  private readonly apiUrl = `${environment.apiUrl}/notifications`;
 
   getMine(): Observable<ApiResponse<AppNotification[]>> {
     return this.http.get<ApiResponse<AppNotification[]>>(this.apiUrl);

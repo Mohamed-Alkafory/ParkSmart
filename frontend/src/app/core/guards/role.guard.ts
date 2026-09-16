@@ -17,21 +17,26 @@ import { getUserRole } from './owner.guard';
  *
  * Note: this is UI-level protection only. Backend authorization is enforced
  * by requireRole() in auth.middleware.js (never rely on this guard alone).
+ *
+ * Checks 'driver' | 'owner' | 'admin' per route; unauthorized users
+ * go to '/login' (no token) or '/parkings' (wrong role).
  */
 export function roleGuard(allowed: string[]): CanActivateFn {
   return (route, state) => {
     const router = inject(Router);
 
+    // A missing token means the user must sign in first.
     if (!getToken()) {
       return router.createUrlTree(['/login'], {
         queryParams: { returnUrl: state.url },
       });
     }
 
-    if (allowed.includes(getUserRole() ?? '')) {
-      return true;
+    // Logged-in users can open only pages allowed for their role.
+    if (!allowed.includes(getUserRole() ?? '')) {
+      return router.createUrlTree(['/parkings']);
     }
 
-    return router.createUrlTree(['/parkings']);
+    return true;
   };
 }

@@ -1,21 +1,19 @@
 const express = require('express');
 const router  = express.Router();
-const { getReviewsByParking, createReview } = require('../controller/reviews.controller');
+const { 
+  getReviewsByParking, 
+  createReview, 
+  getMyReviews, 
+  deleteReview 
+} = require('../controllers/reviews.controller');
 const { requireAuth } = require('../middlewares/auth.middleware');
 
-/**
- * Reviews Routes
- * Base: /api/reviews
- *
- * GET  /api/reviews/parking/:parkingId → تقييمات جراج معين (عام)
- * POST /api/reviews                    → إضافة تقييم (driver — لازم يكون عنده حجز قديم في الجراج ده)
- *
- * TODO: ممكن تضيف:
- *   - DELETE /api/reviews/:id → حذف تقييم (صاحبه أو admin)
- *   - التحقق إن الـ user عمل حجز في الجراج ده قبل ما يقدر يقيّمه
- */
-
+// Public Route: Get reviews for a specific parking
 router.get('/parking/:parkingId', getReviewsByParking);
-router.post('/',                  requireAuth, createReview);
+
+// Protected Routes: Require Authentication
+router.get('/my', requireAuth, getMyReviews);
+router.post('/', requireAuth, createReview);
+router.delete('/:id', requireAuth, deleteReview);
 
 module.exports = router;

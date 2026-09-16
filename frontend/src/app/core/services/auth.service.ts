@@ -15,13 +15,24 @@ export class AuthService {
 
   readonly currentUser = signal<User | null>(null);
 
-  register(name: string, email: string, password: string, phone?: string): Observable<ApiResponse<User>> {
+  register(
+    name: string,
+    email: string,
+    password: string,
+    phone?: string
+  ): Observable<ApiResponse<User>> {
     const body = { name, email, password, ...(phone ? { phone } : {}) };
     return this.http.post<ApiResponse<User>>(`${this.apiUrl}/register`, body);
   }
 
-  login(email: string, password: string): Observable<ApiResponse<AuthPayload>> {
-    return this.http.post<ApiResponse<AuthPayload>>(`${this.apiUrl}/login`, { email, password });
+  login(
+    email: string,
+    password: string
+  ): Observable<ApiResponse<AuthPayload>> {
+    return this.http.post<ApiResponse<AuthPayload>>(
+      `${this.apiUrl}/login`,
+      { email, password }
+    );
   }
 
   logout(): void {

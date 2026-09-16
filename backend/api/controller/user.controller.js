@@ -1,7 +1,8 @@
 ﻿const userService = require("../services/user.service");
 
-// ===================== Get All Users =====================
-
+/**
+ * GET /api/users — admin only.
+ */
 async function getUsers(req, res, next) {
   try {
     const data = await userService.getUsers();
@@ -15,8 +16,9 @@ async function getUsers(req, res, next) {
   }
 }
 
-// ===================== Get User By ID =====================
-
+/**
+ * GET /api/users/:id — self or admin.
+ */
 async function getUserById(req, res, next) {
   try {
     const data = await userService.getUserById(req.params.id);
@@ -37,8 +39,9 @@ async function getUserById(req, res, next) {
   }
 }
 
-// ===================== Update User =====================
-
+/**
+ * PATCH /api/users/:id — self or admin.
+ */
 async function updateUser(req, res, next) {
   try {
     const data = await userService.updateUser(
@@ -63,8 +66,9 @@ async function updateUser(req, res, next) {
   }
 }
 
-// ===================== Delete User =====================
-
+/**
+ * DELETE /api/users/:id — admin only.
+ */
 async function deleteUser(req, res, next) {
   try {
     const data = await userService.deleteUser(req.params.id);

@@ -11,14 +11,14 @@ const { requireAuth } = require('../middlewares/auth.middleware');
  * Notifications Routes
  * Base: /api/notifications
  *
- * ⚠️ كل الـ routes هنا تحتاج requireAuth — مفيش إشعارات عامة
+ * All routes here require requireAuth — there are no public notifications.
  *
- * GET   /api/notifications           → كل إشعاراتي
- * PATCH /api/notifications/read-all  → علّم الكل كمقروء
- * PATCH /api/notifications/:id/read  → علّم إشعار كمقروء
+ * GET   /api/notifications           → current user's notifications
+ * PATCH /api/notifications/read-all  → mark all as read
+ * PATCH /api/notifications/:id/read  → mark one notification as read
  *
- * ⚠️ ترتيب الـ routes مهم — /read-all لازم قبل /:id/read
- *   عشان Express ميعملش confusion بين /read-all و /:id
+ * Route order matters — /read-all must come before /:id/read
+ * so Express does not confuse /read-all with /:id.
  */
 
 router.get('/',                 requireAuth, getMyNotifications);
