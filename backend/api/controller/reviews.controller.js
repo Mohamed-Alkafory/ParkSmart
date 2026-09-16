@@ -38,5 +38,34 @@ async function createReview(req, res, next) {
     next(err);
   }
 }
+/**
+ * GET /api/reviews/my
+ * Requires requireAuth.
+ */
+async function getMyReviews(req, res, next) {
+  try {
+    const data = await reviewsService.fetchUserReviews(req.user.id);
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
 
-module.exports = { getReviewsByParking, createReview };
+/**
+ * DELETE /api/reviews/:id
+ * Requires requireAuth.
+ */
+async function deleteReview(req, res, next) {
+  try {
+    const data = await reviewsService.deleteReview(req.params.id, req.user);
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
+module.exports = {
+  getReviewsByParking,
+  createReview,
+  getMyReviews,
+  deleteReview
+};
