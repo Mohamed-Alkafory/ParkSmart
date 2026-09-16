@@ -1,20 +1,19 @@
 const express = require('express');
 const router  = express.Router();
-const { getReviewsByParking, createReview } = require('../controller/reviews.controller');
+const { 
+  getReviewsByParking, 
+  createReview, 
+  getMyReviews, 
+  deleteReview 
+} = require('../controllers/reviews.controller');
 const { requireAuth } = require('../middlewares/auth.middleware');
 
-/**
- * Reviews Routes
- * Base: /api/reviews
- *
- * GET  /api/reviews/parking/:parkingId → reviews of a parking (public)
- * POST /api/reviews                    → add a review (must have booked the parking before)
- *
- * Possible addition:
- *   - DELETE /api/reviews/:id → delete a review (its author or admin)
- */
-
+// Public Route: Get reviews for a specific parking
 router.get('/parking/:parkingId', getReviewsByParking);
-router.post('/',                  requireAuth, createReview);
+
+// Protected Routes: Require Authentication
+router.get('/my', requireAuth, getMyReviews);
+router.post('/', requireAuth, createReview);
+router.delete('/:id', requireAuth, deleteReview);
 
 module.exports = router;
