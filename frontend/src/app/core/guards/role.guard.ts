@@ -5,7 +5,19 @@ import { getUserRole } from './owner.guard';
 
 /**
  * Generic role guard — follows owner.guard.ts pattern.
- * Usage in app.routes.ts: canActivate: [authGuard, roleGuard(['admin'])]
+ *
+ * Usage in app.routes.ts:
+ *   canActivate: [authGuard, roleGuard(['admin'])]
+ *   canActivate: [authGuard, roleGuard(['owner', 'admin'])]
+ *
+ * Behavior:
+ *   1. No token            → redirect to /login with returnUrl.
+ *   2. Role not allowed    → redirect to /parkings (403-equivalent).
+ *   3. Role allowed        → allow navigation.
+ *
+ * Note: this is UI-level protection only. Backend authorization is enforced
+ * by requireRole() in auth.middleware.js (never rely on this guard alone).
+ *
  * Checks 'driver' | 'owner' | 'admin' per route; unauthorized users
  * go to '/login' (no token) or '/parkings' (wrong role).
  */

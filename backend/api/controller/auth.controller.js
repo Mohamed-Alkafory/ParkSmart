@@ -1,5 +1,10 @@
 const authService = require("../services/auth.service");
 
+const {
+  OAUTH_SUCCESS_REDIRECT,
+  OAUTH_FAILURE_REDIRECT,
+} = require("../config/env.config");
+
 /**
  * POST /api/auth/register
  */
@@ -58,7 +63,41 @@ async function login(req, res, next) {
   }
 }
 
+/**
+ * GET /api/auth/google/callback
+ * Google OAuth callback — passport sets req.user = { provider, providerId, email, name }
+ */
+async function googleCallback(req, res) {
+  await handleOAuthCallback(req, res);
+}
+
+/**
+ * GET /api/auth/facebook/callback
+ * Facebook OAuth callback
+ */
+async function facebookCallback(req, res) {
+  await handleOAuthCallback(req, res);
+}
+
+async function handleOAuthCallback(req, res) {
+  try {
+    const data = await authService.findOrCreateOAuthUser(req.user);
+
+    const query = new URLSearchParams({
+      token: data.token,
+      user: JSON.stringify(data.user),
+    });
+
+    return res.redirect(`${OAUTH_SUCCESS_REDIRECT}?${query.toString()}`);
+  } catch (err) {
+    const query = new URLSearchParams({ error: err.message });
+    return res.redirect(`${OAUTH_FAILURE_REDIRECT}?${query.toString()}`);
+  }
+}
+
 module.exports = {
   register,
   login,
+  googleCallback,
+  facebookCallback,
 };

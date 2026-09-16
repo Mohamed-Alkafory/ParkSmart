@@ -19,6 +19,13 @@ export const routes: Routes = [
     path: 'register',
     loadComponent: () => import('./features/auth/register/register').then((m) => m.Register),
   },
+  {
+    path: 'oauth-callback',
+    loadComponent: () =>
+      import('./features/auth/oauth-callback/oauth-callback').then(
+        (m) => m.OAuthCallback,
+      ),
+  },
 
   {
     path: 'parkings',
