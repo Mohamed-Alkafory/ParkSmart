@@ -1,5 +1,6 @@
 export const environment = {
-  production: false,
-  backendUrl: 'http://localhost:3000',
-  frontendUrl: 'http://localhost:4200',
+  production: true,
+  backendUrl: 'https://your-backend.example.com',
+  apiUrl: 'https://your-backend.example.com/api',
+  frontendUrl: 'https://your-frontend.example.com',
 };
