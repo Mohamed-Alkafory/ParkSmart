@@ -1,0 +1,7 @@
+/* The <aside> must participate in the page flex layout directly.
+   Without this, the <app-sidebar> host stays an inline element and the
+   inner aside (w-full / lg:w-64) sizes unpredictably inside flex rows,
+   collapsing or overflowing next to the page content. */
+:host {
+  display: contents;
+}

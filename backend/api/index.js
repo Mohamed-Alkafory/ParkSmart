@@ -4,6 +4,7 @@ const cors = require("cors");
 const { PORT } = require("./config/env.config");
 const connectDB = require("./config/db.config");
 const errorHandler = require("./middlewares/errorHandler");
+const passport = require("./config/passport");
 
 // Routes
 const authRoutes          = require('./routes/auth.routes');
@@ -19,6 +20,7 @@ const app = express();
 // ─── Middlewares ───────────────────────────────────────────────
 app.use(cors());
 app.use(express.json());
+app.use(passport.initialize());
 
 // ─── DB Connection ─────────────────────────────────────────────
 connectDB();

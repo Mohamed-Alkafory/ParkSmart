@@ -29,6 +29,13 @@ export const routes: Routes = [
     path: 'register',
     loadComponent: () => import('./features/auth/register/register').then((m) => m.Register),
   },
+  {
+    path: 'oauth-callback',
+    loadComponent: () =>
+      import('./features/auth/oauth-callback/oauth-callback').then(
+        (m) => m.OAuthCallback,
+      ),
+  },
 
   {
     path: 'parkings',
@@ -199,6 +206,12 @@ export const routes: Routes = [
       import('./pages/admin/dashboard/dashboard.component').then(
         (m) => m.AdminDashboardComponent,
       ),
+    canActivate: [authGuard, roleGuard(['admin'])],
+  },
+  {
+    path: 'admin/profile',
+    loadComponent: () =>
+      import('./pages/admin/profile/profile.component').then((m) => m.AdminProfileComponent),
     canActivate: [authGuard, roleGuard(['admin'])],
   },
 

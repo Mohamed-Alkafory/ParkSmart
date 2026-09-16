@@ -1,15 +1,13 @@
+<!-- Fixed app sidebar: full viewport height, flush to the top-left viewport
+     edges, always visible while content scrolls. Hidden below lg, where the
+     navbar hamburger menu takes over navigation. Content pages offset
+     themselves with lg:ml-64. -->
 <aside
-  class="w-full overflow-hidden rounded-3xl bg-slate-950 text-white shadow-xl lg:sticky lg:top-6 lg:w-64"
+  class="fixed inset-y-0 left-0 z-40 hidden w-64 overflow-hidden bg-slate-950 text-white shadow-xl lg:block"
 >
-  <!-- Sidebar brand and current workspace. -->
-  <div class="border-b border-white/10 bg-gradient-to-br from-blue-700 to-emerald-500 p-5">
-    <a routerLink="/" class="text-xl font-bold tracking-tight">ParkSmart</a>
-    <p class="mt-1 text-xs font-medium text-white/80">{{ title() }}</p>
-  </div>
-
   <!-- Links change automatically when the role input changes. -->
   <nav
-    class="flex gap-2 overflow-x-auto p-3 lg:flex-col lg:overflow-visible"
+    class="flex h-full flex-col gap-2 overflow-y-auto p-3 pt-20"
     aria-label="Dashboard navigation"
   >
     @for (link of links(); track link.route) {

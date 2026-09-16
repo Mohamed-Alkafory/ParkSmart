@@ -84,7 +84,58 @@ async function loginUser(credentials) {
 }
 
 
+// ===================== OAuth Find-or-Create =====================
+
+async function findOrCreateOAuthUser({ provider, providerId, email, name }) {
+  if (!email) {
+    throw new Error('OAuth provider did not return an email address');
+  }
+
+  // 1. Find by provider + providerId first (same Google/Facebook account)
+  let user = await User.findOne({ provider, providerId });
+
+  if (user) {
+    return formatUserResponse(user);
+  }
+
+  // 2. Find by email (user may have registered normally before)
+  user = await User.findOne({ email });
+
+  if (user) {
+    // Link the OAuth provider to the existing account
+    user.provider = provider;
+    user.providerId = providerId;
+    await user.save();
+    return formatUserResponse(user);
+  }
+
+  // 3. Create new user — always default to "driver"
+  user = await User.create({
+    name: name || email.split('@')[0],
+    email,
+    provider,
+    providerId,
+    role: 'driver',
+  });
+
+  return formatUserResponse(user);
+}
+
+function formatUserResponse(user) {
+  const userResponse = user.toObject();
+  delete userResponse.password;
+
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  );
+
+  return { token, user: userResponse };
+}
+
 module.exports = {
   registerUser,
   loginUser,
+  findOrCreateOAuthUser,
 };

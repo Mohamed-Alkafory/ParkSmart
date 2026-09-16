@@ -17,6 +17,7 @@ interface SidebarLink {
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './sidebar.component.html',
+  styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
   readonly role = input<UserRole>('driver');
@@ -33,6 +34,7 @@ export class SidebarComponent {
       return [
         { label: 'Dashboard', route: '/owner/dashboard', icon: '▦' },
         { label: 'My parkings', route: '/owner/parkings', icon: 'P' },
+        { label: 'Add parking', route: '/owner/parkings/new', icon: '+' },
         { label: 'Bookings', route: '/owner/bookings', icon: 'B' },
         { label: 'Reviews', route: '/owner/reviews', icon: 'R' },
         { label: 'Notifications', route: '/notifications', icon: 'N' },

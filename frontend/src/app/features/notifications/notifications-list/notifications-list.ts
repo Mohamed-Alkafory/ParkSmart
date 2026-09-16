@@ -1,27 +1,30 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { NotificationsService } from '../../../core/services/notifications.service';
 import { AppNotification } from '../../../core/models/api.models';
+import { NotificationItemComponent } from '../../../shared/components/notification-item/notification-item.component';
+import { LoadingComponent } from '../../../shared/components/loading/loading.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
 
-/**
- * Notifications page: Notifications in the design flow (shared by all roles).
- * GET /api/notifications, PATCH /api/notifications/:id/read, PATCH /read-all.
- */
 @Component({
   selector: 'app-notifications-list',
   standalone: true,
-  imports: [DatePipe],
+  imports: [
+    NotificationItemComponent,
+    LoadingComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+  ],
   templateUrl: './notifications-list.html',
 })
 export class NotificationsList implements OnInit {
   private notificationsService = inject(NotificationsService);
 
   readonly notifications = signal<AppNotification[]>([]);
-  readonly loading = signal(false);
+  readonly loading = signal(true);
   readonly error = signal<string | null>(null);
-  readonly actingAll = signal(false);
 
-  readonly unreadCount = computed(() => this.notifications().filter((n) => !n.isRead).length);
+  readonly hasUnread = computed(() => this.notifications().some((n) => !n.isRead));
 
   ngOnInit(): void {
     this.load();
@@ -31,46 +34,34 @@ export class NotificationsList implements OnInit {
     this.loading.set(true);
     this.error.set(null);
     this.notificationsService.getMine().subscribe({
-      next: (res) => {
-        this.notifications.set(res.data ?? []);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.error.set(err?.error?.message ?? 'Could not load notifications.');
-        this.loading.set(false);
-      },
+      next: (res) => this.notifications.set(res.data ?? []),
+      error: (err) => this.error.set(extractMessage(err)),
+      complete: () => this.loading.set(false),
     });
   }
 
-  markOneRead(id?: string): void {
-    if (!id) return;
-    const current = this.notifications().find((n) => n._id === id);
-    if (!current || current.isRead) return;
+  markOneRead(id: string): void {
     this.notificationsService.markAsRead(id).subscribe({
-      next: (res) => {
-        const updated = res.data ?? { ...current, isRead: true };
-        this.notifications.update((list) =>
-          list.map((n) => (n._id === id ? updated : n)),
-        );
-      },
-      error: (err) => {
-        this.error.set(err?.error?.message ?? 'Could not mark notification as read.');
-      },
+      next: () =>
+        this.notifications.update((items) =>
+          items.map((n) => (n._id === id ? { ...n, isRead: true } : n)),
+        ),
+      error: (err) => this.error.set(extractMessage(err)),
     });
   }
 
   markAllRead(): void {
-    if (this.actingAll() || this.unreadCount() === 0) return;
-    this.actingAll.set(true);
     this.notificationsService.markAllAsRead().subscribe({
-      next: () => {
-        this.notifications.update((list) => list.map((n) => ({ ...n, isRead: true })));
-        this.actingAll.set(false);
-      },
-      error: (err) => {
-        this.error.set(err?.error?.message ?? 'Could not mark all as read.');
-        this.actingAll.set(false);
-      },
+      next: () =>
+        this.notifications.update((items) =>
+          items.map((n) => ({ ...n, isRead: true })),
+        ),
+      error: (err) => this.error.set(extractMessage(err)),
     });
   }
+}
+
+function extractMessage(err: unknown): string {
+  const e = err as { error?: { message?: string } } | undefined;
+  return e?.error?.message ?? 'Something went wrong while loading notifications.';
 }
