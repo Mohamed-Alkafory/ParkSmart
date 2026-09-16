@@ -10,12 +10,13 @@ export class ReviewsService {
   private readonly apiUrl = `${environment.apiUrl}/reviews`;
 
   getByParking(parkingId: string): Observable<ApiResponse<Review[]>> {
-    // TODO 1: send GET to `${this.apiUrl}/parking/${parkingId}` (public).
-    //   Note from Phase 1: backend fetchReviewsByParking() is still a TODO stub.
-    //   Use: return this.http.get<ApiResponse<Review[]>>(url).
-    throw new Error('Not implemented — see TODO 1');
+    return this.http.get<ApiResponse<Review[]>>(`${this.apiUrl}/parking/${parkingId}`);
   }
 
+  create(parkingId: string, rating: number, comment?: string): Observable<ApiResponse<Review>> {
+    return this.http.post<ApiResponse<Review>>(this.apiUrl, { parkingId, rating, comment });
+  }
+}
   create(parkingId: string, rating: number, comment?: string): Observable<ApiResponse<Review>> {
     // TODO 2: send POST to `${this.apiUrl}/` with exact body { parkingId, rating, comment? }.
     //   Required: parkingId + rating (1..5). Comment is optional.
