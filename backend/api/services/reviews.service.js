@@ -110,5 +110,50 @@ async function addReview(reviewData) {
   await review.populate('userId', 'name');
   return review;
 }
+async function fetchUserReviews(userId) {
+  if (!userId || !mongoose.isValidObjectId(userId)) {
+    throw createError(400, 'Invalid user ID');
+  }
 
-module.exports = { fetchReviewsByParking, addReview };
+  return await Review.find({ userId })
+    .populate('parkingId', 'name address')
+    .sort({ createdAt: -1 });
+}
+
+async function deleteReview(reviewId, user) {
+  if (!reviewId || !mongoose.isValidObjectId(reviewId)) {
+    throw createError(400, 'Invalid review ID');
+  }
+
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    throw createError(404, 'Review not found');
+  }
+
+  if (review.userId.toString() !== user.id && user.role !== 'admin') {
+    throw createError(403, 'You are not allowed to delete this review');
+  }
+
+  const parkingId = review.parkingId;
+  await Review.findByIdAndDelete(reviewId);
+
+  const parking = await Parking.findById(parkingId);
+  if (parking) {
+    const reviews = await Review.find({ parkingId }).select('rating');
+    const avg =
+      reviews.length > 0
+        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        : 0;
+
+    parking.rating = Math.round(avg * 10) / 10;
+    await parking.save();
+  }
+
+  return { message: 'Review deleted successfully' };
+}
+module.exports = {
+  fetchReviewsByParking,
+  addReview,
+  fetchUserReviews,
+  deleteReview
+};
