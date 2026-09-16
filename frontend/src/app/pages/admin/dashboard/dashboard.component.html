@@ -1,2 +1,60 @@
-﻿<!-- TODO: stat cards + charts placeholder. -->
-<div class="space-y-6"><h1 class="text-2xl font-bold">Admin dashboard</h1><p class="text-sm text-gray-500">TODO admin stats</p></div>
+﻿<section class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold text-slate-900">Admin dashboard</h1>
+    <p class="mt-1 text-sm text-slate-500">Platform-wide usage and revenue.</p>
+  </div>
+
+  @if (loading()) {
+    <div class="rounded-2xl bg-white p-10 text-center text-slate-500 shadow-sm">
+      Loading dashboard…
+    </div>
+  } @else if (error()) {
+    <div class="rounded-2xl border border-red-200 bg-white p-10 text-center shadow-sm">
+      <p class="text-sm font-semibold text-red-700">{{ error() }}</p>
+      <button
+        type="button"
+        (click)="load()"
+        class="mt-4 rounded-xl bg-blue-700 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-800"
+      >
+        Retry
+      </button>
+    </div>
+  } @else {
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <app-stat-card label="Users" [value]="users().length" hint="All roles" />
+      <app-stat-card label="Parkings" [value]="parkings().length" hint="Across platform" />
+      <app-stat-card label="Bookings" [value]="bookings().length" hint="All statuses" />
+      <app-stat-card
+        label="Revenue"
+        [value]="revenue() + ' EGP'"
+        hint="Completed bookings"
+      />
+    </div>
+
+    @if (users().length > 0 || bookings().length > 0) {
+      <div class="grid gap-4 lg:grid-cols-2">
+        @if (users().length > 0) {
+          <app-chart-widget
+            type="pie"
+            title="Users by role"
+            [labels]="usersByRole().labels"
+            [data]="usersByRole().data"
+          />
+        }
+        @if (bookings().length > 0) {
+          <app-chart-widget
+            type="bar"
+            title="Bookings by status"
+            [labels]="bookingsByStatus().labels"
+            [data]="bookingsByStatus().data"
+            [colors]="statusColors"
+          />
+        }
+      </div>
+    } @else {
+      <div class="rounded-2xl bg-white p-10 text-center text-sm text-slate-500 shadow-sm">
+        No platform data yet — charts will appear once users and bookings exist.
+      </div>
+    }
+  }
+</section>

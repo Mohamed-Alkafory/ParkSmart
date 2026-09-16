@@ -45,7 +45,7 @@ export class SidebarComponent {
         { label: 'Users', route: '/admin/users', icon: 'U' },
         { label: 'Parkings', route: '/admin/parkings', icon: 'P' },
         { label: 'Parking spots', route: '/admin/spots', icon: 'S' },
-        { label: 'Bookings', route: '/admin/bookings', icon: 'B' },
+        { label: 'Bookings', route: '/bookings', icon: 'B' },
         { label: 'Reviews', route: '/admin/reviews', icon: 'R' },
         { label: 'Settings', route: '/admin/settings', icon: '⚙' },
       ];

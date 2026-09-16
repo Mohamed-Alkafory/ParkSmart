@@ -10,11 +10,15 @@ export class ParkingsService {
   private readonly apiUrl = `${environment.apiUrl}/parkings`;
 
   getAll(): Observable<ApiResponse<Parking[]>> {
-    // TODO 1: send GET to `${this.apiUrl}/` (public, no token needed).
-    //   Use: return this.http.get<ApiResponse<Parking[]>>(this.apiUrl).
-    //   Note from Phase 1: backend fetchAllParkings() is still a TODO stub,
-    //   so expect an empty/undefined data until backend implements it.
-    throw new Error('Not implemented — see TODO 1');
+    return this.http.get<ApiResponse<Parking[]>>(this.apiUrl);
+  }
+
+  getMine(): Observable<ApiResponse<Parking[]>> {
+    return this.http.get<ApiResponse<Parking[]>>(`${this.apiUrl}/mine`);
+  }
+
+  getById(id: string): Observable<ApiResponse<Parking>> {
+    return this.http.get<ApiResponse<Parking>>(`${this.apiUrl}/${id}`);
   }
 
   getNearby(lat: number, lng: number, maxDistance?: number): Observable<ApiResponse<Parking[]>> {

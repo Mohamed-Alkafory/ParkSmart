@@ -4,9 +4,9 @@ import { Booking } from '../../../core/models/api.models';
 import { StatusBadgeComponent } from '../status-badge/status-badge.component';
 
 /**
- * Dumb booking card used by driver/my-bookings, owner/bookings, and
- * admin/bookings pages. Shows parking, spot, time, and price, plus the
- * status badge. For active bookings it emits cancel/complete with the
+ * Dumb booking card used by the my-bookings list.
+ * Shows parking, spot, time, and price, plus the status badge.
+ * For active bookings it emits cancel/complete with the
  * booking id; the parent page calls BookingsService.updateStatus().
  */
 @Component({
