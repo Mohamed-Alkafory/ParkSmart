@@ -1,5 +1,12 @@
 ﻿import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
-// TODO (team): static footer only ï¿½ no logic. Links to /parkings, /login, /register.
-@Component({ selector: 'app-footer', standalone: true, templateUrl: './footer.component.html' })
-export class FooterComponent {}
+@Component({
+  selector: 'app-footer',
+  standalone: true,
+  imports: [RouterLink],
+  templateUrl: './footer.component.html',
+})
+export class FooterComponent {
+  readonly currentYear = new Date().getFullYear();
+}

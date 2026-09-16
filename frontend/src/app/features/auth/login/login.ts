@@ -1,7 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { StorageService } from '../../../core/services/storage.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -12,16 +14,53 @@ import { AuthService } from '../../../core/services/auth.service';
 export class Login {
   private auth = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private storage = inject(StorageService);
 
-  // TODO 1: create signals for email, password, loading, error using signal().
+  readonly email = signal('');
+  readonly password = signal('');
+  readonly rememberMe = signal(false);
+  readonly showPassword = signal(false);
+  readonly loading = signal(false);
   readonly error = signal<string | null>(null);
 
+  togglePassword(): void {
+    this.showPassword.update((v) => !v);
+  }
+
+  onSocialLogin(provider: 'google' | 'facebook'): void {
+    const base = `${environment.backendUrl}/api/auth`;
+    window.location.href = `${base}/${provider}`;
+  }
+
   onSubmit(): void {
-    // TODO 2: validate email + password are non-empty; set error signal if not.
-    // TODO 3: call this.auth.login(email, password) and subscribe().
-    // TODO 4: on next (ApiResponse<{ token, user }>): save token to
-    //   localStorage 'parksmart_token', set currentUser signal, navigate to '/parkings'.
-    // TODO 5: on error: set error signal from err.error?.message. Use RxJS subscribe({ next, error }).
-    throw new Error('Not implemented — see TODOs 2-5');
+    const emailInput = this.email().trim();
+
+    if (!emailInput || !this.password()) {
+      this.error.set('Please enter your email and password.');
+      return;
+    }
+
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.auth.login(emailInput, this.password()).subscribe({
+      next: (res) => {
+        if (!res.data) {
+          this.error.set('Unexpected server response. Please try again.');
+          this.loading.set(false);
+          return;
+        }
+        this.storage.setToken(res.data.token);
+        this.storage.setUser(res.data.user);
+        this.auth.currentUser.set(res.data.user);
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        this.router.navigateByUrl(returnUrl ?? '/parkings');
+      },
+      error: (err) => {
+        this.error.set(err.error?.message ?? 'Login failed. Please try again.');
+        this.loading.set(false);
+      },
+    });
   }
 }

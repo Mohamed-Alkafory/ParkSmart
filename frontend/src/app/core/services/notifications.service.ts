@@ -9,22 +9,14 @@ export class NotificationsService {
   private readonly apiUrl = 'http://localhost:3000/api/notifications';
 
   getMine(): Observable<ApiResponse<AppNotification[]>> {
-    // TODO 1: send GET to `${this.apiUrl}/` (protected, sorted newest-first by backend).
-    //   Use: return this.http.get<ApiResponse<AppNotification[]>>(this.apiUrl).
-    throw new Error('Not implemented — see TODO 1');
+    return this.http.get<ApiResponse<AppNotification[]>>(this.apiUrl);
   }
 
   markAllAsRead(): Observable<ApiResponse<null>> {
-    // TODO 2: send PATCH to `${this.apiUrl}/read-all` with NO body.
-    //   Backend returns { success: true, message } with NO data field.
-    //   ⚠️ Route order matters on backend — call this exact path, not /:id/read.
-    //   Use: return this.http.patch<ApiResponse<null>>(url, {}).
-    throw new Error('Not implemented — see TODO 2');
+    return this.http.patch<ApiResponse<null>>(`${this.apiUrl}/read-all`, {});
   }
 
   markAsRead(id: string): Observable<ApiResponse<AppNotification>> {
-    // TODO 3: send PATCH to `${this.apiUrl}/${id}/read` with NO body.
-    //   Use: return this.http.patch<ApiResponse<AppNotification>>(url, {}).
-    throw new Error('Not implemented — see TODO 3');
+    return this.http.patch<ApiResponse<AppNotification>>(`${this.apiUrl}/${id}/read`, {});
   }
 }

@@ -3,7 +3,14 @@ import { authGuard } from './core/guards/auth.guard';
 import { ownerGuard } from './core/guards/owner.guard';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'parkings' },
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () =>
+      import('./pages/landing/landing.component').then(
+        (m) => m.LandingComponent,
+      ),
+  },
 
   {
     path: 'login',
@@ -14,6 +21,13 @@ export const routes: Routes = [
     path: 'register',
     loadComponent: () =>
       import('./features/auth/register/register').then((m) => m.Register),
+  },
+  {
+    path: 'oauth-callback',
+    loadComponent: () =>
+      import('./features/auth/oauth-callback/oauth-callback').then(
+        (m) => m.OAuthCallback,
+      ),
   },
 
   {

@@ -1,6 +1,48 @@
-<!-- TODO (template): Mark-all button + @for over notifications() with @if for isRead badge. -->
-<div class="rounded-2xl bg-white p-6 shadow">
-  <h1 class="text-2xl font-bold">Notifications</h1>
-  <p class="text-sm text-gray-500">GET /api/notifications · PATCH /read-all · PATCH /:id/read</p>
-  <!-- TODO: button (click)="markAllRead()" + @for (n of notifications(); track n._id) row -->
+<div class="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+  <div class="flex items-center justify-between gap-4">
+    <h1 class="text-2xl font-extrabold tracking-tight text-[#003366] sm:text-3xl">Notifications</h1>
+    <button
+      type="button"
+      (click)="markAllRead()"
+      [disabled]="loading() || !hasUnread()"
+      class="shrink-0 rounded-lg border border-[#0060C0] bg-white px-4 py-2 text-sm font-semibold text-[#0060C0] transition hover:bg-[#E8F1FB] disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      Mark all as read
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="mt-6 rounded-2xl bg-white p-10 shadow-sm ring-1 ring-slate-900/5">
+      <app-loading message="Loading notifications…" />
+    </div>
+  } @else if (error(); as err) {
+    <div class="mt-6 flex flex-col items-center gap-4 rounded-2xl bg-red-50 p-10 ring-1 ring-red-100">
+      <app-error-state [message]="err" />
+      <button
+        type="button"
+        (click)="load()"
+        class="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100"
+      >
+        Try again
+      </button>
+    </div>
+  } @else if (notifications().length === 0) {
+    <div class="mt-6 rounded-2xl bg-white p-10 shadow-sm ring-1 ring-slate-900/5">
+      <app-empty-state
+        title="No notifications yet"
+        hint="You're all caught up. New parking updates will appear here."
+      />
+    </div>
+  } @else {
+    <ul class="mt-6 flex flex-col gap-3">
+      @for (notification of notifications(); track notification._id) {
+        <li>
+          <app-notification-item
+            [notification]="notification"
+            (read)="markOneRead($event)"
+          />
+        </li>
+      }
+    </ul>
+  }
 </div>

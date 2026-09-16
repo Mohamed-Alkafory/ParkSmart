@@ -25,5 +25,19 @@ module.exports = {
   // ──────────────── Environment ────────────────
   NODE_ENV: process.env.NODE_ENV || 'development',
 
-  // TODO: لو هتضيف Email Service أو أي متغيرات تانية حطها هنا
+  // ──────────────── Google OAuth ────────────────
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+
+  // ──────────────── Facebook OAuth ────────────────
+  FACEBOOK_APP_ID: process.env.FACEBOOK_APP_ID,
+  FACEBOOK_APP_SECRET: process.env.FACEBOOK_APP_SECRET,
+
+  // ──────────────── OAuth URLs ────────────────
+  BACKEND_URL: process.env.BACKEND_URL || 'http://localhost:3000',
+  FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:4200',
+
+  // ──────────────── OAuth Redirects ────────────────
+  OAUTH_SUCCESS_REDIRECT: process.env.OAUTH_SUCCESS_REDIRECT || `${process.env.FRONTEND_URL || 'http://localhost:4200'}/oauth-callback`,
+  OAUTH_FAILURE_REDIRECT: process.env.OAUTH_FAILURE_REDIRECT || `${process.env.FRONTEND_URL || 'http://localhost:4200'}/login`,
 };

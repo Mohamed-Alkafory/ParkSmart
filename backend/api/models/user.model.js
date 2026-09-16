@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true,
+      required: false,
       minlength: 6,
     },
 
@@ -48,6 +48,16 @@ const userSchema = new mongoose.Schema(
     },
 
     phone: {
+      type: String,
+    },
+
+    provider: {
+      type: String,
+      enum: ["local", "google", "facebook"],
+      default: "local",
+    },
+
+    providerId: {
       type: String,
     },
   },

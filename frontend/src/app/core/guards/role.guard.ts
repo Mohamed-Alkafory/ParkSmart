@@ -5,24 +5,33 @@ import { getUserRole } from './owner.guard';
 
 /**
  * Generic role guard — follows owner.guard.ts pattern.
- * Usage in app.routes.ts: canActivate: [authGuard, roleGuard(['admin'])]
  *
- * TODO (team):
- *  1. Extend getUserRole() usage — no code needed, reuse owner.guard helpers.
- *  2. Add 'driver' | 'owner' | 'admin' checks per route (see pages/driver|owner|admin).
- *  3. Redirect unauthorized users to '/parkings' (pattern matches ownerGuard).
+ * Usage in app.routes.ts:
+ *   canActivate: [authGuard, roleGuard(['admin'])]
+ *   canActivate: [authGuard, roleGuard(['owner', 'admin'])]
+ *
+ * Behavior:
+ *   1. No token            → redirect to /login with returnUrl.
+ *   2. Role not allowed    → redirect to /parkings (403-equivalent).
+ *   3. Role allowed        → allow navigation.
+ *
+ * Note: this is UI-level protection only. Backend authorization is enforced
+ * by requireRole() in auth.middleware.js (never rely on this guard alone).
  */
 export function roleGuard(allowed: string[]): CanActivateFn {
   return (route, state) => {
     const router = inject(Router);
-    // TODO: if (!getToken()) return login UrlTree with returnUrl (copy ownerGuard).
-    // TODO: if (!allowed.includes(getUserRole() ?? '')) return UrlTree to '/parkings'.
-    // TODO: return true otherwise.
-    void allowed;
-    void router;
-    void state;
-    void getToken;
-    void getUserRole;
-    throw new Error('Not implemented — see TODOs above');
+
+    if (!getToken()) {
+      return router.createUrlTree(['/login'], {
+        queryParams: { returnUrl: state.url },
+      });
+    }
+
+    if (allowed.includes(getUserRole() ?? '')) {
+      return true;
+    }
+
+    return router.createUrlTree(['/parkings']);
   };
 }

@@ -3,6 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
+// Mirrors the backend rule in auth.service.js: min 6 chars with upper,
+// lower, digit and special character.
+const PASSWORD_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -13,15 +18,48 @@ export class Register {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  // TODO 1: create signals for name, email, password, phone, loading, error.
+  readonly name = signal('');
+  readonly email = signal('');
+  readonly password = signal('');
+  readonly phone = signal('');
+  readonly showPassword = signal(false);
+  readonly loading = signal(false);
   readonly error = signal<string | null>(null);
 
+  togglePassword(): void {
+    this.showPassword.update((v) => !v);
+  }
+
   onSubmit(): void {
-    // TODO 2: validate name + email + password are present (phone optional).
-    //   Note backend password rule (auth.service.js): min 6 chars with upper + lower + digit + special.
-    // TODO 3: call this.auth.register(name, email, password, phone?) and subscribe().
-    // TODO 4: on next: navigate to '/login' (backend register returns user only, NO token).
-    // TODO 5: on error: set error signal. Use subscribe({ next, error }).
-    throw new Error('Not implemented — see TODOs 2-5');
+    const nameInput = this.name().trim();
+    const emailInput = this.email().trim();
+    const phoneInput = this.phone().trim();
+
+    if (!nameInput || !emailInput || !this.password()) {
+      this.error.set('Please fill in your name, email and password.');
+      return;
+    }
+
+    if (!PASSWORD_REGEX.test(this.password())) {
+      this.error.set(
+        'Password must be at least 6 characters and include an uppercase letter, a lowercase letter, a number and a special character.',
+      );
+      return;
+    }
+
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.auth
+      .register(nameInput, emailInput, this.password(), phoneInput || undefined)
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          this.error.set(err.error?.message ?? 'Registration failed. Please try again.');
+          this.loading.set(false);
+        },
+      });
   }
 }

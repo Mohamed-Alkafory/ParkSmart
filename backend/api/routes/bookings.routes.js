@@ -23,7 +23,7 @@ const { requireAuth, requireRole } = require("../middlewares/auth.middleware");
 router.post("/", requireAuth, createBooking);
 router.get("/", requireAuth, requireRole("admin"), getAllBookings);
 router.get("/my", requireAuth, getMyBookings);
-router.get("/owner", requireAuth, requireRole("owner", "admin"), getOwnerBookings);
+router.get("/owner", requireAuth, requireRole("owner"), getOwnerBookings);
 router.patch("/:id/status", requireAuth, updateStatus);
 
 module.exports = router;

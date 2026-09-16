@@ -1,0 +1,15 @@
+<div class="flex min-h-[75vh] items-center justify-center bg-[#F8F8F8] py-8 font-sans">
+  <div class="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-lg ring-1 ring-slate-200 sm:p-8">
+    @if (error()) {
+      <h1 class="text-lg font-bold text-red-700">Sign in failed</h1>
+      <p class="mt-2 text-sm text-slate-500">{{ error() }}</p>
+      <p class="mt-4 text-xs text-slate-400">Redirecting you to the login page…</p>
+    } @else {
+      <span
+        class="mx-auto block h-8 w-8 animate-spin rounded-full border-4 border-[#0060C0]/20 border-t-[#0060C0]"
+        aria-hidden="true"
+      ></span>
+      <h1 class="mt-4 text-lg font-bold text-[#003366]">Completing sign in…</h1>
+    }
+  </div>
+</div>
