@@ -11,7 +11,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 import { ReviewSummaryComponent } from '../../../shared/components/review-summary/review-summary.component';
 import { getToken } from '../../../core/guards/auth.guard';
 import { getUserRole } from '../../../core/guards/owner.guard';
-import { resolveImageUrl } from '../../../core/utils/image-url';
+import { resolveParkingImage } from '../../../core/utils/image-url';
 
 /**
  * Public parking details page (route /parkings/:id) — no login required.
@@ -52,7 +52,7 @@ export class ParkingDetail implements OnInit {
   readonly canBook = computed(() => this.availableSpots().length > 0);
 
   /** Resolved parking photo URL (null = gradient header only). */
-  readonly imageSrc = computed(() => resolveImageUrl(this.parking()?.imageUrl));
+  readonly imageSrc = computed(() => resolveParkingImage(this.parking()));
 
   /** Admins can't book — hide the booking actions for them instead of bouncing to /parkings. */
   readonly isAdmin = computed(() => getUserRole() === 'admin');

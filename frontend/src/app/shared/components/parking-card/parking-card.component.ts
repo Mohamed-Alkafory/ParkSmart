@@ -2,8 +2,7 @@ import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Parking } from '../../../core/models/api.models';
 import { RatingComponent } from '../rating/rating.component';
-import { resolveImageUrl } from '../../../core/utils/image-url';
-
+import { resolveParkingImage } from '../../../core/utils/image-url';
 /**
  * Reusable parking card used by lists and search results.
  * It receives parking data only; fetching data remains the parent page's job.
@@ -22,5 +21,5 @@ export class ParkingCardComponent {
   readonly availableSpots = input<number | null>(null);
 
   /** Resolved parking photo URL (null = decorative gradient placeholder). */
-  readonly imageSrc = computed(() => resolveImageUrl(this.parking().imageUrl));
+  readonly imageSrc = computed(() => resolveParkingImage(this.parking()));
 }
