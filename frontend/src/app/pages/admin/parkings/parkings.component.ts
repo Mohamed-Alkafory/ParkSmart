@@ -12,6 +12,7 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
 import { PagerComponent } from '../../../shared/components/pager/pager.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 type StatusFilter = 'all' | 'active' | 'inactive';
 
@@ -30,7 +31,7 @@ interface SpotSummary {
 @Component({
   selector: 'app-admin-parkings',
   standalone: true,
-  imports: [RouterLink, FormsModule, RatingComponent, StatusBadgeComponent, PagerComponent, SidebarComponent],
+  imports: [RouterLink, FormsModule, RatingComponent, StatusBadgeComponent, PagerComponent, SidebarComponent, PageHeaderComponent],
   templateUrl: './parkings.component.html',
 })
 export class AdminParkingsComponent implements OnInit {
@@ -138,21 +139,33 @@ export class AdminParkingsComponent implements OnInit {
     return summary.available > 0 ? `${summary.available}/${summary.total} free` : 'Full';
   }
 
-  remove(id?: string): void {
+  remove(id?: string, force = false): void {
     if (!id || this.deletingId()) return;
-    if (!confirm('Delete this parking? Blocked if spots or active bookings remain.')) return;
+    if (!force && !confirm('Delete this parking? Blocked if spots or active bookings remain.')) return;
     this.deletingId.set(id);
     this.notice.set(null);
-    this.parkingsSvc.delete(id).subscribe({
+    this.parkingsSvc.delete(id, force).subscribe({
       next: () => {
         this.items.update((list) => list.filter((p) => p._id !== id));
         this.notice.set('Parking deleted.');
         this.deletingId.set(null);
       },
       error: (err) => {
+        const message = err?.error?.message ?? '';
+        // Booking history blocks plain deletes — offer an explicit force delete.
+        if (!force && message.includes('booking history')) {
+          this.deletingId.set(null);
+          if (
+            confirm(
+              'This parking has past bookings. Delete it anyway? Its spots and reviews go too; past bookings will show a deleted parking.',
+            )
+          ) {
+            this.remove(id, true);
+          }
+          return;
+        }
         this.error.set(
-          err?.error?.message ??
-            'Could not delete the parking (requires ownership on the backend).',
+          message || 'Could not delete the parking (requires ownership on the backend).',
         );
         this.deletingId.set(null);
       },

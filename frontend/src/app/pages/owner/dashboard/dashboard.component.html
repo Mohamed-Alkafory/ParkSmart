@@ -1,76 +1,355 @@
-﻿<section class="flex flex-col gap-6 lg:flex-row lg:items-start">
+﻿<section class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
   <app-sidebar [role]="role()" />
-  <div class="min-w-0 flex-1 space-y-6 lg:ml-64">
-  <div>
-    <h1 class="text-2xl font-bold text-slate-900">Owner dashboard</h1>
-    <p class="mt-1 text-sm text-slate-500">Performance of your parkings at a glance.</p>
-  </div>
 
-  @if (loading()) {
-    <div class="rounded-2xl bg-white p-10 text-center text-slate-500 shadow-sm">
-      Loading dashboard…
-    </div>
-  } @else if (error()) {
-    <div class="rounded-2xl border border-red-200 bg-white p-10 text-center shadow-sm">
-      <p class="text-sm font-semibold text-red-700">{{ error() }}</p>
-      <button
-        type="button"
-        (click)="load()"
-        class="mt-4 rounded-xl bg-blue-700 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-800"
-      >
-        Retry
-      </button>
-    </div>
-  } @else if (parkings().length === 0) {
-    <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm">
-      <h2 class="font-semibold text-slate-800">No parkings yet</h2>
-      <p class="mt-1 text-sm text-slate-500">Add your first parking to start seeing stats.</p>
+  <div class="min-w-0 flex-1 space-y-8 lg:ml-64 p-6 lg:p-8">
+    <!-- Header -->
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p class="text-sm font-medium text-blue-600 uppercase tracking-wider">Overview</p>
+        <h1 class="mt-1 text-3xl font-bold text-slate-900">Owner Dashboard</h1>
+        <p class="mt-1 text-sm text-slate-500">Performance of your parkings at a glance</p>
+      </div>
       <a
         routerLink="/owner/parkings/new"
-        class="mt-4 inline-block rounded-xl bg-blue-700 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-800"
+        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:shadow-blue-600/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        Add parking
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+        Add Parking
       </a>
     </div>
-  } @else {
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <app-stat-card label="Parkings" [value]="parkings().length" hint="Your properties" />
-      <app-stat-card label="Spots" [value]="totalSpots()" hint="Across all parkings" />
-      <app-stat-card
-        label="Active bookings"
-        [value]="activeCount()"
-        hint="Currently parked"
-      />
-      <app-stat-card
-        label="Revenue"
-        [value]="revenue() + ' EGP'"
-        hint="Completed bookings"
-      />
-    </div>
 
-    @if (bookings().length > 0) {
-      <div class="grid gap-4 lg:grid-cols-2">
-        <app-chart-widget
-          type="doughnut"
-          title="Bookings by status"
-          [labels]="statusBreakdown().labels"
-          [data]="statusBreakdown().data"
-          [colors]="statusColors"
-        />
-        @if (revenuePerParking().data.length > 0) {
-          <app-chart-widget
-            type="bar"
-            title="Revenue per parking (EGP)"
-            [labels]="revenuePerParking().labels"
-            [data]="revenuePerParking().data"
-          />
+    @if (loading()) {
+      <!-- Loading Skeleton -->
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <div class="h-32 animate-pulse rounded-2xl bg-slate-200"></div>
         }
       </div>
-    } @else {
-      <div class="rounded-2xl bg-white p-10 text-center text-sm text-slate-500 shadow-sm">
-        No bookings yet — charts will appear once drivers start booking your spots.
+    } @else if (error()) {
+      <!-- Error State -->
+      <div class="rounded-2xl border border-red-200 bg-white p-8 text-center shadow-sm">
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+          <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </div>
+        <h3 class="mt-4 text-lg font-semibold text-slate-900">Something went wrong</h3>
+        <p class="mt-2 text-sm text-red-600">{{ error() }}</p>
+        <button
+          type="button"
+          (click)="load()"
+          class="mt-6 inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700"
+        >
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+          Try again
+        </button>
       </div>
+    } @else if (parkings().length === 0) {
+      <!-- Empty State -->
+      <div
+        class="rounded-2xl border-2 border-dashed border-slate-300 bg-white p-12 text-center shadow-sm"
+      >
+        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100">
+          <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+            />
+          </svg>
+        </div>
+        <h3 class="mt-4 text-xl font-semibold text-slate-900">No parkings yet</h3>
+        <p class="mt-2 text-sm text-slate-500 max-w-sm mx-auto">
+          Add your first parking to start seeing stats and managing your business.
+        </p>
+        <a
+          routerLink="/owner/parkings/new"
+          class="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:from-blue-700 hover:to-blue-800"
+        >
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Add your first parking
+        </a>
+      </div>
+    } @else {
+      <!-- Stats Cards -->
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <!-- Parkings Card -->
+        <a
+          routerLink="/owner/parkings"
+          class="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5 transition hover:shadow-lg hover:ring-blue-500/20"
+        >
+          <div
+            class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 transition group-hover:opacity-100"
+          ></div>
+          <div class="relative">
+            <div class="flex items-center justify-between">
+              <div
+                class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600"
+              >
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+                </svg>
+              </div>
+              <span class="text-2xl font-bold text-slate-900">{{ parkings().length }}</span>
+            </div>
+            <h3 class="mt-4 text-sm font-medium text-slate-500">Parkings</h3>
+            <p class="mt-1 text-xs text-slate-400">Your properties</p>
+          </div>
+        </a>
+
+        <!-- Spots Card -->
+        <a
+          routerLink="/owner/parkings"
+          class="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5 transition hover:shadow-lg hover:ring-emerald-500/20"
+        >
+          <div
+            class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 transition group-hover:opacity-100"
+          ></div>
+          <div class="relative">
+            <div class="flex items-center justify-between">
+              <div
+                class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600"
+              >
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <span class="text-2xl font-bold text-slate-900">{{ totalSpots() }}</span>
+            </div>
+            <h3 class="mt-4 text-sm font-medium text-slate-500">Total Spots</h3>
+            <p class="mt-1 text-xs text-slate-400">Across all parkings</p>
+          </div>
+        </a>
+
+        <!-- Active Bookings Card -->
+        <a
+          routerLink="/owner/bookings"
+          class="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5 transition hover:shadow-lg hover:ring-amber-500/20"
+        >
+          <div
+            class="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 transition group-hover:opacity-100"
+          ></div>
+          <div class="relative">
+            <div class="flex items-center justify-between">
+              <div
+                class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-amber-600"
+              >
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <span class="text-2xl font-bold text-slate-900">{{ activeCount() }}</span>
+            </div>
+            <h3 class="mt-4 text-sm font-medium text-slate-500">Active Bookings</h3>
+            <p class="mt-1 text-xs text-slate-400">Currently parked</p>
+          </div>
+        </a>
+
+        <!-- Revenue Card -->
+        <a
+          routerLink="/owner/bookings"
+          class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 p-6 shadow-lg shadow-blue-600/25 transition hover:shadow-xl hover:shadow-blue-600/30"
+        >
+          <div class="relative">
+            <div class="flex items-center justify-between">
+              <div
+                class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 text-white"
+              >
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <span class="text-2xl font-bold text-white">{{ revenue() }} EGP</span>
+            </div>
+            <h3 class="mt-4 text-sm font-medium text-blue-100">Revenue</h3>
+            <p class="mt-1 text-xs text-blue-200">Completed bookings</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Charts Section -->
+      @if (bookings().length > 0) {
+        <div class="grid gap-6 lg:grid-cols-5">
+          <!-- Status Breakdown Chart (Smaller) -->
+          <app-chart-widget
+            class="lg:col-span-2"
+            type="doughnut"
+            title="Bookings by Status"
+            caption="Share of your bookings"
+            unit="bookings"
+            [labels]="statusBreakdown().labels"
+            [data]="statusBreakdown().data"
+            [colors]="statusColors"
+          />
+
+          <!-- Active bookings Chart (Larger - Takes 3 columns) -->
+          <app-chart-widget
+            class="lg:col-span-3"
+            type="bar"
+            title="Active Bookings per Parking"
+            caption="Currently active bookings per property"
+            unit="bookings"
+            emptyText="No active bookings right now — new bookings will appear here."
+            [labels]="activePerParking().labels"
+            [data]="activePerParking().data"
+          />
+        </div>
+
+        <!-- Recent Bookings -->
+        <div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-900/5">
+          <div class="border-b border-slate-100 p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-lg font-semibold text-slate-900">Recent Bookings</h3>
+                <p class="mt-1 text-sm text-slate-500">Your 5 most recent bookings</p>
+              </div>
+              <a
+                routerLink="/owner/bookings"
+                class="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
+              >
+                View all
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+          <ul class="divide-y divide-slate-100">
+            @for (b of recentBookings(); track b._id) {
+              <li>
+                <a
+                  [routerLink]="['/bookings', b._id]"
+                  class="group flex items-center gap-4 p-4 transition hover:bg-slate-50"
+                >
+                  <div
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600"
+                  >
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p
+                      class="truncate text-sm font-semibold text-slate-900 group-hover:text-blue-600"
+                    >
+                      {{ bookingParkingName(b) }}
+                    </p>
+                    <div class="mt-1 flex items-center gap-2">
+                      <span
+                        class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                        [class]="
+                          b.status === 'active'
+                            ? 'bg-amber-100 text-amber-700'
+                            : b.status === 'completed'
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : 'bg-slate-100 text-slate-600'
+                        "
+                      >
+                        {{ b.status }}
+                      </span>
+                      <span class="text-xs text-slate-400">·</span>
+                      <span class="text-xs text-slate-500">{{ b.totalPrice }} EGP</span>
+                    </div>
+                  </div>
+                  <svg
+                    class="h-5 w-5 text-slate-300 transition group-hover:text-blue-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      } @else {
+        <!-- No Bookings State -->
+        <div class="rounded-2xl border-2 border-dashed border-slate-300 bg-white p-12 text-center">
+          <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+            <svg
+              class="h-8 w-8 text-slate-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-lg font-semibold text-slate-900">No bookings yet</h3>
+          <p class="mt-2 text-sm text-slate-500">
+            Charts will appear once drivers start booking your spots.
+          </p>
+        </div>
+      }
     }
-  }
   </div>
 </section>

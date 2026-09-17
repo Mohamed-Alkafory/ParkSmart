@@ -121,11 +121,14 @@ async function updateParking(req, res, next) {
  * DELETE /api/parkings/:id
  * Requires requireAuth + requireRole('owner', 'admin').
  * Owners pass the ownership check; admins bypass it.
- * Rejected with 409 if there are active bookings or remaining spots.
+ * Rejected with 409 on active bookings. Pass ?force=true to also delete
+ * non-active booking history (spots, reviews and photo are always removed
+ * together with the parking).
  */
 async function deleteParking(req, res, next) {
   try {
-    await parkingsService.deleteParking(req.params.id, req.user.id, req.user.role);
+    const force = req.query.force === 'true';
+    await parkingsService.deleteParking(req.params.id, req.user.id, req.user.role, force);
 
     res.json({
       success: true,
@@ -136,4 +139,27 @@ async function deleteParking(req, res, next) {
   }
 }
 
-module.exports = { getAllParkings, getNearbyParkings, createParking, getMyParkings, getParkingById, updateParking, deleteParking };
+/**
+ * POST /api/parkings/:id/image
+ * Requires requireAuth + requireRole('owner') + ownership check.
+ * Expects multipart/form-data with a single file field named "image".
+ */
+async function uploadParkingImage(req, res, next) {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'Please choose an image to upload' });
+    }
+
+    const data = await parkingsService.setParkingImage(
+      req.params.id,
+      `/uploads/${req.file.filename}`,
+      req.user.id
+    );
+
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { getAllParkings, getNearbyParkings, createParking, getMyParkings, getParkingById, updateParking, deleteParking, uploadParkingImage };

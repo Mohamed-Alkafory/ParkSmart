@@ -2,6 +2,7 @@
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 const STORAGE_KEY = 'parksmart_admin_settings';
 
@@ -28,7 +29,7 @@ const DEFAULTS: AdminSettings = {
 };
 
 // Platform settings page. No backend endpoint exists, so settings persist to localStorage only.
-@Component({ selector: 'app-admin-settings', standalone: true, imports: [FormsModule, SidebarComponent], templateUrl: './settings.component.html' })
+@Component({ selector: 'app-admin-settings', standalone: true, imports: [FormsModule, SidebarComponent, PageHeaderComponent], templateUrl: './settings.component.html' })
 export class AdminSettingsComponent implements OnInit {
   private auth = inject(AuthService);
 

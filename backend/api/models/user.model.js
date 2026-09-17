@@ -59,6 +59,11 @@ const userSchema = new mongoose.Schema(
     providerId: {
       type: String,
     },
+
+    avatarUrl: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

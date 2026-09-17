@@ -8,8 +8,10 @@ const {
   getParkingById,
   updateParking,
   deleteParking,
+  uploadParkingImage,
 } = require('../controller/parkings.controller');
 const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
+const { uploadSingle } = require('../middlewares/upload.middleware');
 
 /**
  * Parkings Routes
@@ -34,5 +36,6 @@ router.get('/:id',     getParkingById);
 router.post('/',       requireAuth, requireRole('owner'), createParking);
 router.put('/:id',     requireAuth, requireRole('owner'), updateParking);
 router.delete('/:id',  requireAuth, requireRole('owner', 'admin'), deleteParking);
+router.post('/:id/image', requireAuth, requireRole('owner'), uploadSingle('image'), uploadParkingImage);
 
 module.exports = router;

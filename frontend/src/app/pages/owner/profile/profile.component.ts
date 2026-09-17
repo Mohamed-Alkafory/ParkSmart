@@ -4,21 +4,20 @@ import { AuthService } from '../../../core/services/auth.service';
 import { UsersService } from '../../../core/services/users.service';
 import { USER_KEY } from '../../../core/guards/owner.guard';
 import { User } from '../../../core/models/api.models';
-import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { ImageUploadComponent } from '../../../shared/components/image-upload/image-upload.component';
+import { resolveImageUrl } from '../../../core/utils/image-url';
 
 /** Owner profile page: reads and updates the signed-in owner's name and phone. */
 @Component({
   selector: 'app-owner-profile',
   standalone: true,
-  imports: [FormsModule, SidebarComponent],
+  imports: [FormsModule, PageHeaderComponent, ImageUploadComponent],
   templateUrl: './profile.component.html',
 })
 export class OwnerProfileComponent implements OnInit {
   private auth = inject(AuthService);
   private usersService = inject(UsersService);
-
-  /** Sidebar role — same source the navbar uses (AuthService.currentUser). */
-  readonly role = computed(() => this.auth.currentUser()?.role ?? 'owner');
 
   readonly user = signal<User | null>(null);
   readonly name = signal('');
@@ -27,6 +26,10 @@ export class OwnerProfileComponent implements OnInit {
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
   readonly message = signal<string | null>(null);
+  readonly avatarUploading = signal(false);
+
+  /** Resolved avatar URL (null = show the initial-letter fallback). */
+  readonly avatarSrc = computed(() => resolveImageUrl(this.user()?.avatarUrl));
 
   ngOnInit(): void {
     this.load();
@@ -86,6 +89,32 @@ export class OwnerProfileComponent implements OnInit {
         this.saving.set(false);
       },
       complete: () => this.saving.set(false),
+    });
+  }
+
+  /** Uploads a new avatar immediately on file selection. */
+  onAvatarSelected(file: File): void {
+    const currentUser = this.user();
+    if (!currentUser?._id || this.avatarUploading()) return;
+
+    this.avatarUploading.set(true);
+    this.error.set(null);
+    this.message.set(null);
+
+    this.usersService.uploadAvatar(currentUser._id, file).subscribe({
+      next: (response) => {
+        if (response.data) {
+          this.setFormUser(response.data);
+          this.auth.currentUser.set(response.data);
+          this.storeUser(response.data);
+        }
+        this.message.set('Profile photo updated successfully.');
+        this.avatarUploading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err?.error?.message ?? 'Could not upload the photo.');
+        this.avatarUploading.set(false);
+      },
     });
   }
 

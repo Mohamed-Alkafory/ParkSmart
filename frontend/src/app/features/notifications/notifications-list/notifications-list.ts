@@ -1,7 +1,11 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { NotificationsService } from '../../../core/services/notifications.service';
 import { AppNotification } from '../../../core/models/api.models';
 import { NotificationItemComponent } from '../../../shared/components/notification-item/notification-item.component';
+import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { AuthService } from '../../../core/services/auth.service';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
@@ -10,7 +14,10 @@ import { ErrorStateComponent } from '../../../shared/components/error-state/erro
   selector: 'app-notifications-list',
   standalone: true,
   imports: [
+    NgClass,
     NotificationItemComponent,
+    SidebarComponent,
+    PageHeaderComponent,
     LoadingComponent,
     EmptyStateComponent,
     ErrorStateComponent,
@@ -19,6 +26,13 @@ import { ErrorStateComponent } from '../../../shared/components/error-state/erro
 })
 export class NotificationsList implements OnInit {
   private notificationsService = inject(NotificationsService);
+  private auth = inject(AuthService);
+
+  /** Sidebar role — same source the navbar uses (AuthService.currentUser). */
+  readonly role = computed(() => this.auth.currentUser()?.role ?? 'driver');
+
+  /** Drivers use the sidebar-less layout like all other driver pages. */
+  readonly hasSidebar = computed(() => this.role() !== 'driver');
 
   readonly notifications = signal<AppNotification[]>([]);
   readonly loading = signal(true);

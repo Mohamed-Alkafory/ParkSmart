@@ -8,6 +8,7 @@ import { Parking, Review } from '../../../core/models/api.models';
 import { RatingComponent } from '../../../shared/components/rating/rating.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 interface OwnerReview extends Review {
   parkingName: string;
@@ -17,7 +18,7 @@ interface OwnerReview extends Review {
 
 // Owner reviews page (read-only). Loads the owner's parkings via GET /api/parkings/mine,
 // then aggregates GET /api/reviews/parking/:parkingId per parking (reviewer name is populated).
-@Component({ selector: 'app-owner-reviews', standalone: true, imports: [DatePipe, RatingComponent, SidebarComponent], templateUrl: './reviews.component.html' })
+@Component({ selector: 'app-owner-reviews', standalone: true, imports: [DatePipe, RatingComponent, SidebarComponent, PageHeaderComponent], templateUrl: './reviews.component.html' })
 export class OwnerReviewsComponent implements OnInit {
   private parkingsSvc = inject(ParkingsService);
   private auth = inject(AuthService);

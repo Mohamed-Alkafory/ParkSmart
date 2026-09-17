@@ -13,6 +13,8 @@ import { Spot } from '../../../core/models/api.models';
 export class ParkingSpotComponent {
   readonly spot = input.required<Spot>();
   readonly selectable = input(false);
+  /** Highlights the spot as the driver's current pick (navy). */
+  readonly selected = input(false);
   readonly select = output<string>();
 
   /** Sends the selected spot ID to the parent component. */

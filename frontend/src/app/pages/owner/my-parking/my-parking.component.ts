@@ -8,6 +8,7 @@ import { Parking } from '../../../core/models/api.models';
 import { RatingComponent } from '../../../shared/components/rating/rating.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 interface SpotSummary {
   total: number;
@@ -21,7 +22,7 @@ interface SpotSummary {
 @Component({
   selector: 'app-my-parking',
   standalone: true,
-  imports: [RouterLink, RatingComponent, SidebarComponent],
+  imports: [RouterLink, RatingComponent, SidebarComponent, PageHeaderComponent],
   templateUrl: './my-parking.component.html',
 })
 export class MyParkingComponent implements OnInit {
@@ -67,20 +68,33 @@ export class MyParkingComponent implements OnInit {
     return this.spotSummaries()[parkingId] ?? null;
   }
 
-  remove(id?: string): void {
+  remove(id?: string, force = false): void {
     if (!id || this.deletingId()) return;
-    if (!confirm('Delete this parking? This cannot be undone.')) return;
+    if (!force && !confirm('Delete this parking? This cannot be undone.')) return;
     this.deletingId.set(id);
     this.notice.set(null);
-    this.parkingsSvc.delete(id).subscribe({
+    this.parkingsSvc.delete(id, force).subscribe({
       next: () => {
         this.items.update((list) => list.filter((p) => p._id !== id));
         this.notice.set('Parking deleted.');
         this.deletingId.set(null);
       },
       error: (err) => {
+        const message = err?.error?.message ?? '';
+        // Booking history blocks plain deletes — offer an explicit force delete.
+        if (!force && message.includes('booking history')) {
+          this.deletingId.set(null);
+          if (
+            confirm(
+              'This parking has past bookings. Delete it anyway? Its spots and reviews go too; past bookings will show a deleted parking.',
+            )
+          ) {
+            this.remove(id, true);
+          }
+          return;
+        }
         this.error.set(
-          err?.error?.message ??
+          message ||
             'Could not delete the parking. Remove spots and wait for active bookings to finish first.',
         );
         this.deletingId.set(null);

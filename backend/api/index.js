@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const { PORT } = require("./config/env.config");
 const connectDB = require("./config/db.config");
@@ -24,6 +25,10 @@ app.use(passport.initialize());
 
 // ─── DB Connection ─────────────────────────────────────────────
 connectDB();
+
+// ─── Uploaded images (multer local disk: backend/uploads) ─────────
+// Must stay before the /api routes so GET /uploads/<file> is served directly.
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // ─── Routes ────────────────────────────────────────────────────
 app.use('/api/auth',          authRoutes);

@@ -6,77 +6,121 @@
   } @else if (error() && !parking()) {
     <app-error-state [message]="error() ?? 'Could not load parking details.'" (retry)="load()" />
   } @else if (parking()) {
-    <!-- Header -->
+    <!-- Photo header with info overlaid on it -->
     <div class="overflow-hidden rounded-3xl bg-white shadow-sm">
-      <div class="bg-gradient-to-br from-slate-900 via-blue-800 to-cyan-600 p-6 text-white sm:p-8">
-        <h1 class="text-2xl font-bold sm:text-3xl">{{ parking()!.name }}</h1>
-        <p class="mt-1 text-sm text-blue-100">📍 {{ parking()!.address }}</p>
-        <div class="mt-4 flex flex-wrap items-center gap-3">
-          <app-rating [value]="parking()!.rating" [readonly]="true" />
-          <span class="rounded-full bg-white/15 px-3 py-1 text-sm font-semibold backdrop-blur">
-            {{ parking()!.pricePerHour }} EGP/hour
-          </span>
+      <div class="relative">
+        @if (imageSrc()) {
+          <img [src]="imageSrc()" alt="Photo of {{ parking()!.name }}" class="h-72 w-full object-cover sm:h-80" />
+        } @else {
+          <div class="h-72 w-full bg-gradient-to-br from-slate-900 via-blue-800 to-cyan-600 sm:h-80"></div>
+        }
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 p-6 text-white sm:p-8">
+          <h1 class="text-2xl font-bold drop-shadow sm:text-3xl">{{ parking()!.name }}</h1>
+          <p class="mt-1 text-sm text-slate-200">📍 {{ parking()!.address }}</p>
         </div>
-      </div>
-      <div class="flex flex-wrap items-center gap-2 p-4 sm:p-6">
-        <app-status-badge status="available" />
-        <span class="text-sm text-slate-600">{{ availableSpots().length }} available</span>
-        <app-status-badge status="booked" />
-        <span class="text-sm text-slate-600">{{ bookedSpots().length }} booked</span>
       </div>
     </div>
 
-    <!-- CTA: adapts to auth state (login for guests, driver flow for drivers) -->
-    <div>
-      <a
-        [routerLink]="ctaLink().commands"
-        [queryParams]="ctaLink().queryParams"
-        class="block rounded-xl bg-blue-700 px-6 py-3 text-center font-semibold text-white transition hover:bg-blue-800"
-        [class.pointer-events-none]="!canBook()"
-        [class.opacity-50]="!canBook()"
-      >
-        Book Now
-      </a>
-      @if (!canBook()) {
-        <p class="mt-2 text-sm text-slate-500">No spots are currently available at this parking.</p>
-      }
-    </div>
+    <div class="grid gap-6 lg:grid-cols-3">
+      <div class="space-y-6 lg:col-span-2">
+        <!-- Info card -->
+        <section class="rounded-3xl bg-white p-6 shadow-sm sm:p-8">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <div class="min-w-0">
+              <h2 class="text-2xl font-bold text-[#003366]">{{ parking()!.name }}</h2>
+              <p class="mt-1 text-sm text-slate-500">📍 {{ parking()!.address }}</p>
+            </div>
+            <p class="shrink-0 text-right">
+              <span class="text-3xl font-extrabold text-[#003366]">{{ parking()!.pricePerHour }}</span>
+              <span class="ml-1 text-sm font-medium text-slate-500">EGP/hour</span>
+            </p>
+          </div>
+          <div class="mt-6 grid grid-cols-3 gap-4 border-t border-slate-100 pt-6 text-center">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Rating</p>
+              <p class="mt-1 text-xl font-extrabold text-[#003366]">{{ parking()!.rating }}</p>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Spots</p>
+              <p class="mt-1 text-xl font-extrabold text-[#003366]">{{ spots().length }}</p>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Available</p>
+              <p class="mt-1 text-xl font-extrabold text-emerald-600">{{ availableSpots().length }}</p>
+            </div>
+          </div>
+        </section>
 
-    <!-- Spots overview (read-only; booking happens in the driver flow) -->
-    <section class="rounded-2xl bg-white p-6 shadow-sm">
-      <h2 class="text-lg font-bold text-slate-900">Spots ({{ spots().length }})</h2>
-      @if (spots().length === 0) {
-        <div class="mt-4">
-          <app-empty-state title="No spots listed" hint="This parking has no spots yet. Please check back later." />
-        </div>
-      } @else {
-        <div class="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          @for (spot of spots(); track spot._id ?? spot.spotNumber) {
-            <app-parking-spot [spot]="spot" [selectable]="false" />
-          }
-        </div>
-      }
-    </section>
-
-    <!-- Reviews -->
-    <section class="rounded-2xl bg-white p-6 shadow-sm">
-      <h2 class="text-lg font-bold text-slate-900">Reviews ({{ reviews().length }})</h2>
-      @if (reviews().length === 0) {
-        <div class="mt-4">
-          <app-empty-state title="No reviews yet" hint="Be the first to review after your visit." />
-        </div>
-      } @else {
-        <ul class="mt-4 space-y-4">
-          @for (review of reviews(); track review._id) {
-            <li class="rounded-xl border border-slate-200 p-4">
-              <app-rating [value]="review.rating" [readonly]="true" />
-              @if (review.comment) {
-                <p class="mt-2 text-sm text-slate-700">{{ review.comment }}</p>
+        <!-- Reviews -->
+        <section class="rounded-3xl bg-white p-6 shadow-sm sm:p-8">
+          <h2 class="text-xl font-bold text-slate-900">Reviews</h2>
+          @if (reviews().length === 0) {
+            <div class="mt-4">
+              <app-empty-state title="No reviews yet" hint="Be the first to review after your visit." />
+            </div>
+          } @else {
+            <div class="mt-4">
+              <app-review-summary [reviews]="reviews()" />
+            </div>
+            <ul class="mt-6">
+              @for (review of reviews(); track review._id) {
+                <li class="flex gap-3 border-t border-slate-100 py-4">
+                  <span
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#003366] text-sm font-bold text-white"
+                    aria-hidden="true"
+                  >
+                    {{ reviewerInitial(review) }}
+                  </span>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                      <p class="text-sm font-semibold text-slate-900">{{ reviewerName(review) }}</p>
+                      <span class="flex items-center gap-2">
+                        <app-rating [value]="review.rating" [readonly]="true" />
+                        @if (reviewDate(review)) {
+                          <span class="text-xs text-slate-400">{{ reviewDate(review) }}</span>
+                        }
+                      </span>
+                    </div>
+                    @if (review.comment) {
+                      <p class="mt-1 text-sm text-slate-600">{{ review.comment }}</p>
+                    }
+                  </div>
+                </li>
               }
-            </li>
+            </ul>
           }
-        </ul>
-      }
-    </section>
+        </section>
+      </div>
+
+      <!-- Action panel -->
+      <aside class="h-fit rounded-3xl bg-white p-6 shadow-sm lg:sticky lg:top-24">
+        <h2 class="text-lg font-bold text-[#003366]">Book a Spot</h2>
+        @if (isAdmin()) {
+          <p class="mt-4 rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-500 ring-1 ring-slate-200">
+            You are signed in as an admin. Bookings are made from driver accounts.
+          </p>
+        } @else {
+          <a
+            [routerLink]="ctaLink().commands"
+            [queryParams]="ctaLink().queryParams"
+            class="mt-4 block rounded-xl bg-[#0B2A5B] px-6 py-3 text-center font-semibold text-white transition hover:bg-[#123a75]"
+            [class.pointer-events-none]="!canBook()"
+            [class.opacity-50]="!canBook()"
+          >
+            Select a Spot
+          </a>
+          @if (!canBook()) {
+            <p class="mt-2 text-sm text-slate-500">No spots are currently available at this parking.</p>
+          }
+        }
+        <!-- Teammate hook: review submission entry point (label only, not wired yet). -->
+        <p
+          class="mt-3 block text-center text-sm font-semibold text-[#003366]"
+        >
+          Write a Review
+        </p>
+      </aside>
+    </div>
   }
 </div>

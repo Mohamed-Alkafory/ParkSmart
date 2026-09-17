@@ -22,17 +22,20 @@ export class BookingCardComponent {
 
   readonly parkingName = computed(() => {
     const parking = this.booking().parkingId;
-    return typeof parking === 'string' ? 'Parking' : parking.name;
+    if (typeof parking === 'string') return 'Parking';
+    return parking?.name ?? 'Deleted parking';
   });
 
   readonly parkingAddress = computed(() => {
     const parking = this.booking().parkingId;
-    return typeof parking === 'string' ? '' : parking.address;
+    if (typeof parking === 'string') return '';
+    return parking?.address ?? '';
   });
 
   readonly spotLabel = computed(() => {
     const spot = this.booking().spotId;
-    return typeof spot === 'string' ? '' : spot.spotNumber;
+    if (typeof spot === 'string') return '';
+    return spot?.spotNumber ?? '—';
   });
 
   readonly isActive = computed(() => this.booking().status === 'active');

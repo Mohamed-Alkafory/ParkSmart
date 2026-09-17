@@ -3,7 +3,7 @@
      navbar hamburger menu takes over navigation. Content pages offset
      themselves with lg:ml-64. -->
 <aside
-  class="fixed inset-y-0 left-0 z-40 hidden w-64 overflow-hidden bg-slate-950 text-white shadow-xl lg:block"
+  class="fixed inset-y-0 left-0 z-40 hidden w-64 overflow-hidden border-r border-slate-200 bg-slate-50 text-slate-700 shadow-sm lg:block"
 >
   <!-- Links change automatically when the role input changes. -->
   <nav
@@ -13,12 +13,12 @@
     @for (link of links(); track link.route) {
       <a
         [routerLink]="link.route"
-        routerLinkActive="bg-white text-slate-950 shadow-sm"
-        [routerLinkActiveOptions]="{ exact: link.route === '/parkings' }"
-        class="flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white lg:w-full"
+        routerLinkActive="bg-[#E8F1FB] text-[#0060C0] shadow-sm ring-1 ring-[#0060C0]/15"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition hover:bg-[#E8F1FB] hover:text-[#0060C0] lg:w-full"
       >
         <span
-          class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-xs font-bold"
+          class="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-xs font-bold text-[#0060C0] ring-1 ring-slate-200"
           aria-hidden="true"
         >
           {{ link.icon }}

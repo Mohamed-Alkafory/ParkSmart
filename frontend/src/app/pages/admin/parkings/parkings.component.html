@@ -1,10 +1,7 @@
 ﻿<div class="flex flex-col gap-6 lg:flex-row lg:items-start">
   <app-sidebar [role]="role()" />
   <div class="min-w-0 flex-1 space-y-6 lg:ml-64">
-  <div class="rounded-3xl bg-gradient-to-r from-indigo-700 to-violet-600 p-6 text-white shadow-lg sm:p-8">
-    <p class="text-sm font-semibold uppercase tracking-wider text-indigo-100">Inventory</p>
-    <h1 class="mt-2 text-3xl font-bold">Parkings ({{ filtered().length }})</h1>
-  </div>
+  <app-page-header eyebrow="Inventory" title="Parkings ({{ filtered().length }})" subtitle="Every parking listed on the platform." />
 
   <div class="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm sm:flex-row sm:items-center">
     <input

@@ -12,15 +12,17 @@ import {
 } from '../../../shared/components/chart-widget/chart-widget.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 function parkingKey(b: Booking): string {
-  return typeof b.parkingId === 'string' ? b.parkingId : (b.parkingId._id ?? '');
+  if (typeof b.parkingId === 'string') return b.parkingId;
+  return b.parkingId?._id ?? '';
 }
 
 @Component({
   selector: 'app-owner-dashboard',
   standalone: true,
-  imports: [RouterLink, StatCardComponent, ChartWidgetComponent, SidebarComponent],
+  imports: [RouterLink, StatCardComponent, ChartWidgetComponent, SidebarComponent, PageHeaderComponent],
   templateUrl: './dashboard.component.html',
 })
 export class OwnerDashboardComponent implements OnInit {
@@ -59,19 +61,33 @@ export class OwnerDashboardComponent implements OnInit {
     };
   });
 
-  readonly revenuePerParking = computed(() => {
+  /** Last 5 bookings by start time — read-only slice of already-fetched data. */
+  readonly recentBookings = computed(() =>
+    [...this.bookings()]
+      .sort((a, b) => +new Date(b.startTime) - +new Date(a.startTime))
+      .slice(0, 5),
+  );
+
+  /** Display name for a booking's parking (populated object or plain id). */
+  bookingParkingName(b: Booking): string {
+    const p = b.parkingId;
+    return typeof p === 'string' ? 'Parking' : (p?.name ?? 'Parking');
+  }
+
+  /** Active-booking count per property — bar chart data (labels + counts). */
+  readonly activePerParking = computed(() => {
     const names = new Map(
       this.parkings().map((p) => [p._id ?? '', p.name] as const),
     );
-    const totals = new Map<string, number>();
+    const counts = new Map<string, number>();
     for (const b of this.bookings()) {
-      if (b.status !== 'completed') continue;
+      if (b.status !== 'active') continue;
       const key = parkingKey(b);
-      totals.set(key, (totals.get(key) ?? 0) + (b.totalPrice ?? 0));
+      counts.set(key, (counts.get(key) ?? 0) + 1);
     }
     return {
-      labels: [...totals.keys()].map((id) => names.get(id) ?? 'Parking'),
-      data: [...totals.values()],
+      labels: [...counts.keys()].map((id) => names.get(id) ?? 'Parking'),
+      data: [...counts.values()],
     };
   });
 

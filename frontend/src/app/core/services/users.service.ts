@@ -37,4 +37,11 @@ export class UsersService {
   delete(id: string): Observable<ApiResponse<{ message: string }>> {
     return this.http.delete<ApiResponse<{ message: string }>>(`${this.apiUrl}/${id}`);
   }
+
+  /** POST /:id/avatar — self or admin. Multipart field name is "image". */
+  uploadAvatar(id: string, file: File): Observable<ApiResponse<User>> {
+    const form = new FormData();
+    form.append('image', file);
+    return this.http.post<ApiResponse<User>>(`${this.apiUrl}/${id}/avatar`, form);
+  }
 }

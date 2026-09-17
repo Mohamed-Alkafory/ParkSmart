@@ -1,5 +1,6 @@
 ﻿const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
+const { deleteUploadByUrl } = require("../middlewares/upload.middleware");
 
 // Same password rule as auth.service.js register
 const passwordRegex =
@@ -56,9 +57,26 @@ async function deleteUser(id) {
   return await User.findByIdAndDelete(id);
 }
 
+// Replaces the user's avatar. Removes the previous upload from disk
+// so orphaned files do not accumulate (best-effort, never throws).
+async function setUserAvatar(id, avatarUrl) {
+  const user = await User.findById(id);
+  if (!user) return null;
+
+  const oldUrl = user.avatarUrl;
+  user.avatarUrl = avatarUrl;
+  await user.save();
+
+  if (oldUrl && oldUrl !== avatarUrl) deleteUploadByUrl(oldUrl);
+
+  user.password = undefined;
+  return user;
+}
+
 module.exports = {
   getUsers,
   getUserById,
   updateUser,
   deleteUser,
+  setUserAvatar,
 };

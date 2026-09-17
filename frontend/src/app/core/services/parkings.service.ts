@@ -52,8 +52,21 @@ export class ParkingsService {
     return this.http.put<ApiResponse<Parking>>(`${this.apiUrl}/${id}`, payload);
   }
 
-  /** DELETE /api/parkings/:id — rejected with 409 if active bookings or spots remain. */
-  delete(id: string): Observable<ApiResponse<null>> {
-    return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`);
+  /**
+   * DELETE /api/parkings/:id — rejected with 409 on active bookings.
+   * force=true also removes non-active booking history (spots, reviews, photo
+   * always go with the parking). Past bookings stay, shown as deleted parking.
+   */
+  delete(id: string, force = false): Observable<ApiResponse<null>> {
+    return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`, {
+      params: force ? { force: 'true' } : {},
+    });
+  }
+
+  /** POST /api/parkings/:id/image — owning owner only. Multipart field name is "image". */
+  uploadImage(id: string, file: File): Observable<ApiResponse<Parking>> {
+    const form = new FormData();
+    form.append('image', file);
+    return this.http.post<ApiResponse<Parking>>(`${this.apiUrl}/${id}/image`, form);
   }
 }

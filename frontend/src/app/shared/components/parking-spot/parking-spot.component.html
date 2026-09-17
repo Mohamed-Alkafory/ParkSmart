@@ -1,20 +1,27 @@
-<!-- The color makes the spot status easy to recognize. -->
+<!-- The color makes the spot status easy to recognize (navy = selected pick). -->
 <button
   type="button"
   class="flex min-h-28 w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 p-4 text-center transition"
-  [class.border-emerald-300]="spot().status === 'available'"
-  [class.bg-emerald-50]="spot().status === 'available'"
-  [class.text-emerald-800]="spot().status === 'available'"
+  [class.border-emerald-300]="spot().status === 'available' && !selected()"
+  [class.bg-emerald-50]="spot().status === 'available' && !selected()"
+  [class.text-emerald-800]="spot().status === 'available' && !selected()"
   [class.border-slate-300]="spot().status === 'booked'"
   [class.bg-slate-100]="spot().status === 'booked'"
   [class.text-slate-600]="spot().status === 'booked'"
+  [class.border-[#0B2A5B]]="selected()"
+  [class.bg-[#0B2A5B]]="selected()"
+  [class.text-white]="selected()"
   [class.cursor-pointer]="selectable() && spot().status === 'available'"
-  [class.hover:-translate-y-1]="selectable() && spot().status === 'available'"
+  [class.hover:-translate-y-1]="selectable() && spot().status === 'available' && !selected()"
   [disabled]="selectable() && spot().status === 'booked'"
   (click)="chooseSpot()"
 >
   <span class="text-xl font-bold">{{ spot().spotNumber }}</span>
-  <span class="rounded-full bg-white/80 px-3 py-1 text-xs font-semibold">
-    {{ spot().status === 'available' ? 'Available' : 'Booked' }}
+  <span
+    class="rounded-full px-3 py-1 text-xs font-semibold"
+    [class.bg-white/80]="!selected()"
+    [class.bg-white/15]="selected()"
+  >
+    {{ selected() ? 'Selected' : spot().status === 'available' ? 'Available' : 'Booked' }}
   </span>
 </button>

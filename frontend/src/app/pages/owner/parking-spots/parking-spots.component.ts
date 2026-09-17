@@ -6,6 +6,7 @@ import { Spot, SpotStatus } from '../../../core/models/api.models';
 import { ParkingSpotComponent } from '../../../shared/components/parking-spot/parking-spot.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 /**
  * Owner spot management page.
@@ -14,7 +15,7 @@ import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.com
 @Component({
   selector: 'app-owner-spots',
   standalone: true,
-  imports: [FormsModule, RouterLink, ParkingSpotComponent, SidebarComponent],
+  imports: [FormsModule, RouterLink, ParkingSpotComponent, SidebarComponent, PageHeaderComponent],
   templateUrl: './parking-spots.component.html',
 })
 export class OwnerParkingSpotsComponent implements OnInit {

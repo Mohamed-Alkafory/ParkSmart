@@ -7,6 +7,7 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
 import { PagerComponent } from '../../../shared/components/pager/pager.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 type StatusFilter = 'all' | BookingStatus;
 
@@ -26,7 +27,7 @@ interface PopulatedRef {
 @Component({
   selector: 'app-admin-bookings',
   standalone: true,
-  imports: [DatePipe, FormsModule, StatusBadgeComponent, PagerComponent, SidebarComponent],
+  imports: [DatePipe, FormsModule, StatusBadgeComponent, PagerComponent, SidebarComponent, PageHeaderComponent],
   templateUrl: './bookings.component.html',
 })
 export class AdminBookingsComponent implements OnInit {
@@ -97,17 +98,17 @@ export class AdminBookingsComponent implements OnInit {
 
   parkingName(b: Booking): string {
     if (typeof b.parkingId === 'string') return 'Parking';
-    return (b.parkingId as PopulatedRef).name ?? 'Parking';
+    return (b.parkingId as PopulatedRef | null)?.name ?? 'Deleted parking';
   }
 
   parkingAddress(b: Booking): string {
     if (typeof b.parkingId === 'string') return '';
-    return (b.parkingId as PopulatedRef).address ?? '';
+    return (b.parkingId as PopulatedRef | null)?.address ?? '';
   }
 
   spotLabel(b: Booking): string {
     if (typeof b.spotId === 'string') return '—';
-    return (b.spotId as PopulatedRef).spotNumber ?? '—';
+    return (b.spotId as PopulatedRef | null)?.spotNumber ?? '—';
   }
 
   userName(b: Booking): string {

@@ -1,18 +1,14 @@
 ﻿<div class="flex flex-col gap-6 lg:flex-row lg:items-start">
   <app-sidebar [role]="role()" />
   <div class="min-w-0 flex-1 space-y-6 lg:ml-64">
-  <div class="flex flex-wrap items-center justify-between gap-3 rounded-3xl bg-gradient-to-r from-emerald-700 to-teal-600 p-6 text-white shadow-lg sm:p-8">
-    <div>
-      <p class="text-sm font-semibold uppercase tracking-wider text-emerald-100">Your properties</p>
-      <h1 class="mt-2 text-3xl font-bold">My parkings ({{ count() }})</h1>
-    </div>
+  <app-page-header eyebrow="Your properties" title="My parkings ({{ count() }})" subtitle="Manage your properties and their availability.">
     <a
       routerLink="/owner/parkings/new"
-      class="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+      class="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-[#0060C0] transition hover:bg-blue-50"
     >
       + Add New Parking
     </a>
-  </div>
+  </app-page-header>
 
   @if (notice()) {
     <p class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{{ notice() }}</p>

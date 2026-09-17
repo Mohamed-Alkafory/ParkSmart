@@ -117,16 +117,7 @@
   }
   <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
     @for (p of filtered(); track p._id) {
-      <div class="space-y-2">
-        <app-parking-card [parking]="p" linkPrefix="/parkings" />
-        <p class="px-1 text-xs font-medium text-slate-500">
-          @if (availableCount(p._id) !== null) {
-            <span class="font-semibold text-emerald-700">{{ availableCount(p._id) }}</span> spot(s) available
-          } @else {
-            <span>Availability loading...</span>
-          }
-        </p>
-      </div>
+      <app-parking-card [parking]="p" linkPrefix="/parkings" [availableSpots]="availableCount(p._id)" />
     }
   </div>
 </div>

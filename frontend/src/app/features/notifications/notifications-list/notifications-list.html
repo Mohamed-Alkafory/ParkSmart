@@ -1,22 +1,25 @@
-<div class="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-  <div class="flex items-center justify-between gap-4">
-    <h1 class="text-2xl font-extrabold tracking-tight text-[#003366] sm:text-3xl">Notifications</h1>
+<div class="flex flex-col gap-6 lg:flex-row lg:items-start">
+  @if (hasSidebar()) {
+    <app-sidebar [role]="role()" />
+  }
+  <div class="min-w-0 flex-1 space-y-6" [ngClass]="{ 'lg:ml-64': hasSidebar() }">
+  <app-page-header eyebrow="Inbox" title="Notifications" subtitle="Booking updates and parking alerts.">
     <button
       type="button"
       (click)="markAllRead()"
       [disabled]="loading() || !hasUnread()"
-      class="shrink-0 rounded-lg border border-[#0060C0] bg-white px-4 py-2 text-sm font-semibold text-[#0060C0] transition hover:bg-[#E8F1FB] disabled:cursor-not-allowed disabled:opacity-50"
+      class="shrink-0 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-[#0060C0] transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
     >
       Mark all as read
     </button>
-  </div>
+  </app-page-header>
 
   @if (loading()) {
-    <div class="mt-6 rounded-2xl bg-white p-10 shadow-sm ring-1 ring-slate-900/5">
+    <div class="rounded-2xl bg-white p-10 shadow-sm ring-1 ring-slate-900/5">
       <app-loading message="Loading notifications…" />
     </div>
   } @else if (error(); as err) {
-    <div class="mt-6 flex flex-col items-center gap-4 rounded-2xl bg-red-50 p-10 ring-1 ring-red-100">
+    <div class="flex flex-col items-center gap-4 rounded-2xl bg-red-50 p-10 ring-1 ring-red-100">
       <app-error-state [message]="err" />
       <button
         type="button"
@@ -27,14 +30,14 @@
       </button>
     </div>
   } @else if (notifications().length === 0) {
-    <div class="mt-6 rounded-2xl bg-white p-10 shadow-sm ring-1 ring-slate-900/5">
+    <div class="rounded-2xl bg-white p-10 shadow-sm ring-1 ring-slate-900/5">
       <app-empty-state
         title="No notifications yet"
         hint="You're all caught up. New parking updates will appear here."
       />
     </div>
   } @else {
-    <ul class="mt-6 flex flex-col gap-3">
+    <ul class="flex flex-col gap-3">
       @for (notification of notifications(); track notification._id) {
         <li>
           <app-notification-item
@@ -45,4 +48,5 @@
       }
     </ul>
   }
+  </div>
 </div>

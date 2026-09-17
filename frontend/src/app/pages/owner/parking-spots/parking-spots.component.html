@@ -2,27 +2,40 @@
   <app-sidebar [role]="role()" />
   <div class="min-w-0 flex-1 space-y-6 lg:ml-64">
   <!-- Page title and a quick summary for the owner. -->
-  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-    <div>
-      <p class="text-sm font-semibold uppercase tracking-wider text-emerald-600">
-        Parking management
-      </p>
-      <h1 class="mt-1 text-3xl font-bold text-slate-900">Parking spots</h1>
-      <p class="mt-2 text-sm text-slate-500">Add spots and keep their availability up to date.</p>
-    </div>
+  <app-page-header eyebrow="Parking management" title="Parking spots" subtitle="Add spots and keep their availability up to date.">
     <div class="flex flex-wrap items-center gap-3">
-      <div class="rounded-xl bg-slate-900 px-4 py-3 text-white">
-        <span class="text-sm text-slate-300">Total spots</span>
-        <strong class="ml-2 text-xl">{{ spots().length }}</strong>
-      </div>
+      <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur">
+        Total spots: {{ spots().length }}
+      </span>
+      @if (id()) {
+        <a
+          [routerLink]="['/parkings', id()]"
+          class="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-[#0060C0] transition hover:bg-blue-50"
+        >
+          View this park
+        </a>
+      }
       <a
         routerLink="/owner/bookings"
-        class="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+        class="rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/30 transition hover:bg-white/20"
       >
         View bookings
       </a>
     </div>
-  </div>
+  </app-page-header>
+
+  <!-- Step 2 of 2: spots for the park just created. -->
+  <ol class="mt-4 flex items-center gap-2 pt-2 text-xs font-semibold">
+    <li class="flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-700 ring-1 ring-emerald-200">
+      <span class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white">✓</span>
+      Create park
+    </li>
+    <li aria-hidden="true" class="text-slate-300">→</li>
+    <li class="flex items-center gap-2 rounded-full bg-[#0060C0] px-4 py-2 text-white">
+      <span class="flex h-5 w-5 items-center justify-center rounded-full bg-white/20">2</span>
+      Add spots
+    </li>
+  </ol>
 
   <!-- New spot form. -->
   <form class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" (ngSubmit)="addSpot()">
@@ -34,7 +47,7 @@
         id="spotNumber"
         name="spotNumber"
         type="text"
-        class="min-w-0 flex-1 rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+        class="min-w-0 flex-1 rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-[#0060C0] focus:ring-2 focus:ring-[#0060C0]/15"
         placeholder="Example: A1"
         autocomplete="off"
         [ngModel]="newSpotNumber()"
@@ -99,6 +112,30 @@
           </div>
         </article>
       }
+    </div>
+  }
+
+  <!-- Finish step: go see the park just created. -->
+  @if (!loading() && spots().length > 0) {
+    <div class="flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
+      <p class="text-sm font-semibold text-slate-700">Finished adding spots?</p>
+      <p class="text-xs text-slate-500">See how the park you just added looks.</p>
+      <div class="flex flex-col gap-2 sm:flex-row">
+        @if (id()) {
+          <a
+            [routerLink]="['/parkings', id()]"
+            class="rounded-xl bg-[#0060C0] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#003366]"
+          >
+            View this park
+          </a>
+        }
+        <a
+          routerLink="/owner/parkings"
+          class="rounded-xl border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          Back to My parkings
+        </a>
+      </div>
     </div>
   }
   </div>

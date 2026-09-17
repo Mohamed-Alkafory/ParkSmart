@@ -16,6 +16,7 @@ export interface User {
   email: string;
   phone?: string;
   role: UserRole;
+  avatarUrl?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -36,6 +37,7 @@ export interface Parking {
     coordinates: [number, number]; // [lng, lat] — backend order matters!
   };
   rating: number;
+  imageUrl?: string | null;
 }
 
 export type SpotStatus = 'available' | 'booked';

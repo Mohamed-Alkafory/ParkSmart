@@ -28,3 +28,7 @@ desktop.ini
 # ─── Build Output ───────────────────────────────────────────────
 dist/
 build/
+
+# ─── Uploaded files (local image uploads — never commit these) ──
+uploads/*
+!uploads/.gitkeep

@@ -1,11 +1,7 @@
-﻿<div class="flex flex-col gap-6 lg:flex-row lg:items-start">
+﻿<div class="lg:pl-64">
   <app-sidebar [role]="role()" />
-  <div class="mx-auto w-full max-w-2xl flex-1 space-y-6 lg:ml-64">
-  <div class="rounded-3xl bg-gradient-to-r from-indigo-700 to-violet-600 p-6 text-white shadow-lg sm:p-8">
-    <p class="text-sm font-semibold uppercase tracking-wider text-indigo-100">Platform</p>
-    <h1 class="mt-2 text-3xl font-bold">Settings</h1>
-    <p class="mt-2 text-sm text-indigo-100">Stored in this browser only — no backend endpoint exists.</p>
-  </div>
+  <div class="mx-auto w-full max-w-2xl space-y-6">
+  <app-page-header eyebrow="Platform" title="Settings" subtitle="Stored in this browser only — no backend endpoint exists." />
 
   <form (ngSubmit)="onSave()" class="space-y-6 rounded-2xl bg-white p-6 shadow-sm sm:p-8">
     @if (error()) {

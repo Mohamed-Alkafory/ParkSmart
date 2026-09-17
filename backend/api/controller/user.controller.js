@@ -89,9 +89,44 @@ async function deleteUser(req, res, next) {
   }
 }
 
+/**
+ * POST /api/users/:id/avatar — self or admin.
+ * Expects multipart/form-data with a single file field named "image".
+ */
+async function uploadAvatar(req, res, next) {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Please choose an image to upload",
+      });
+    }
+
+    const data = await userService.setUserAvatar(
+      req.params.id,
+      `/uploads/${req.file.filename}`
+    );
+
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getUsers,
   getUserById,
   updateUser,
   deleteUser,
+  uploadAvatar,
 };

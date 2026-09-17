@@ -3,6 +3,7 @@ import { SpotsService } from '../../../core/services/spots.service';
 import { Spot } from '../../../core/models/api.models';
 import { AuthService } from '../../../core/services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 type AdminSpot = Omit<Spot, 'parkingId'> & {
   parkingId: string | { _id: string; name: string; address?: string };
@@ -15,7 +16,7 @@ type AdminSpot = Omit<Spot, 'parkingId'> & {
 @Component({
   selector: 'app-admin-spots',
   standalone: true,
-  imports: [SidebarComponent],
+  imports: [SidebarComponent, PageHeaderComponent],
   templateUrl: './parking-spots.component.html',
 })
 export class AdminSpotsComponent implements OnInit {
