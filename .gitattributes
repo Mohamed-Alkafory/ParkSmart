@@ -1,0 +1,6 @@
+# ─── GitHub language stats ────────────────────────────────────────
+# Angular templates (*.html) hold most of the Tailwind markup, which makes
+# HTML dominate the language bar by byte count. Marking them vendored
+# excludes them from statistics so TypeScript (the actual app logic)
+# shows as the project's first language. No code behavior changes.
+*.html linguist-vendored
