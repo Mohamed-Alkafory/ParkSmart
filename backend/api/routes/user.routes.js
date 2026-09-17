@@ -6,6 +6,7 @@ const {
   getUserById,
   updateUser,
   deleteUser,
+  uploadAvatar,
 } = require("../controller/user.controller");
 
 const {
@@ -13,6 +14,8 @@ const {
   requireRole,
   requireSelfOrAdmin,
 } = require("../middlewares/auth.middleware");
+
+const { uploadSingle } = require("../middlewares/upload.middleware");
 
 // Get all users (admin only â€” contains PII)
 router.get("/", requireAuth, requireRole("admin"), getUsers);
@@ -22,6 +25,9 @@ router.get("/:id", requireAuth, requireSelfOrAdmin, getUserById);
 
 // Update user (self or admin â€” see user.service for field whitelist)
 router.patch("/:id", requireAuth, requireSelfOrAdmin, updateUser);
+
+// Upload avatar (self or admin) — multipart/form-data, field "image"
+router.post("/:id/avatar", requireAuth, requireSelfOrAdmin, uploadSingle("image"), uploadAvatar);
 
 // Delete user
 router.delete(

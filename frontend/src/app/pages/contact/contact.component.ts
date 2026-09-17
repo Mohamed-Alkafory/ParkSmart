@@ -1,6 +1,5 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
 // Public Contact page: form UI with client-side validation only — no backend calls.
@@ -11,14 +10,11 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [FormsModule, RouterLink, ScrollRevealDirective],
+  imports: [FormsModule, ScrollRevealDirective],
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.css',
 })
 export class ContactComponent {
-  /** Mobile hamburger menu state (temporary inline nav). */
-  readonly mobileMenuOpen = signal(false);
-
   /** Current year for the footer copyright line. */
   readonly year = new Date().getFullYear();
 
@@ -35,11 +31,6 @@ export class ContactComponent {
   /** Footer "Back to top" action. */
   scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  /** Close the mobile menu after choosing a link. */
-  closeMobileMenu(): void {
-    this.mobileMenuOpen.set(false);
   }
 
   /** Validate locally and show an inline success message (preview only). */

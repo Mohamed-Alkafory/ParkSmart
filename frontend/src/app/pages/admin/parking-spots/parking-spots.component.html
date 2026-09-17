@@ -2,17 +2,11 @@
   <app-sidebar [role]="role()" />
   <div class="min-w-0 flex-1 space-y-6 lg:ml-64">
   <!-- Admin heading and system-wide spot count. -->
-  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-    <div>
-      <p class="text-sm font-semibold uppercase tracking-wider text-violet-600">Admin control</p>
-      <h1 class="mt-1 text-3xl font-bold text-slate-900">All parking spots</h1>
-      <p class="mt-2 text-sm text-slate-500">Monitor every spot and its current status.</p>
-    </div>
-    <div class="rounded-xl bg-violet-700 px-5 py-3 text-white shadow">
-      <span class="text-sm text-violet-100">Total</span>
-      <strong class="ml-2 text-xl">{{ spots().length }}</strong>
-    </div>
-  </div>
+  <app-page-header eyebrow="Admin control" title="All parking spots" subtitle="Monitor every spot and its current status.">
+    <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur">
+      Total: {{ spots().length }}
+    </span>
+  </app-page-header>
 
   @if (error()) {
     <p class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

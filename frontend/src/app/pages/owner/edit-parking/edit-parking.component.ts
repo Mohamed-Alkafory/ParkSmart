@@ -4,10 +4,13 @@ import { Router, RouterLink } from '@angular/router';
 import { ParkingsService } from '../../../core/services/parkings.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { ImageUploadComponent } from '../../../shared/components/image-upload/image-upload.component';
+import { resolveImageUrl } from '../../../core/utils/image-url';
 
 // Owner edit-parking page. Prefills from GET /api/parkings/:id,
 // saves with PUT /api/parkings/:id (lat+lng sent together), then back to /owner/parkings.
-@Component({ selector: 'app-edit-parking', standalone: true, imports: [FormsModule, RouterLink, SidebarComponent], templateUrl: './edit-parking.component.html' })
+@Component({ selector: 'app-edit-parking', standalone: true, imports: [FormsModule, RouterLink, SidebarComponent, PageHeaderComponent, ImageUploadComponent], templateUrl: './edit-parking.component.html' })
 export class EditParkingComponent implements OnInit {
   private parkingsSvc = inject(ParkingsService);
   private router = inject(Router);
@@ -26,6 +29,11 @@ export class EditParkingComponent implements OnInit {
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
+  readonly imageUploading = signal(false);
+  readonly storedImagePath = signal<string | null>(null);
+
+  /** Resolved parking photo URL (null = show the placeholder). */
+  readonly imageSrc = computed(() => resolveImageUrl(this.storedImagePath()));
 
   ngOnInit(): void {
     this.load();
@@ -51,12 +59,32 @@ export class EditParkingComponent implements OnInit {
           const coords = p.location.coordinates;
           this.lng.set(coords[0]);
           this.lat.set(coords[1]);
+          this.storedImagePath.set(p.imageUrl ?? null);
         }
         this.loading.set(false);
       },
       error: (err) => {
         this.error.set(err?.error?.message ?? 'Could not load the parking.');
         this.loading.set(false);
+      },
+    });
+  }
+
+  /** Uploads a new parking photo immediately on file selection. */
+  onImageSelected(file: File): void {
+    const parkingId = this.id();
+    if (!parkingId || this.imageUploading()) return;
+
+    this.imageUploading.set(true);
+    this.error.set(null);
+    this.parkingsSvc.uploadImage(parkingId, file).subscribe({
+      next: (res) => {
+        this.storedImagePath.set(res.data?.imageUrl ?? null);
+        this.imageUploading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err?.error?.message ?? 'Could not upload the photo.');
+        this.imageUploading.set(false);
       },
     });
   }

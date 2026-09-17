@@ -6,6 +6,7 @@ import { Booking, BookingStatus } from '../../../core/models/api.models';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 type StatusFilter = 'all' | BookingStatus;
 
@@ -21,7 +22,7 @@ interface PopulatedUser {
 @Component({
   selector: 'app-owner-bookings',
   standalone: true,
-  imports: [DatePipe, FormsModule, StatusBadgeComponent, SidebarComponent],
+  imports: [DatePipe, FormsModule, StatusBadgeComponent, SidebarComponent, PageHeaderComponent],
   templateUrl: './bookings.component.html',
 })
 export class OwnerBookingsComponent implements OnInit {
@@ -70,11 +71,13 @@ export class OwnerBookingsComponent implements OnInit {
   }
 
   parkingName(b: Booking): string {
-    return typeof b.parkingId === 'string' ? 'Parking' : (b.parkingId.name ?? 'Parking');
+    if (typeof b.parkingId === 'string') return 'Parking';
+    return b.parkingId?.name ?? 'Deleted parking';
   }
 
   spotLabel(b: Booking): string {
-    return typeof b.spotId === 'string' ? '—' : (b.spotId.spotNumber ?? '—');
+    if (typeof b.spotId === 'string') return '—';
+    return b.spotId?.spotNumber ?? '—';
   }
 
   driverName(b: Booking): string {

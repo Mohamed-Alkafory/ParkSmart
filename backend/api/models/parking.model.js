@@ -19,6 +19,7 @@ const parkingSchema = new mongoose.Schema(
       coordinates: { type: [Number], required: true }, // [lng, lat]
     },
     rating: { type: Number, default: 0 },
+    imageUrl: { type: String, default: null },
   },
   { timestamps: true }
 );

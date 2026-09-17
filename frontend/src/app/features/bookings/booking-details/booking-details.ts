@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { BookingsService } from '../../../core/services/bookings.service';
 import { Booking } from '../../../core/models/api.models';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
+import { getUserRole } from '../../../core/guards/owner.guard';
 
 /**
  * Booking details page: Booking Details in the design flow.
@@ -32,25 +33,26 @@ export class BookingDetails {
   readonly parkingName = computed(() => {
     const b = this.booking();
     if (!b) return '';
-    return typeof b.parkingId === 'string' ? 'Parking' : b.parkingId.name;
+    if (typeof b.parkingId === 'string') return 'Parking';
+    return b.parkingId?.name ?? 'Deleted parking';
   });
 
   readonly parkingAddress = computed(() => {
     const b = this.booking();
     if (!b || typeof b.parkingId === 'string') return '';
-    return b.parkingId.address;
+    return b.parkingId?.address ?? '';
   });
 
   readonly parkingIdValue = computed(() => {
     const b = this.booking();
     if (!b) return '';
-    return typeof b.parkingId === 'string' ? b.parkingId : (b.parkingId._id ?? '');
+    return typeof b.parkingId === 'string' ? b.parkingId : (b.parkingId?._id ?? '');
   });
 
   readonly spotLabel = computed(() => {
     const b = this.booking();
     if (!b) return 'Auto-assigned';
-    return typeof b.spotId === 'string' ? 'Auto-assigned' : b.spotId.spotNumber;
+    return typeof b.spotId === 'string' ? 'Auto-assigned' : (b.spotId?.spotNumber ?? '—');
   });
 
   readonly isActive = computed(() => this.booking()?.status === 'active');
@@ -71,9 +73,40 @@ export class BookingDetails {
     this.bookingsService.getMine().subscribe({
       next: (res) => {
         const found = (res.data ?? []).find((b) => b._id === bookingId) ?? null;
-        this.booking.set(found);
-        if (!found) this.error.set('Booking not found.');
-        this.loading.set(false);
+        if (found) {
+          this.booking.set(found);
+          this.loading.set(false);
+          return;
+        }
+        // Owners open drivers' bookings (e.g. from the owner dashboard's
+        // recent list) — those live in GET /api/bookings/owner, not /my.
+        // Admins open any platform booking — those come from GET /api/bookings.
+        const role = getUserRole();
+        const fallback$ =
+          role === 'owner'
+            ? this.bookingsService.getOwnerBookings()
+            : role === 'admin'
+              ? this.bookingsService.getAllBookings()
+              : null;
+        if (!fallback$) {
+          this.booking.set(null);
+          this.error.set('Booking not found.');
+          this.loading.set(false);
+          return;
+        }
+        fallback$.subscribe({
+          next: (fallbackRes) => {
+            const fallbackFound =
+              (fallbackRes.data ?? []).find((b) => b._id === bookingId) ?? null;
+            this.booking.set(fallbackFound);
+            if (!fallbackFound) this.error.set('Booking not found.');
+            this.loading.set(false);
+          },
+          error: (err) => {
+            this.error.set(err?.error?.message ?? 'Could not load the booking.');
+            this.loading.set(false);
+          },
+        });
       },
       error: (err) => {
         this.error.set(err?.error?.message ?? 'Could not load the booking.');

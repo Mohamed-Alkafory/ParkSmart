@@ -10,6 +10,7 @@ import { RatingComponent } from '../../../shared/components/rating/rating.compon
 import { PagerComponent } from '../../../shared/components/pager/pager.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 type RatingFilter = 'all' | 1 | 2 | 3 | 4 | 5;
 
@@ -28,7 +29,7 @@ interface AdminReview extends Review {
 @Component({
   selector: 'app-admin-reviews',
   standalone: true,
-  imports: [DatePipe, FormsModule, RatingComponent, PagerComponent, SidebarComponent],
+  imports: [DatePipe, FormsModule, RatingComponent, PagerComponent, SidebarComponent, PageHeaderComponent],
   templateUrl: './reviews.component.html',
 })
 export class AdminReviewsComponent implements OnInit {

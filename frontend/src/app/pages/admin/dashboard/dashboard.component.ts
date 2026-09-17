@@ -1,4 +1,5 @@
 ﻿import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { UsersService } from '../../../core/services/users.service';
 import { ParkingsService } from '../../../core/services/parkings.service';
@@ -11,11 +12,12 @@ import {
 } from '../../../shared/components/chart-widget/chart-widget.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [StatCardComponent, ChartWidgetComponent, SidebarComponent],
+  imports: [RouterLink, StatCardComponent, ChartWidgetComponent, SidebarComponent, PageHeaderComponent],
   templateUrl: './dashboard.component.html',
 })
 export class AdminDashboardComponent implements OnInit {
@@ -64,6 +66,19 @@ export class AdminDashboardComponent implements OnInit {
       ],
     };
   });
+
+  /** Last 5 bookings by start time — read-only slice of already-fetched data. */
+  readonly recentBookings = computed(() =>
+    [...this.bookings()]
+      .sort((a, b) => +new Date(b.startTime) - +new Date(a.startTime))
+      .slice(0, 5),
+  );
+
+  /** Display name for a booking's parking (populated object or plain id). */
+  bookingParkingName(b: Booking): string {
+    const p = b.parkingId;
+    return typeof p === 'string' ? 'Parking' : (p?.name ?? 'Parking');
+  }
 
   ngOnInit(): void {
     this.load();

@@ -6,6 +6,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { User, UserRole } from '../../../core/models/api.models';
 import { PagerComponent } from '../../../shared/components/pager/pager.component';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 type RoleFilter = 'all' | UserRole;
 
@@ -19,7 +20,7 @@ const PAGE_SIZE = 10;
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [DatePipe, FormsModule, PagerComponent, SidebarComponent],
+  imports: [DatePipe, FormsModule, PagerComponent, SidebarComponent, PageHeaderComponent],
   templateUrl: './users.component.html',
 })
 export class AdminUsersComponent implements OnInit {

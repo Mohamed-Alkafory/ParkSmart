@@ -1,8 +1,23 @@
-<div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+<div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-slate-900/5">
   @if (title()) {
-    <h3 class="mb-3 font-semibold text-slate-800">{{ title() }}</h3>
+    <h3 class="font-semibold text-slate-800">{{ title() }}</h3>
   }
-  <div class="relative h-64">
-    <canvas #canvas></canvas>
-  </div>
+  @if (caption()) {
+    <p class="mb-3 mt-0.5 text-xs text-slate-500">{{ caption() }}</p>
+  } @else if (title()) {
+    <div class="mb-3"></div>
+  }
+  @if (hasData()) {
+    <div class="relative h-64">
+      <canvas #canvas></canvas>
+    </div>
+  } @else {
+    <div class="flex h-64 flex-col items-center justify-center gap-2 rounded-xl bg-slate-50 text-center ring-1 ring-slate-100">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-slate-300" aria-hidden="true">
+        <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+        <path d="M7 14l4-4 4 4 5-6" />
+      </svg>
+      <p class="max-w-xs px-4 text-xs font-medium text-slate-400">{{ emptyText() }}</p>
+    </div>
+  }
 </div>

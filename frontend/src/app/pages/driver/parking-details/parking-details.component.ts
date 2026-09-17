@@ -5,9 +5,9 @@ import { ParkingsService } from '../../../core/services/parkings.service';
 import { SpotsService } from '../../../core/services/spots.service';
 import { ReviewsService } from '../../../core/services/reviews.service';
 import { Parking, Review, Spot } from '../../../core/models/api.models';
-import { ParkingSpotComponent } from '../../../shared/components/parking-spot/parking-spot.component';
 import { RatingComponent } from '../../../shared/components/rating/rating.component';
-import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
+import { resolveImageUrl } from '../../../core/utils/image-url';
+import { ReviewSummaryComponent } from '../../../shared/components/review-summary/review-summary.component';
 
 /**
  * Driver parking details page: Parking Details in the design flow.
@@ -18,7 +18,7 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
 @Component({
   selector: 'app-parking-details',
   standalone: true,
-  imports: [RouterLink, ParkingSpotComponent, RatingComponent, StatusBadgeComponent],
+  imports: [RouterLink, RatingComponent, ReviewSummaryComponent],
   templateUrl: './parking-details.component.html',
 })
 export class ParkingDetailsComponent implements OnInit {
@@ -37,11 +37,30 @@ export class ParkingDetailsComponent implements OnInit {
   readonly availableSpots = computed(() => this.spots().filter((s) => s.status === 'available'));
   readonly bookedSpots = computed(() => this.spots().filter((s) => s.status === 'booked'));
   readonly canBook = computed(() => this.availableSpots().length > 0);
-  readonly coordinates = computed(() => {
-    const coords = this.parking()?.location.coordinates;
-    if (!coords) return null;
-    return { lng: coords[0], lat: coords[1] };
-  });
+
+  /** Resolved parking photo URL (null = gradient header only). */
+  readonly imageSrc = computed(() => resolveImageUrl(this.parking()?.imageUrl));
+
+  /** Reviewer display name — userId arrives populated with the name. */
+  reviewerName(review: Review): string {
+    if (typeof review.userId === 'string') return 'Driver';
+    return (review.userId as unknown as { name?: string })?.name ?? 'Driver';
+  }
+
+  reviewerInitial(review: Review): string {
+    return this.reviewerName(review).charAt(0).toUpperCase();
+  }
+
+  /** Review date (backend timestamps) formatted like "Sep 10, 2025". */
+  reviewDate(review: Review): string {
+    const raw = (review as unknown as { createdAt?: string }).createdAt;
+    if (!raw) return '';
+    return new Date(raw).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }
 
   ngOnInit(): void {
     this.load();

@@ -1,7 +1,8 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Parking } from '../../../core/models/api.models';
 import { RatingComponent } from '../rating/rating.component';
+import { resolveImageUrl } from '../../../core/utils/image-url';
 
 /**
  * Reusable parking card used by lists and search results.
@@ -17,4 +18,9 @@ export class ParkingCardComponent {
   readonly parking = input.required<Parking>();
   /** Route prefix for the details link. Defaults to the public page; driver flow passes '/driver/parkings'. */
   readonly linkPrefix = input<string>('/parkings');
+  /** Available-spot count for the badge (null = still loading). Parent pages fetch this. */
+  readonly availableSpots = input<number | null>(null);
+
+  /** Resolved parking photo URL (null = decorative gradient placeholder). */
+  readonly imageSrc = computed(() => resolveImageUrl(this.parking().imageUrl));
 }

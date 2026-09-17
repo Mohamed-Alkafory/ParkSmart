@@ -1,15 +1,11 @@
 <div class="flex flex-col gap-6 lg:flex-row lg:items-start">
   <app-sidebar [role]="role()" />
   <div class="min-w-0 flex-1 space-y-6 lg:ml-64">
-  <div class="flex flex-wrap items-center justify-between gap-3 rounded-3xl bg-gradient-to-r from-emerald-700 to-teal-600 p-6 text-white shadow-lg sm:p-8">
-    <div>
-      <p class="text-sm font-semibold uppercase tracking-wider text-emerald-100">Reservations</p>
-      <h1 class="mt-2 text-3xl font-bold">Owner bookings</h1>
-    </div>
+  <app-page-header eyebrow="Reservations" title="Owner bookings" subtitle="Bookings for your parkings — complete or cancel active ones.">
     <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur">
       Revenue: {{ revenue() }} EGP
     </span>
-  </div>
+  </app-page-header>
 
   <div class="flex flex-wrap items-center gap-2 rounded-2xl bg-white p-4 shadow-sm">
     <span class="text-sm font-semibold text-slate-600">Filter:</span>

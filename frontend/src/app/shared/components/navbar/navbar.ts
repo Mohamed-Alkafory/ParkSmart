@@ -5,6 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../core/services/auth.service';
 import { StorageService } from '../../../core/services/storage.service';
 import { NotificationsService } from '../../../core/services/notifications.service';
+import { resolveImageUrl } from '../../../core/utils/image-url';
 
 @Component({
   selector: 'app-navbar',
@@ -35,6 +36,9 @@ export class Navbar implements OnInit {
   readonly menuOpen = signal(false);
   readonly hasUnread = signal(false);
   private readonly unreadUserId = signal<string | null>(null);
+
+  /** Resolved avatar URL for the signed-in user (null = initial-letter fallback). */
+  readonly avatarSrc = computed(() => resolveImageUrl(this.currentUser()?.avatarUrl));
 
   constructor() {
     effect(() => {

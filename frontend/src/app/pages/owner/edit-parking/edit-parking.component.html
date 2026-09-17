@@ -1,10 +1,7 @@
-﻿<div class="flex flex-col gap-6 lg:flex-row lg:items-start">
+﻿<div class="lg:pl-64">
   <app-sidebar [role]="role()" />
-  <div class="mx-auto w-full max-w-xl flex-1 space-y-6 lg:ml-64">
-  <div class="rounded-3xl bg-gradient-to-r from-emerald-700 to-teal-600 p-6 text-white shadow-lg sm:p-8">
-    <p class="text-sm font-semibold uppercase tracking-wider text-emerald-100">Edit property</p>
-    <h1 class="mt-2 text-3xl font-bold">Edit parking</h1>
-  </div>
+  <div class="mx-auto w-full max-w-xl space-y-6">
+  <app-page-header eyebrow="Edit property" title="Edit parking" subtitle="Update your parking details below." />
 
   @if (loading()) {
     <div class="rounded-2xl bg-white p-10 text-center text-slate-500 shadow-sm">Loading parking...</div>
@@ -17,39 +14,49 @@
         Name
         <input type="text" required maxlength="100"
           [ngModel]="name()" (ngModelChange)="name.set($event)" name="name"
-          class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal text-slate-900 focus:border-emerald-600 focus:outline-none" />
+          class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal text-slate-900 focus:border-[#0060C0] focus:outline-none" />
       </label>
       <label class="block text-sm font-semibold text-slate-700">
         Address
         <input type="text" required maxlength="200"
           [ngModel]="address()" (ngModelChange)="address.set($event)" name="address"
-          class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal text-slate-900 focus:border-emerald-600 focus:outline-none" />
+          class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal text-slate-900 focus:border-[#0060C0] focus:outline-none" />
       </label>
       <label class="block text-sm font-semibold text-slate-700">
         Price per hour (EGP)
         <input type="number" required min="1" step="any"
           [ngModel]="pricePerHour()" (ngModelChange)="pricePerHour.set($event)" name="pricePerHour"
-          class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal text-slate-900 focus:border-emerald-600 focus:outline-none" />
+          class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal text-slate-900 focus:border-[#0060C0] focus:outline-none" />
       </label>
       <div class="grid gap-4 sm:grid-cols-2">
         <label class="block text-sm font-semibold text-slate-700">
           Latitude
           <input type="number" required step="any"
             [ngModel]="lat()" (ngModelChange)="lat.set($event)" name="lat"
-            class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal text-slate-900 focus:border-emerald-600 focus:outline-none" />
+            class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal text-slate-900 focus:border-[#0060C0] focus:outline-none" />
         </label>
         <label class="block text-sm font-semibold text-slate-700">
           Longitude
           <input type="number" required step="any"
             [ngModel]="lng()" (ngModelChange)="lng.set($event)" name="lng"
-            class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal text-slate-900 focus:border-emerald-600 focus:outline-none" />
+            class="mt-1 w-full rounded-xl border border-slate-300 px-4 py-2 font-normal text-slate-900 focus:border-[#0060C0] focus:outline-none" />
         </label>
       </div>
+      <div>
+        <span class="mb-2 block text-sm font-semibold text-slate-700">Photo</span>
+        <app-image-upload
+          variant="wide"
+          [currentUrl]="imageSrc()"
+          [uploading]="imageUploading()"
+          buttonLabel="Upload image"
+          (filePicked)="onImageSelected($event)"
+        />
+      </div>
       <button type="submit" [disabled]="saving()"
-        class="w-full rounded-xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50">
+        class="w-full rounded-xl bg-[#0060C0] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#003366] disabled:cursor-not-allowed disabled:opacity-50">
         {{ saving() ? 'Saving...' : 'Save changes' }}
       </button>
-      <a routerLink="/owner/parkings" class="block text-center text-sm font-semibold text-emerald-700 hover:underline">
+      <a routerLink="/owner/parkings" class="block text-center text-sm font-semibold text-[#0060C0] hover:underline">
         Back to My Parkings
       </a>
     </form>

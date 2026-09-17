@@ -1,7 +1,9 @@
 const Parking = require('../models/parking.model');
 const ParkingSpot = require('../models/spot.model');
 const Booking = require('../models/booking.model');
+const Review = require('../models/review.model');
 const mongoose = require('mongoose');
+const { deleteUploadByUrl } = require('../middlewares/upload.middleware');
 
 /**
  * Builds an error carrying an HTTP status for the errorHandler.
@@ -196,18 +198,24 @@ async function updateParking(parkingId, data, userId) {
  * deleteParking
  * Only the parking owner or an admin may delete.
  *
- * Safe-delete policy (BLOCK, not cascade):
- *   1. Rejects with 409 if any spot of this parking has an active booking.
- *   2. Rejects with 409 if any spots still exist (delete them first).
+ * Safe-delete policy:
+ *   1. Rejects with 409 if any booking of this parking is still active
+ *      (always blocked — drivers could be parked there right now).
+ *   2. Rejects with 409 if any booking (even completed/cancelled) references
+ *      this parking's spots, unless force is true — deleting them would
+ *      orphan booking history (frontend shows "Deleted parking" instead).
+ *   3. Otherwise the parking's spots (and its now-unreachable reviews) are
+ *      removed together with it, so owners don't delete spots by hand first.
  * Cascade would permanently destroy spot and booking history, so blocking
  * preserves historical data — same philosophy as deleteSpot.
  *
  * @param {string} parkingId
  * @param {string} userId - user ID from the JWT token
  * @param {string} role - role from the JWT token ('admin' bypasses ownership)
+ * @param {boolean} force - delete despite non-active booking history
  * @returns {Promise<Object>}
  */
-async function deleteParking(parkingId, userId, role) {
+async function deleteParking(parkingId, userId, role, force = false) {
   const parking = await verifyParkingOwner(parkingId, userId, role);
 
   const activeBooking = await Booking.exists({ parkingId, status: 'active' });
@@ -215,12 +223,55 @@ async function deleteParking(parkingId, userId, role) {
     throw createError(409, 'Cannot delete a parking with active bookings');
   }
 
-  const spotsCount = await ParkingSpot.countDocuments({ parkingId });
-  if (spotsCount > 0) {
-    throw createError(409, 'Cannot delete the parking before deleting all of its spots');
+  const spotIds = await ParkingSpot.find({ parkingId }).select('_id');
+  if (spotIds.length > 0) {
+    const hasHistory = await Booking.exists({
+      spotId: { $in: spotIds.map((s) => s._id) },
+    });
+    if (hasHistory && !force) {
+      throw createError(409, 'Cannot delete a parking with booking history');
+    }
+    await ParkingSpot.deleteMany({ parkingId });
   }
 
+  // Reviews belong to the parking — unreachable once it is gone.
+  await Review.deleteMany({ parkingId });
+
+  const imageUrl = parking.imageUrl;
   await parking.deleteOne();
+  if (imageUrl) deleteUploadByUrl(imageUrl);
+  return parking;
+}
+
+/**
+ * setParkingImage
+ * Replaces a parking's image. Owner-only check mirroring the
+ * verifyParkingOwner pattern from spots.service.js: the parking must
+ * exist and the current user must own it. Removes the previous upload
+ * from disk so orphaned files do not accumulate (best-effort).
+ *
+ * @param {string} parkingId
+ * @param {string} imageUrl - e.g. "/uploads/123-abc.png"
+ * @param {string} userId - user ID from the JWT token
+ * @returns {Promise<Object>}
+ */
+async function setParkingImage(parkingId, imageUrl, userId) {
+  validateObjectId(parkingId, 'Invalid parking ID format');
+
+  const parking = await Parking.findById(parkingId);
+  if (!parking) {
+    throw createError(404, 'Parking not found');
+  }
+  if (parking.ownerId.toString() !== userId.toString()) {
+    throw createError(403, 'You are not the owner of this parking');
+  }
+
+  const oldUrl = parking.imageUrl;
+  parking.imageUrl = imageUrl;
+  await parking.save();
+
+  if (oldUrl && oldUrl !== imageUrl) deleteUploadByUrl(oldUrl);
+
   return parking;
 }
 
@@ -233,4 +284,5 @@ module.exports = {
   updateParking,
   deleteParking,
   verifyParkingOwner,
+  setParkingImage,
 };
